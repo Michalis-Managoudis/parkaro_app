@@ -1,8 +1,380 @@
+html {
+  font-size: 10px;
+}
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: white;
+  color: black;
+  font: 1.8em / 1.8 Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
 }
 
 a {
-  color: #00B7FF;
+  color: black;
+  text-decoration: none;
 }
+
+/* ------------------------- Header ------------------------- */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: #EFF5FF;
+  /* position: sticky; */
+  /* top: 0; */
+}
+
+.h-el {
+  height: 27px;
+}
+
+#h-left_section,
+#h-right_section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* #h-right_section {
+  position: fixed;
+  right: 0;
+  z-index: 2;
+} */
+
+header img {
+  height: 1.3em;
+}
+
+/* header a {
+  color: black;
+  text-decoration: none;
+} */
+
+/* ---------- header contact info ---------- */
+#h-social {
+  display: inline-block;
+  list-style: none;
+  position: relative;
+  top: 2px;
+  padding-left: 1em;
+  margin: 0;
+}
+
+#h-social li {
+  display: inline-block;
+  padding-left: 0;
+}
+
+.h-contact_info {
+  padding-left: 1.5em;
+  padding-top: 0px;
+}
+
+#h-mail {
+  white-space: nowrap;
+}
+
+#h-mail_text {
+  position: relative;
+  top: -4px;
+}
+
+#h-tel_text {
+  position: relative;
+  top: -3px;
+}
+
+#h-mail img {
+  position: relative;
+  top: 5px;
+}
+
+#h-tel {
+  white-space: nowrap;
+}
+
+#h-tel img {
+  position: relative;
+  top: 2px;
+}
+
+#h-tel_text:hover {
+  text-decoration: underline;
+}
+
+/* ----- header account & language ----- */
+#h-lang {
+  padding-left: 2em;
+  padding-right: 1em;
+  white-space: nowrap;
+}
+
+#h-lang img,
+#h-enter img {
+  position: relative;
+  top: 2px;
+}
+
+#h-lang_text:hover {
+  text-decoration: underline;
+}
+
+#h-enter {
+  white-space: nowrap;
+}
+
+#h-enter_text {
+  position: relative;
+  top: -4px;
+}
+
+#h-lang_text {
+  position: relative;
+  top: -3px;
+}
+
+#h-enter_sign_in:hover,
+#h-enter_sign_up:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------- Navbar ------------------------- */
+nav {
+  display: flex;
+  /* flex-wrap: wrap; */
+  position: sticky;
+  /* top: 27px; */
+  top: 0;
+  background-color: #3F4963;
+  z-index: 1;
+}
+
+#n-logo {
+  display: flex;
+}
+
+#n-logo img {
+  height: 45px;
+}
+
+#n-bar ul {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  list-style: none;
+  align-items: center;
+  margin: 0;
+  margin-top: 6px;
+}
+
+#n-bar ul li {
+  margin-right: 40px;
+  white-space: nowrap;
+}
+
+#n-bar ul li a {
+  text-decoration: none;
+  color: white;
+}
+
+#n-bar ul li a:hover {
+  text-decoration: underline;
+}
+
+#n-park_now {
+  display: none;
+}
+
+#n-park_now a {
+  display: none;
+}
+
+/* ------------------------- Footer ------------------------- */
+footer {
+  background-color: #9298b5;
+  /* padding-top: 1em; */
+  /* padding-bottom: 1em; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  /* position: absolute; */
+  width: 100%;
+}
+
+footer img {
+  height: 3.5em;
+}
+
+.f-el {
+  display: inline-block;
+  max-width: 240px;
+  top: 0;
+  vertical-align: top;
+  padding-left: 2.5em;
+  margin-top: 1em;
+}
+
+/* footer a {
+  color: black;
+  text-decoration: none;
+} */
+
+/* ----- footer app ----- */
+#f-app {
+  padding-left: 1em;
+  text-align: center;
+}
+
+#f-app h5 {
+  margin: 0;
+  text-align: center;
+}
+
+#f-app_img {
+  display: block;
+  height: 150px;
+  margin: auto;
+}
+
+.f-_app_store img {
+  padding: 0.5em 1em;
+  height: 2.5em;
+}
+
+
+/* ----- footer contact info ----- */
+#f-contact_info {
+  width: min-content;
+}
+
+#f-social {
+  display: inline-block;
+  list-style: none;
+  padding: 0;
+  margin: 0.2em;
+}
+
+#f-social li {
+  display: inline-block;
+}
+
+#f-social img {
+  height: 1.5em;
+}
+
+.f-contact_info_icons img {
+  height: 1.5em;
+}
+
+.f-contact_info_icons {
+  display: inline-block;
+}
+
+#f-mail,
+#f-tel {
+  white-space: nowrap;
+}
+
+#f-mail_text {
+  position: relative;
+  top: -10px;
+}
+
+#f-tel_text {
+  position: relative;
+  top: -5px;
+}
+
+#f-tel_text:hover {
+  text-decoration: underline;
+}
+
+#f-contact_info h4 {
+  display: inline-block;
+  margin: 0;
+  position: relative;
+  top: -30px;
+}
+
+/* ----- footer info ----- */
+#f-info h4 {
+  display: inline-block;
+  margin: 0;
+  position: relative;
+  top: -30px;
+}
+
+/* ----- footer driver ----- */
+#f-driver {
+  width: min-content;
+}
+
+#f-driver span {
+  white-space: nowrap;
+}
+
+#f-driver ul {
+  margin: 0;
+  padding: 0;
+}
+
+#f-driver h4 {
+  display: inline-block;
+  margin: 0;
+  position: relative;
+  top: -30px;
+}
+
+#f-log {
+  position: relative;
+  top: -27px;
+  left: 80px;
+}
+
+#f-log a {
+  display: block;
+}
+
+#f-driver ul {
+  position: relative;
+  top: -20px;
+  list-style: none;
+}
+
+#f-driver a:hover {
+  text-decoration: underline;
+}
+
+/* ----- footer business ----- */
+#f-business {
+  padding-right: 1em;
+  width: min-content;
+}
+
+#f-business h4 {
+  display: inline-block;
+  position: relative;
+  top: -30px;
+}
+
+#f-business span {
+  white-space: nowrap;
+}
+
+#f-business a {
+  white-space: nowrap;
+  display: block;
+  padding-left: 1em;
+  padding-bottom: 0.4em;
+}
+
+#f-business a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------- Main ------------------------- */
+main {
+  background-color: #68a7f4;
+  /* background-color: #9e3c8d; */
+}
+
