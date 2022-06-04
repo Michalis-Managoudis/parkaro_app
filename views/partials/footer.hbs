@@ -1,67 +1,138 @@
+{{#if lang}}
 <!-- Footer -->
-    <footer>
-        <span class="f-el" id="f-app">
-            <h5>Download the app</h5>
-            <div><img id="f-app_img" src="/images/f-app.png" alt=""></div>
-            <a class="f-_app_store" href=""><img src="/images/f-play_store.png" alt=""></a>
-            <a class="f-_app_store" href=""><img src="/images/f-app_store.png" alt=""></a>
+<footer>
+    <span class="f-el" id="f-app">
+        <h5>Download the app</h5>
+        <div><img id="f-app_img" src="/images/f-app.png" alt=""></div>
+        <a class="f-_app_store" href=""><img src="/images/f-play_store.png" alt=""></a>
+        <a class="f-_app_store" href=""><img src="/images/f-app_store.png" alt=""></a>
+    </span>
+
+    <span class="f-el" id="f-contact_info">
+        <img src="/images/f-contact_icon.png" alt="">
+        <h4>Contact</h4>
+
+        <span class="f-contact_info_icons" id="f-mail">
+            <img src="/images/h-msg_icon.png">
+            <span id="f-mail_text">support@gmail.com</span>
         </span>
 
-        <span class="f-el" id="f-contact_info">
-            <img src="/images/f-contact_icon.png" alt="">
-            <h4>Contact</h4>
-
-            <span class="f-contact_info_icons" id="f-mail">
-                <img src="/images/h-msg_icon.png">
-                <span id="f-mail_text">support@gmail.com</span>
-            </span>
-
-            <span class="f-contact_info_icons" id="f-tel">
-                <a href="tel:2271012345">
-                    <img src="/images/h-customer-service_icon.png">
-                    <span id="f-tel_text">22710 12345</span>
-                </a>
-            </span>
-
-            <ul id="f-social">
-                <li><a href="https://www.facebook.com/"><img src="/images/h-fb_icon.png"></a></li>
-                <li><a href="https://www.instagram.com/"><img src="/images/h-insta_icon.png"></a></li>
-                <li><a href="https://twitter.com/"><img src="/images/h-twitter_icon.png"></a></li>
-                <li><a href="https://www.linkedin.com/"><img src="/images/h-linkedin_icon.png"></a></li>
-            </ul>
-
+        <span class="f-contact_info_icons" id="f-tel">
+            <a href="tel:2271012345">
+                <img src="/images/h-customer-service_icon.png">
+                <span id="f-tel_text">22710 12345</span>
+            </a>
         </span>
 
-        <span class="f-el" id="f-info">
-            <img src="/images/f-info_icon.png" alt="">
-            <h4>Info</h4>
-            <p>This website is a result of diploma thesis</p>
+        <ul id="f-social">
+            <li><a href="https://www.facebook.com/"><img src="/images/h-fb_icon.png"></a></li>
+            <li><a href="https://www.instagram.com/"><img src="/images/h-insta_icon.png"></a></li>
+            <li><a href="https://twitter.com/"><img src="/images/h-twitter_icon.png"></a></li>
+            <li><a href="https://www.linkedin.com/"><img src="/images/h-linkedin_icon.png"></a></li>
+        </ul>
+
+    </span>
+
+    <span class="f-el" id="f-info">
+        <img src="/images/f-info_icon.png" alt="">
+        <h4>Info</h4>
+        <p>This website is a result of diploma thesis</p>
+    </span>
+
+    <span class="f-el" id="f-driver">
+        <span>
+            <img src="/images/f-driver.png" alt="">
+            <h4>For driver</h4>
+        </span>
+        <span id="f-log">
+            <a href="">Sign in</a>
+
+            <a href="">Sign up</a>
+        </span>
+        <ul>
+            <li> <a href="">Park now</a> </li>
+            <li> <a href="">City</a> </li>
+            <li> <a href="">Airport</a> </li>
+            <li> <a href="">Port</a> </li>
+        </ul>
+    </span>
+
+    <span class="f-el" id="f-business">
+        <span>
+            <img src="/images/f-business.png" alt="">
+            <h4>For business</h4>
+        </span>
+        <a href="">Partners Sign in</a>
+        <a href="">Partners Sign up</a>
+    </span>
+</footer>
+
+{{else}}
+<footer>
+    <span class="f-el" id="f-app">
+        <h5>Κατεβάστε την Εφαρμογή</h5>
+        <div><img id="f-app_img" src="/images/f-app.png" alt=""></div>
+        <a class="f-_app_store" href=""><img src="/images/f-play_store.png" alt=""></a>
+        <a class="f-_app_store" href=""><img src="/images/f-app_store.png" alt=""></a>
+    </span>
+
+    <span class="f-el" id="f-contact_info">
+        <img src="/images/f-contact_icon.png" alt="">
+        <h4>Επικοινωνία</h4>
+
+        <span class="f-contact_info_icons" id="f-mail">
+            <img src="/images/h-msg_icon.png">
+            <span id="f-mail_text">support@gmail.com</span>
         </span>
 
-        <span class="f-el" id="f-driver">
-            <span>
-                <img src="/images/f-driver.png" alt="">
-                <h4>For driver</h4>
-            </span>
-            <span id="f-log">
-                <a href="">Sign in</a>
-                
-                <a href="">Sign up</a>
-            </span>
-            <ul>
-                <li> <a href="">Park now</a> </li>
-                <li> <a href="">City</a> </li>
-                <li> <a href="">Airport</a> </li>
-                <li> <a href="">Port</a> </li>
-            </ul>
+        <span class="f-contact_info_icons" id="f-tel">
+            <a href="tel:2271012345">
+                <img src="/images/h-customer-service_icon.png">
+                <span id="f-tel_text">22710 12345</span>
+            </a>
         </span>
 
-        <span class="f-el" id="f-business">
-            <span>
-                <img src="/images/f-business.png" alt="">
-                <h4>For business</h4>
-            </span>
-            <a href="">Partners Sign in</a>
-            <a href="">Partners Sign up</a>
+        <ul id="f-social">
+            <li><a href="https://www.facebook.com/"><img src="/images/h-fb_icon.png"></a></li>
+            <li><a href="https://www.instagram.com/"><img src="/images/h-insta_icon.png"></a></li>
+            <li><a href="https://twitter.com/"><img src="/images/h-twitter_icon.png"></a></li>
+            <li><a href="https://www.linkedin.com/"><img src="/images/h-linkedin_icon.png"></a></li>
+        </ul>
+
+    </span>
+
+    <span class="f-el" id="f-info">
+        <img src="/images/f-info_icon.png" alt="">
+        <h4>Πληροφορίες</h4>
+        <p>Αυτή η εφαρμογή φτιάχτηκε στα πλαίσια μίας διπλωματικής εργασίας</p>
+    </span>
+
+    <span class="f-el" id="f-driver">
+        <span>
+            <img src="/images/f-driver.png" alt="">
+            <h4>Για οδηγούς</h4>
         </span>
-    </footer>
+        <span id="f-log">
+            <a href="">Σύνδεση</a>
+
+            <a href="">Εγγραφή</a>
+        </span>
+        <ul>
+            <li> <a href="">Πάρκαρε τώρα</a> </li>
+            <li> <a href="">Πόλη</a> </li>
+            <li> <a href="">Αεροδρόμιο</a> </li>
+            <li> <a href="">Λιμάνι</a> </li>
+        </ul>
+    </span>
+
+    <span class="f-el" id="f-business">
+        <span>
+            <img src="/images/f-business.png" alt="">
+            <h4>Για Επιχειρήσεις</h4>
+        </span>
+        <a href="">Είσοδος Συνεργατών</a>
+        <a href="">Εγγραφή Συνεργατών</a>
+    </span>
+</footer>
+
+{{/if}}

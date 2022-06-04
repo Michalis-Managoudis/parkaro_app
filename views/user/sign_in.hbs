@@ -1,0 +1,29 @@
+{{#if lang}}
+<form action="" method="post">
+    <fieldset>
+        <legend>Sign in</legend>
+        <label for="m-f-email">
+            Email:
+        </label>
+        <input type="text" id="m-f-email" name="email" placeholder="someone@example.com" autofocus
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+
+        <label for="m-f-pswd">
+            Password:
+        </label>
+        <input type="password" id="m-f-pswd" name="password" placeholder=""
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+
+        <input type="submit" value="Sign in">
+
+    </fieldset>
+
+</form>
+<p>Not an account?</p>
+<a href="">Create one here</a>
+
+{{else}}
+
+
+{{/if}}

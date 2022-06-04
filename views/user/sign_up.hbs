@@ -1,0 +1,31 @@
+{{#if lang}}
+<form action="" method="post">
+    <fieldset>
+        <legend>Create an account</legend>
+
+        <label for="m-f-name">Full Name</label>
+        <input type="text" id="m-f-name" name="name" placeholder="Firstname  Lastname" autofocus>
+
+        <label for="m-f-email">Email:</label>
+        <input type="text" id="m-f-email" name="email" placeholder="someone@example.com"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+
+        <label for="m-f-tel">Phone number</label>
+        <input type="tel" id="m-f-tel" name="phone" placeholder="69xxxxxxxx" pattern="[0-9]{3}-*[0-9]{3}-*[0-9]{4}"
+            required>
+
+        <label for="m-f-pswd">Password:</label>
+        <input type="password" id="m-f-pswd" name="password" placeholder=""
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+        <input type="submit" value="Sign up">
+
+    </fieldset>
+</form>
+<p>Already have an account?</p>
+<a href="">Sign in here</a>
+
+{{else}}
+
+
+{{/if}}
