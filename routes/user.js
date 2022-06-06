@@ -3,14 +3,28 @@ var router = express.Router();
 
 /* GET home page. */
 
-// router.get('/', function(req, res, next) {
-//   res.render('index');
-// });
+// router.get('/', function(req, res, next) {res.render('index');});
 
-router.get('/', function(req, res) {
-  res.render('user/home');
-});
+router.get('/', function(req, res) {res.render('user/home');});
 
+router.get('/account', function(req, res) {res.render('user/account');});
 
+router.get('/airport', function(req, res) {res.render('user/airport');});
+
+router.get('/city', function(req, res) {res.render('user/city');});
+
+router.get('/home', function(req, res) {res.render('user/home');});
+
+router.get('/info', function(req, res) {res.render('user/info');});
+
+router.get('/port', function(req, res) {res.render('user/port');});
+
+router.get('/sign_in', function(req, res) {res.render('user/sign_in');});
+
+router.get('/sign_up', function(req, res) {res.render('user/sign_up');});
+
+router.post('/sign_in', function(req, res) {res.render('user/sign_in');});
+
+router.post('/sign_up', function(req, res) {res.render('user/sign_up');});
 
 module.exports = router;
