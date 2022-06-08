@@ -11,6 +11,18 @@ var adminRouter = require('./routes/admin');
 
 var app = express();
 
+const sqlite3 = require('sqlite3');
+let db = new sqlite3.Database(":memory:" , (err) => {
+  if(err)
+  {
+      console.log("Error Occurred - " + err.message);
+  }
+  else
+  {
+      console.log("DataBase Connected");
+  }
+})
+
 // view engine setup
 app.engine('hbs', exphbs.engine({defaultLayout: 'main',extname: '.hbs'}));
 
