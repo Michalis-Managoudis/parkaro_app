@@ -65,3 +65,4 @@ CREATE TABLE `review` (
 );
 
 INSERT INTO `user` VALUES (1,'1@1','1234','Anast','694444','444',5);
+INSERT INTO `user` VALUES (2,'2@2','2345','Mike','69444555','333',10);

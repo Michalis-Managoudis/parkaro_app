@@ -14,7 +14,7 @@ router.get('/airport', function (req, res) { res.render('user/airport'); });
 
 router.get('/city', function (req, res) { dataModel.readTable("user", function (data) {res.render('user/city', {nameu: data["1"].email});})  });
 // router.get('/city', function (req, res) { res.render('user/city', { nameu: dataModel.readTable("user") }); });
-dataModel.readTable("user", function (dataa) {console.log(dataa);})
+// dataModel.readData("user", "email", "" , function (dataa) {console.log(dataa);})
 
 router.get('/home', function (req, res) { res.render('user/home'); });
 
