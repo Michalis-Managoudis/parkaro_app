@@ -12,7 +12,7 @@ CREATE TABLE `user` (
 	`name`		TEXT NOT NULL,
 	`phone` 	INTEGER NOT NULL UNIQUE,
 	`photo` 	TEXT,
-	`points` 	INTEGER NOT NULL DEFAULT 0 CHECK (points >= 0),
+	`points` 	INTEGER NOT NULL DEFAULT 0 CHECK (points >= 0)
 );
 
 CREATE TABLE `car` (
@@ -21,7 +21,7 @@ CREATE TABLE `car` (
 	`plate` 	TEXT NOT NULL UNIQUE,
 	`model` 	TEXT,
 	`color` 	TEXT DEFAULT 'black',
-	`photo` 	TEXT,
+	`photo` 	TEXT
 );
 
 CREATE TABLE `reservation` (
@@ -30,16 +30,18 @@ CREATE TABLE `reservation` (
 	`p_space_id`	INTEGER NOT NULL REFERENCES parking_space(id),
 	`start` 		TEXT NOT NULL,
 	`end` 			TEXT NOT NULL,
-	`price` 		REAL NOT NULL CHECK (price >= 0),
+	`price` 		REAL NOT NULL CHECK (price >= 0)
 );
 
 CREATE TABLE `parking_space` (
 	`id`			INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	`parking_id`	INTEGER NOT NULL REFERENCES parking(id),
+	`parking_id`	INTEGER NOT NULL REFERENCES parking(id)
 );
 
 CREATE TABLE `parking` (
 	`id` 			INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	`email`			TEXT NOT NULL UNIQUE,
+	`password`		TEXT NOT NULL,
 	`spaces` 		INTEGER NOT NULL CHECK (spaces >= 0),
 	`location` 		TEXT NOT NULL,
 	`photo` 		TEXT NOT NULL UNIQUE,
@@ -55,15 +57,14 @@ CREATE TABLE `parking` (
 	`s_length` 		REAL NOT NULL CHECK (s_length > 0),
 	`s_english` 	INTEGER NOT NULL DEFAULT 0 CHECK (s_english == 0 OR s_english == 1),
 	`s_camera` 		INTEGER NOT NULL DEFAULT 0 CHECK (s_camera == 0 OR s_camera == 1),
-	`s_wash` 		INTEGER NOT NULL DEFAULT 0 CHECK (s_wash == 0 OR s_wash == 1),
+	`s_wash` 		INTEGER NOT NULL DEFAULT 0 CHECK (s_wash == 0 OR s_wash == 1)
 );
 CREATE TABLE `review` (
 	`id`			INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT REFERENCES reservation(id),
 	`parking_id` 	INTEGER NOT NULL REFERENCES parking(id),
-	`stars` 		INTEGER NOT NULL CHECK (s_covered >= 0 OR s_covered <= 5),
-	`description` 	TEXT,
+	`stars` 		INTEGER NOT NULL CHECK (stars >= 0 OR stars <= 5),
+	`description` 	TEXT
 );
 
-INSERT INTO `user` VALUES (1,'1@1','1234','Anast');
-INSERT INTO `user` VALUES (2,'1@2','12345','Mike');
-INSERT INTO `user` VALUES (3,'2@3','1234','Nikos');
+INSERT INTO `user` VALUES (1,'1@1','1234','Anast','694444','444',5);
+INSERT INTO `user` VALUES (2,'2@2','2345','Mike','69444555','333',10);

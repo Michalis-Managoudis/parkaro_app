@@ -26,6 +26,29 @@
 <a href="">Sign in here</a>
 
 {{else}}
-<p>εγγραφή</p>
+<form action="" method="post">
+    <fieldset>
+        <legend>Create an account</legend>
+        <label for="m-f-email">Email:</label>
+        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" autofocus
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+
+        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
+        <input type="password" id="m-f-pswd" name="password" placeholder=""
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+        <label for="m-f-name">Ονοματεπώνυμο:</label>
+        <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" autofocus required>
+
+        <label for="m-f-phone">Τηλέφωνο:</label>
+        <input type="tel" id="m-f-phone" name="phone" placeholder="69********" autofocus pattern="[0-9]{10}" required>
+
+        <input type="submit" value="Sign in">
+
+    </fieldset>
+
+</form>
+<p>Already have an account?</p>
+<a href="/sign_in">Sign in here</a>
 
 {{/if}}
