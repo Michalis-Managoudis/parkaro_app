@@ -11,6 +11,7 @@ CREATE TABLE `user` (
 	`password`	TEXT NOT NULL,
 	`name`		TEXT NOT NULL,
 	`phone` 	INTEGER NOT NULL UNIQUE,
+	`lang`		INTEGER NOT NULL DEFAULT 0 CHECK (lang == 0 OR lang == 1),
 	`photo` 	TEXT,
 	`points` 	INTEGER NOT NULL DEFAULT 0 CHECK (points >= 0)
 );
@@ -47,14 +48,16 @@ CREATE TABLE `parking_station` (
 	`tax_office` 	TEXT NOT NULL,
 	`address` 		TEXT NOT NULL,
 	`phone` 		INTEGER NOT NULL,
-	`lots` 			INTEGER NOT NULL CHECK (spaces >= 0),
+	`lots` 			INTEGER NOT NULL CHECK (lots >= 0),
 	`location` 		TEXT NOT NULL,
 	`name` 			TEXT,
+	`type`			INTEGER NOT NULL DEFAULT 0 CHECK (type == 0 OR type == 1 OR type == 2),
+	`lang`			INTEGER NOT NULL DEFAULT 0 CHECK (lang == 0 OR lang == 1),
 	`photo` 		TEXT NOT NULL UNIQUE,
 	`work_hours` 	TEXT NOT NULL DEFAULT '24/7',
 	`price_list` 	TEXT NOT NULL,
 	`discount` 		INTEGER NOT NULL DEFAULT 0 CHECK (discount >= 0 AND discount <=100),
-	`info` 			TEXT,	
+	`info` 			TEXT,
 	`s_height` 		REAL NOT NULL CHECK (s_height > 0),
 	`s_length` 		REAL NOT NULL CHECK (s_length > 0),
 	`s_covered` 	INTEGER NOT NULL DEFAULT 1 CHECK (s_covered == 0 OR s_covered == 1),
@@ -72,5 +75,8 @@ CREATE TABLE `review` (
 	`description` 			TEXT
 );
 
-INSERT INTO `user` VALUES (1,'1@1','1234','Anast','694444','444',5);
-INSERT INTO `user` VALUES (2,'2@2','2345','Mike','69444555','333',10);
+INSERT INTO `user` VALUES (1,'1@1','1234','Anast','694444', 0,'444',5);
+INSERT INTO `user` VALUES (2,'2@2','2345','Mike','69444555', 1,'333',10);
+
+INSERT INTO `parking_station` VALUES (1,'2@2','2345','0123456789','Park&DriveA.E.','Chiou','Ritsou 19',6987453254,5,'23.717539/37.983810','ParknDrivee',0,0,'1.png','24/7','1-2-3-4-5',0,NULL,5.2,3.1,0,0,0,0,0,0,0);
+INSERT INTO `parking_station` VALUES (2,'2@3','23465','012345678910','Park&nDriveA.E.','Chiou','Ritsou 18',6987453254,10,'23.737539/37.983810','Parkn',0,1,'2.png','24/7','1-2-3-4-5',0,NULL,4.2,2.1,0,0,0,0,0,0,0);

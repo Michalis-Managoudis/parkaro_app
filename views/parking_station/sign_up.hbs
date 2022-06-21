@@ -1,7 +1,88 @@
-    {{#if lang}}
+{{#if lang}}
 
 
-    {{else}}
+{{else}}
+<form action="" method="post">
+    <fieldset>
+        <legend>Create an account</legend>
+        <label for="m-f-email">Email:</label>
+        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" autofocus
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
 
-    
-    {{/if}}
+        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
+        <input type="password" id="m-f-pswd" name="password" placeholder=""
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+        <label for="m-f-tin">ΑΦΜ:</label>
+        <input type="number" id="m-f-tin" name="tin" placeholder="" pattern="[0-9]+" required>
+
+        <label for="m-f-cname">Επωνυμία Εταιρίας:</label>
+        <input type="text" id="m-f-cname" name="company_name" placeholder="" required>
+
+        <label for="m-f-tax_of">Δ.Ο.Υ.:</label>
+        <input type="text" id="m-f-tax_of" name="tax_office" placeholder="" required>
+
+        <label for="m-f-addr">Έδρα:</label>
+        <input type="text" id="m-f-addr" name="address" placeholder="" required>
+
+        <label for="m-f-phone">Τηλέφωνο:</label>
+        <input type="tel" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" required>
+    </fieldset>
+    <fieldset>
+        <legend>Parking</legend>
+        <label for="m-f-lots">Διαθέσιμες θέσεις parking:</label>
+        <input type="number" id="m-f-lots" name="lots" placeholder="" pattern="[0-9]+" required>
+
+        <label for="m-f-loc">Τοποθεσία:</label>
+        <input type="text" id="m-f-loc" name="location" placeholder="" required>
+
+        <label for="m-f-name">Ονομα:</label>
+        <input type="text" id="m-f-name" name="name" placeholder="" required>
+
+        <label for="m-f-photo">Φωτογραφία:</label>
+        <input type="text" id="m-f-photo" name="photo" placeholder="" required>
+
+        <label for="m-f-">Ωράριο λειτουργίας:</label>
+        <input type="" id="m-f-" name="" placeholder="" required>
+
+        <label for="m-f-">Τιμοκατάλογος:</label>
+        <input type="" id="m-f-" name="" placeholder="" required>
+
+        <label for="m-f-">Επιπλέον πληροφορίες:</label>
+        <input type="" id="m-f-" name="" placeholder="" required>
+    </fieldset>
+
+    <fieldset>
+        <legend>Υπηρεσίες</legend>
+        <label for="m-f-1">Στεγασμένος χώρος</label>
+        <input type="checkbox" id="m-f-1" name="s_covered" value="1">
+
+        <label for="m-f-">Τα κλειδιά παραμένουν στο parking</label>
+        <input type="checkbox" id="m-f-" name="s_keys" value="0">
+
+        <label for="m-f-">Πληρωμή με κάρτα στο χώρο του parking</label>
+        <input type="checkbox" id="m-f-" name="s_card" value="0">
+
+        <label for="m-f-">Φορτηστής ηλεκτρικών οχημάτων</label>
+        <input type="checkbox" id="m-f-" name="s_charger" value="0">
+
+        <label for="m-f-">Αγγλικά</label>
+        <input type="checkbox" id="m-f-" name="s_english" value="0">
+
+        <label for="m-f-">24ωρη παρακολούθηση από κάμερες</label>
+        <input type="checkbox" id="m-f-" name="s_camera" value="0">
+
+        <label for="m-f-">Πληντύριο</label>
+        <input type="checkbox" id="m-f-" name="s_wash" value="0">
+
+
+
+
+    </fieldset>
+    <input type="submit" value="Sign up">
+
+</form>
+<p>Already have an account?</p>
+<a href="/parking_station/sign_in">Sign in here</a>
+
+{{/if}}

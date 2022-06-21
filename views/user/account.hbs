@@ -1,7 +1,36 @@
-    {{#if lang}}
+{{#if lang}}
 
 
-    {{else}}
-    <p>Ο Λογαριασμός μου</p>
-    
-    {{/if}}
+{{else}}
+<p>Ο Λογαριασμός μου</p>
+
+<form action="" method="post">
+    <fieldset>
+        <legend>Create an account</legend>
+        <label for="m-f-email">Email:</label>
+        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" value='{{user.email}}' autofocus
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+
+        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
+        <input type="password" id="m-f-pswd" name="password" placeholder="****"
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+        <label for="m-f-name">Ονοματεπώνυμο:</label>
+        <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" value='{{user.name}}' required>
+
+        <label for="m-f-phone">Τηλέφωνο:</label>
+        <input type="tel" id="m-f-phone" name="phone" placeholder="69********" value={{user.phone}} pattern="[0-9]{10}" required>
+
+        <label>Γλώσσα:</label>
+        <input type="radio" id="a" name="lang" value="0">
+        <label for="a">Αγγλικά</label>
+        <input type="radio" id="b" name="lang" value="1">
+        <label for="b">Ελληνικά</label>
+
+        <input type="submit" value="Save">
+
+    </fieldset>
+
+</form>
+
+{{/if}}

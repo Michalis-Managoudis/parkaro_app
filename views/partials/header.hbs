@@ -23,7 +23,8 @@
 
     <span id="h-right_section">
         <span class="h-el" id="h-enter">
-            <img src="/images/h-user_icon.png" alt="">
+            {{#if is_user}}<img src="/images/h-user_icon.png" alt="">
+            {{else}}<img src="/images/h-business_icon.png" alt="">{{/if}}
             <span id="h-enter_text">
                 {{#if login}}
                 <a href="/account">
@@ -42,9 +43,10 @@
         </span>
 
         <span class="h-el" id="h-lang">
-            <a href="">
+            <a href="/language">
                 <img src="/images/h-lang_icon.png" alt="">
-                <span id="h-lang_text">EN</span>
+                {{#if lang}}<span id="h-lang_text">GR</span>
+                {{else}}<span id="h-lang_text">EN</span>{{/if}}
             </a>
         </span>
     </span>

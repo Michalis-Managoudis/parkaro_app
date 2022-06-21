@@ -378,3 +378,32 @@ main {
   /* background-color: #9e3c8d; */
 }
 
+/* Set the size of the div element that contains the map */
+#map {
+  height: 500px;
+  /* The height is 400 pixels */
+  width: 50%;
+  /* The width is the width of the web page */
+}
+
+/* .mapouter {
+  position: relative;
+  text-align: right;
+  height: 500px;
+  width: 800px;
+}
+
+.gmap_canvas {
+  overflow: hidden;
+  background: none !important;
+  height: 500px;
+  width: 800px;
+} */
+
+#menu {
+  position: absolute;
+  background: #efefef;
+  padding: 10px;
+  font-family: 'Open Sans', sans-serif;
+  }
+  

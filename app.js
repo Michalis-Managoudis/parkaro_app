@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 // session
 // app.use(cookieParser());
 app.use(session({
-  // name: 'Parkaro_app_session',
+  name: 'Parkaro_app_session',
   secret: process.env.secret || "PynOjAuHetAuWawtinAytVunarAcjeBlybEshkEjVudyelwa",
   resave: false,
   saveUninitialized: true,

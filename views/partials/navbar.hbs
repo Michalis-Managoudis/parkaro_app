@@ -5,12 +5,21 @@
     </span>
     <span class="n-el" id="n-bar">
         <ul>
+            {{#if is_user}}
             <li> <a href="/home">{{#if lang}}Αρχική{{else}}Home{{/if}}</a> </li>
             <li hidden> <a href="">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a> </li>
             <li> <a href="/city">{{#if lang}}Πόλη{{else}}City{{/if}}</a> </li>
             <li> <a href="/airport">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a> </li>
             <li> <a href="/port">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a> </li>
             <li> <a href="/info">{{#if lang}}Πληροφορίες{{else}}About us{{/if}}</a> </li>
+            {{else}}
+            <li> <a href="/home">{{#if lang}}Αρχική{{else}}Home{{/if}}</a> </li>
+            <li hidden> <a href="">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a> </li>
+            <li> <a href="/city">{{#if lang}}Πόλη{{else}}City{{/if}}</a> </li>
+            <li> <a href="/airport">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a> </li>
+            <li> <a href="/port">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a> </li>
+            <li> <a href="/info">{{#if lang}}Πληροφορίες{{else}}About us{{/if}}</a> </li>
+            {{/if}}
         </ul>
     </span>
 </nav>

@@ -2,24 +2,42 @@
 const db = require('../database/db');
 
 const schema = {
-  "user": ["id", "email", "password", "name", "phone", "photo", "points"],
+  "user": ["id", "email", "password", "name", "phone", "lang", "photo", "points"],
   "car": ["id", "user_id", "plate", "model", "color", "photo"],
-  "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["id", "parking_station_id"],
   "reservation": ["id", "car_id", "parking_lot_id", "dstart", "end", "price"],
   "review": ["id", "parking_station_id", "stars", "description"]
 };
-
 const schema_required = {
   "user": ["email", "password", "name", "phone"],
   "car": ["user_id", "plate", "model", "color"],
-  "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "photo", "work_hours", "price_list", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "type", "photo", "work_hours", "price_list", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "dstart", "end", "price"],
   "review": ["parking_station_id", "stars", "description"]
 };
-
+const schema_show = { //? , "lang";;;;;;;
+  "user": ["email", "name", "phone", "photo", "points"],
+  "car": ["plate", "model", "color", "photo"],
+  "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_lot": ["parking_station_id"],
+  "reservation": ["car_id", "parking_lot_id", "dstart", "end", "price"],
+  "review": ["parking_station_id", "stars", "description"]
+};
+const schema_editable = {
+  "user": ["email", "password", "name", "phone", "lang", "photo"],
+  "car": ["plate", "model", "color", "photo"],
+  "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "reservation": ["car_id", "dstart", "end"],
+  "review": ["stars", "description"]
+};
+const schema_unique = {
+  "user": ["email", "phone"],
+  "parking_station": ["email", "tin"]
+};
 const schema_parking_station_boolean = ["s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"];
+
 // function readTable(table) {
 //     const sql = `SELECT * FROM ${table}`;
 //     let data = [];
@@ -65,7 +83,7 @@ function create_(table, vls, cb) {
 function update_(table, row, cb) {
   let pairs = "";
   let field = "";
-  for (field of schema[table].slice(1)) {   /* for every column except id */
+  for (field of schema_editable[table]) {   /* for every column except id */
     if (pairs) pairs += ", ";    /* insert comma unless string is empty */
     pairs += `${field} = '${row[field]}'`;   /* column = 'value' */
   }
@@ -78,26 +96,29 @@ function delete_(table, id, cb) {
   db.run(sql, cb);
 };
 
-// function check_if_exists_(table, fld, val, cb) {
-//   const cond = `${fld} = "${val}"`;
-//   const sql = `SELECT id FROM ${table} WHERE ${cond}`;
-//   db.all(sql, function (data) {
-//     if (Object.keys(data).length === 0) {
-//       console.log("not");
-//       return false;
-//     }
-//     else {
-//       console.log("yes");
-//       return true;
-//     }
-//   })
-// };
-
 function auth_(table, email, pass, cb) {
-  const sql = `SELECT id, email, password FROM ${table} WHERE email = "${email}" AND password = "${pass}"`;
+  const sql = `SELECT id, lang FROM ${table} WHERE email = "${email}" AND password = "${pass}"`;
+  db.get(sql, function (err, row) {
+    if (err) throw (err);
+    if (row) cb(row);
+  })
+};
+
+function get_(table, id, cb) {
+  const fields = schema_show[table].join(", ");
+  const sql = `SELECT ${fields} FROM ${table} WHERE id = "${id}"`;
   db.get(sql, function (err, row) {
     if (err) throw (err);
     if (cb) cb(row);
+  })
+};
+
+function check_(table, id, fld, vl, cb) {
+  const sql = `SELECT id FROM ${table} WHERE ${fld} = "${vl}" AND id != ${id}`;
+  db.get(sql, function (err, row) {
+    if (err) throw (err);
+    if (row) cb(false);
+    else cb(true);
   })
 };
 
@@ -113,11 +134,14 @@ function find_parking_space(id, cb) {
 module.exports = {
   schema,
   schema_required,
+  schema_show,
+  schema_editable,
   schema_parking_station_boolean,
   read_,
   create_,
   update_,
   delete_,
-  auth_
-  // check_if_exists_
+  auth_,
+  get_,
+  check_
 }
