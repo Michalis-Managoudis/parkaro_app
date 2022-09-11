@@ -1,5 +1,6 @@
 'use strict';
-var dataModel = require('../models/sqlite_data_model.js');
+//const dataModel = require('../models/sqlite_data_model.js');
+const dataModel = require('../models/mysql_data_model.js');
 
 // regex patterns
 const mail_regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;

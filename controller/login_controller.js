@@ -1,12 +1,13 @@
 'use strict';
-const dataModel = require('../models/sqlite_data_model.js');
+//const dataModel = require('../models/sqlite_data_model.js');
+const dataModel = require('../models/mysql_data_model.js');
 
 // regex patterns
 const mail_regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 const password_regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 const phone_regex = /[0-9]{10}/;
 const tin_regex = /[0-9]+/;
-
+ 
 // const safe = require('safe-regex');
 // console.log(safe(tin_regex));
 

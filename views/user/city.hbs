@@ -1,16 +1,13 @@
 {{#if lang}}
 
-
 {{else}}
 <p>Hello</p>
-<p>{{nameu}}</p>
 
 {{/if}}
 
 <div id="map"></div>
-
 <div id="menu">
-    <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" checked="checked">
+    <input id="satellite-v9" type="radio" name="rtoggle" value="satellite">
     <!-- See a list of Mapbox-hosted public styles at -->
     <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
     <label for="satellite-v9">satellite</label>
@@ -18,10 +15,66 @@
     <label for="light-v10">light</label>
     <input id="dark-v10" type="radio" name="rtoggle" value="dark">
     <label for="dark-v10">dark</label>
-    <input id="streets-v11" type="radio" name="rtoggle" value="streets">
+    <input id="streets-v11" type="radio" name="rtoggle" value="streets" checked="checked">
     <label for="streets-v11">streets</label>
     <input id="outdoors-v11" type="radio" name="rtoggle" value="outdoors">
     <label for="outdoors-v11">outdoors</label>
 </div>
 
-<script src="/javascripts/city.js" async></script>
+{{!--
+<script src="/javascripts/city.js" async></script> --}}
+
+<script>
+    // mapboxgl.accessToken = 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA';
+    const map = new mapboxgl.Map({
+        accessToken: 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA',
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        center: [23.727539, 37.983810], // starting position [lng, lat]
+        zoom: 11 // starting zoom
+    });
+
+    let geojson = {
+        'type': 'FeatureCollection',
+        'features': []
+    };
+
+    const data = {{{ parking_station_locations }}};
+    for (parking_station of data) {
+        const ft = {
+            'type': 'Feature',
+            'properties': {
+                'description':
+                    '<strong>' + parking_station.id + '</strong>'
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': parking_station.location
+            }
+        }
+        geojson.features.push(ft);
+    }
+
+    for (const marker of geojson.features) {
+        let popup = new mapboxgl.Popup()
+            .setHTML(marker.properties.description)
+        // Add markers to the map.
+        new mapboxgl.Marker()
+            .setLngLat(marker.geometry.coordinates)
+            .setPopup(popup)
+            .addTo(map);
+    }
+
+    // map style
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+    for (const input of inputs) {
+        input.onclick = (layer) => {
+            const layerId = layer.target.id;
+            map.setStyle('mapbox://styles/mapbox/' + layerId);
+        };
+    }
+
+    //!!!!!
+
+</script>

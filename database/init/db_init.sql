@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `car`;
 DROP TABLE IF EXISTS `reservation`;
-DROP TABLE IF EXISTS `parking_space`;
-DROP TABLE IF EXISTS `parking`;
+DROP TABLE IF EXISTS `parking_lot`;
+DROP TABLE IF EXISTS `parking_station`;
 DROP TABLE IF EXISTS `review`;
 
 CREATE TABLE `user` (
@@ -36,7 +36,7 @@ CREATE TABLE `reservation` (
 
 CREATE TABLE `parking_lot` (
 	`id`				INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	`parking_staion_id`	INTEGER NOT NULL
+	`parking_station_id`	INTEGER NOT NULL
 );
 
 CREATE TABLE `parking_station` (

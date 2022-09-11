@@ -19,6 +19,7 @@ router.get('/home', user_controller.get_user_home_page);
 router.get('/city', user_controller.get_user_city_page);
 router.get('/airport', user_controller.get_user_airport_page);
 router.get('/port', user_controller.get_user_port_page);
+router.get('/book', user_controller.get_user_book_page);
 // change language page
 router.get('/language', account_controller.change_language);
 // account page
@@ -36,12 +37,6 @@ router.post('/sign_in', login_controller.login_user);                           
 router.post('/sign_up', login_controller.add_new_user);                                     //? !!!!!!! ready
 
 module.exports = router;
-
-
-
-
-
-
 
 // router.get('/', function (req, res) { res.redirect('/home'); });
 // router.get('/account', function (req, res) { res.render('user/account'); });

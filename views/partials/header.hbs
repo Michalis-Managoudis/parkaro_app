@@ -27,17 +27,37 @@
             {{else}}<img src="/images/h-business_icon.png" alt="">{{/if}}
             <span id="h-enter_text">
                 {{#if login}}
-                <a href="/account">
-                    <span id="h-enter_sign_in">{{#if lang}}Ο Λογαριασμός μου{{else}}My account{{/if}}</span>
-                </a>
+                    {{#if is_user}}
+                        <a href="/account">
+                            <span id="h-enter_sign_in">{{#if lang}}Ο Λογαριασμός μου{{else}}My account{{/if}}</span>
+                        </a>
+                    {{else}}
+                        <a href="/parking_station/account">
+                            <span id="h-enter_sign_in">{{#if lang}}Ο Λογαριασμός μου{{else}}My parking_station{{/if}}</span>
+                        </a>
+                    {{/if}}
+                
                 {{else}}
-                <a href="/sign_in">
-                    <span id="h-enter_sign_in">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span>
-                </a>
-                /
-                <a href="/sign_up">
-                    <span id="h-enter_sign_up">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span>
-                </a>
+
+                    {{#if is_user}}
+                        <a href="/sign_in">
+                            <span id="h-enter_sign_in">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span>
+                        </a>
+                        /
+                        <a href="/sign_up">
+                            <span id="h-enter_sign_up">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span>
+                        </a>
+                    {{else}}
+                        <a href="/parking_station/sign_in">
+                            <span id="h-enter_sign_in">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span>
+                        </a>
+                        /
+                        <a href="/parking_station/sign_up">
+                            <span id="h-enter_sign_up">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span>
+                        </a>
+                    {{/if}}
+                
+                
                 {{/if}}
             </span>
         </span>

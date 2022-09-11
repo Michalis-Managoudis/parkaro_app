@@ -7,7 +7,7 @@ const account_controller = require('../controller/account_controller');
 const login_controller = require('../controller/login_controller');
 const parking_station_controller = require('../controller/parking_station_controller');
 
-router.get('/', function(req, res, next) {res.redirect('parking_station/home');});
+router.get('/', function(req, res) {res.redirect('/parking_station/home');});
 
 // home page
 router.get('/home', parking_station_controller.get_parking_station_home_page);
