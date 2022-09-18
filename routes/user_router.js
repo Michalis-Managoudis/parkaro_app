@@ -20,6 +20,7 @@ router.get('/city', user_controller.get_user_city_page);
 router.get('/airport', user_controller.get_user_airport_page);
 router.get('/port', user_controller.get_user_port_page);
 router.get('/book/:ps_id', user_controller.get_user_book_page);
+router.post('/book/:ps_id', user_controller.add_user_reservation);
 router.post('/review/:res_id/:ps_id', user_controller.get_user_review_page);
 // change language page
 router.get('/language', account_controller.change_language);                                //? !!!!!!! ready

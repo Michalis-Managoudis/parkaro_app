@@ -185,8 +185,8 @@ function get_user_history_page(req, res) {
         dataModel.get_("user", req.session.sid, function (data) { // check if email exists
             if (data) {
                 dataModel.load_reservation_history("user",req.session.sid, function (data) {
+                    const dt = JSON.parse(JSON.stringify(data));
                     if (Object.keys(data).length !== 0) {
-                        const dt = JSON.parse(JSON.stringify(data));
                         res.render('user/history', {
                             records: dt,
                             "is_user": true,
@@ -195,7 +195,6 @@ function get_user_history_page(req, res) {
                         });
                     }
                     else {
-                        const dt = JSON.parse(JSON.stringify(data));
                         res.render('user/history', {
                             records: dt,
                             "is_user": true,

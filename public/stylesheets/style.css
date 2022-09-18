@@ -255,9 +255,15 @@ a{
   display: block;
   }
 
+  /* ------------------------- Book ------------------------- */
+._book-card {
+  /* width: 700px; */
+  font-size: medium;
+}
 
-
-
+._car-info {
+  font-size: 10px;
+}
 
 
 
