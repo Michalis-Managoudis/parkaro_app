@@ -66,6 +66,7 @@ function update_user_data(req, res) {
         if (!mail_regex.test(user.email)) fields_check = false;
         if (!password_regex.test(user.password)) fields_check = false;
         if (!phone_regex.test(user.phone)) fields_check = false;
+        if (!(user.password===req.body.password2)) fields_check = false;
         //? if (!user.name) fields_check = false;
         if (fields_check) {
             // check if user already exists (email and phone)
@@ -91,7 +92,11 @@ function update_user_data(req, res) {
                     res.redirect('/account');
                 }
             });
-        };
+        }
+        else {
+            console.log("Fields check failed");
+            res.redirect('/account');
+        }
     }
 
 }
@@ -151,6 +156,7 @@ function delete_user_account(req, res) {
     }
     else {
         dataModel.delete_("user", req.session.sid, function () {
+            req.session.sid = undefined;
             res.redirect('/home');
         });
     }
@@ -170,6 +176,39 @@ function delete_parking_station_account(req, res) {
 
 }
 
+function get_user_history_page(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("To see history page you must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        dataModel.get_("user", req.session.sid, function (data) { // check if email exists
+            if (data) {
+                dataModel.load_reservation_history("user",req.session.sid, function (data) {
+                    if (Object.keys(data).length !== 0) {
+                        const dt = JSON.parse(JSON.stringify(data));
+                        res.render('user/history', {
+                            records: dt,
+                            "is_user": true,
+                            "login": (req.session.sid !== undefined),
+                            'lang': req.session.lang
+                        });
+                    }
+                    else {
+                        const dt = JSON.parse(JSON.stringify(data));
+                        res.render('user/history', {
+                            records: dt,
+                            "is_user": true,
+                            "login": (req.session.sid !== undefined),
+                            'lang': req.session.lang
+                        });
+                    }
+                })
+            }
+        });
+    }
+}
+
 module.exports = {
     change_language,
     get_user_account_page,
@@ -177,5 +216,6 @@ module.exports = {
     update_user_data,
     update_parking_station_data,
     delete_user_account,
-    delete_parking_station_account
+    delete_parking_station_account,
+    get_user_history_page
 }

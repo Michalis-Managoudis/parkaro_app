@@ -101,15 +101,15 @@ function delete_(table, id, cb) {
     if (cb) cb(data);
   });
 };
-
+// user & parking authedication
 function auth_(table, email, pass, cb) {
   const sql = `SELECT id, lang FROM ${table} WHERE email = "${email}" AND password = "${pass}"`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
-    if (cb) cb(JSON.parse(JSON.stringify(data))[0]); //! if is only one
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
   });
 };
-
+// get columns of a specific row of a table
 function get_(table, id, cb) {
   const fields = schema_show[table].join(", ");
   const sql = `SELECT ${fields} FROM ${table} WHERE id = "${id}"`;
@@ -118,13 +118,31 @@ function get_(table, id, cb) {
     if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
   });
 };
-
+// check if unique field already exist in database
 function check_(table, id, fld, vl, cb) {
   const sql = `SELECT id FROM ${table} WHERE ${fld} = "${vl}" AND id != ${id}`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (JSON.parse(JSON.stringify(data)).length) cb(false);
     else cb(true);
+  });
+};
+
+function load_reservation_history(md, id, cb) {
+  let sql =``;
+  if (md === "user") {sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, p.name, p.phone, p.address, p.id1 FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.user_id FROM (reservation r JOIN car c ON r.car_id=c.id) WHERE c.user_id=${id}) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id)) p ON rc.parking_lot_id=p.id2`;}
+  else if (md === "parking_station") {sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, rc.user_id, p.name, p.phone, p.address FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.user_id FROM (reservation r JOIN car c ON r.car_id=c.id)) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id) WHERE ps.id=${id}) p ON rc.parking_lot_id=p.id2`;}
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
+function add_review(id, ps_id, star, desc, cb) {
+ const sql = `INSERT INTO review VALUES (${id}, ${ps_id}, ${star}, '${desc}')`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
   });
 };
 
@@ -149,5 +167,7 @@ module.exports = {
   delete_,
   auth_,
   get_,
-  check_
+  check_,
+  load_reservation_history,
+  add_review
 }

@@ -60,6 +60,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', user_router);
 app.use('/parking_station', parking_station_router);
 app.use('/admin', admin_router);
+// bootstrap
+app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
+app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')))
+// app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')))
+// font-awesome
+app.use('/fa', express.static(__dirname + '/node_modules/font-awesome/css'));
+app.use('/fonts', express.static(__dirname + '/node_modules/font-awesome/fonts'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -19,13 +19,15 @@ router.get('/home', user_controller.get_user_home_page);
 router.get('/city', user_controller.get_user_city_page);
 router.get('/airport', user_controller.get_user_airport_page);
 router.get('/port', user_controller.get_user_port_page);
-router.get('/book', user_controller.get_user_book_page);
+router.get('/book/:ps_id', user_controller.get_user_book_page);
+router.post('/review/:res_id/:ps_id', user_controller.get_user_review_page);
 // change language page
-router.get('/language', account_controller.change_language);
+router.get('/language', account_controller.change_language);                                //? !!!!!!! ready
 // account page
 router.get('/account', account_controller.get_user_account_page);                           //? !!!!!!! ready
 router.post('/account', account_controller.update_user_data); // update account             //? !!!!!!! ready
 router.get('/account/delete', account_controller.delete_user_account); // delete account    //? !!!!!!! ready
+router.get('/history', account_controller.get_user_history_page); 
 // info page
 router.get('/info', user_controller.get_user_info_page);                                    //? !!!!!!! ready
 // load sign pages

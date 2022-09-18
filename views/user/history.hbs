@@ -1,0 +1,195 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var btn = document.getElementById("myBtn");
+        btn.addEventListener("click", function () {
+            var myModal = new bootstrap.Modal(document.getElementById("myModal"));
+            myModal.show();
+        });
+    });
+</script>
+
+
+{{#if records}}
+{{#each records}}
+{{!-- <p>{{this.price}}</p> --}}
+{{/each}}
+
+{{else}}
+<p class="p-3 text-center">Oops nothing found</p>
+<p class="text-center"><a href="/home" class="text-center">Go to find a parking</a></p>
+
+{{/if}}
+<h3 class="text-center">Reservations History</h3>
+<div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
+    <table class="table table-bordered m-0">
+        <thead style="position: sticky; top: 0" class="bg-dark text-white">
+            <tr>
+                <th>Date started</th>
+                <th>Date (to be) ended</th>
+                <th>Price</th>
+                <th>Car plate</th>
+                <th>Parking name</th>
+                <th>Add or update a review</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each records}}
+            {{!-- <p>{{this.price}}</p> --}}
+            <tr>
+                <td>{{this.r_start}}</td>
+                <td>{{this.r_end}}</td>
+                <td>{{this.price}} €</td>
+                <td>{{this.plate}}</td>
+                <td>{{this.name}} <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
+                </td>
+                <td>
+                    <div class="">
+                        <button type="button" id="myBtn" class="btn btn-lg btn-dark d-block mx-5"
+                            style="font-size: 18px;">+</button>
+                        <div id="myModal" class="modal fade" tabindex="-1">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Review</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/review/{{this.id}}/{{this.id1}}" method="post">
+                                            <p>Αστέρια</p>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" name="stars" id="radio1" value=1 checked>
+                                                <label class="form-check-label" for="radioMale">1</label>
+                                            </div>
+                                            <div class="form-check form-check-inline ms-3">
+                                                <input type="radio" class="form-check-input" name="stars" id="radio2" value=2>
+                                                <label class="form-check-label" for="radioFemale">2</label>
+                                            </div>
+                                            <div class="form-check form-check-inline ms-3">
+                                                <input type="radio" class="form-check-input" name="stars" id="radio3" value=3>
+                                                <label class="form-check-label" for="radioFemale">3</label>
+                                            </div>
+                                            <div class="form-check form-check-inline ms-3">
+                                                <input type="radio" class="form-check-input" name="stars" id="radio4" value=4>
+                                                <label class="form-check-label" for="radioFemale">4</label>
+                                            </div>
+                                            <div class="form-check form-check-inline ms-3">
+                                                <input type="radio" class="form-check-input" name="stars" id="radio5" value=5>
+                                                <label class="form-check-label" for="radioFemale">5</label>
+                                            </div>
+                                            <p>Γράψτε μία κριτική</p>
+                                            <textarea name="description" id="" cols="45" rows="5"></textarea>
+                                            <div class="d-flex justify-content-between">
+                                                <button type="button" class="btn btn-lg btn-secondary "
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <input type="submit" class="btn btn-lg btn-success" value="Save">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
+            {{!-- <tr>
+                <td>Marlo Sanki</td>
+                <td>53425532</td>
+                <td>15 May 2015</td>
+                <td><label class="badge badge-warning">In progress</label></td>
+            </tr>
+            <tr>
+                <td>John ryte</td>
+                <td>53275533</td>
+                <td>14 May 2017</td>
+                <td><label class="badge badge-info">Fixed</label></td>
+            </tr>
+            <tr>
+                <td>Peter mark</td>
+                <td>53275534</td>
+                <td>16 May 2017</td>
+                <td><label class="badge badge-success">Completed</label></td>
+            </tr>
+            <tr>
+                <td>Dave</td>
+                <td>53275535</td>
+                <td>20 May 2017</td>
+                <td><label class="badge badge-warning">In progress</label></td>
+            </tr>
+            <tr>
+                <td>Peter mark</td>
+                <td>53275534</td>
+                <td>16 May 2017</td>
+                <td><label class="badge badge-success">Completed</label></td>
+            </tr>
+            <tr>
+                <td>Dave</td>
+                <td>53275535</td>
+                <td>20 May 2017</td>
+                <td><label class="badge badge-warning">In progress</label></td>
+            </tr> --}}
+        </tbody>
+    </table>
+</div>
+
+
+
+{{!-- <div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-lg-8 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Basic Table</h4>
+                        <p class="card-description">Basic table with card</p>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>ID No.</th>
+                                        <th>Created On</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Samso Park</td>
+                                        <td>34424433</td>
+                                        <td>12 May 2017</td>
+                                        <td><label class="badge badge-danger">Pending</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Marlo Sanki</td>
+                                        <td>53425532</td>
+                                        <td>15 May 2015</td>
+                                        <td><label class="badge badge-warning">In progress</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>John ryte</td>
+                                        <td>53275533</td>
+                                        <td>14 May 2017</td>
+                                        <td><label class="badge badge-info">Fixed</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Peter mark</td>
+                                        <td>53275534</td>
+                                        <td>16 May 2017</td>
+                                        <td><label class="badge badge-success">Completed</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dave</td>
+                                        <td>53275535</td>
+                                        <td>20 May 2017</td>
+                                        <td><label class="badge badge-warning">In progress</label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div> --}}

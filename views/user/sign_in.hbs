@@ -1,22 +1,83 @@
 {{#if lang}}
 <p>sign_in</p>
-
 {{else}}
-<form action="" method="post">
-    <fieldset>
-        <legend>Sign in</legend>
-        <label for="m-f-email">Email:</label>
-        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-
-        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
-        <input type="password" id="m-f-pswd" name="password" placeholder="" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-
-        <input type="submit" value="Sign in">
-
-    </fieldset>
-
-</form>
-<p>Not an account?</p>
-<a href="/sign_up">Create one here</a>
 
 {{/if}}
+
+{{!-- <section class="vh-100" style="background-color: #508bfc;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <h3 class="mb-5">Sign in</h3>
+                        <div class="form-outline mb-4">
+                            <input type="email" id="typeEmailX-2" class="form-control form-control-lg" />
+                            <label class="form-label" for="typeEmailX-2">Email</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="password" id="typePasswordX-2" class="form-control form-control-lg" />
+                            <label class="form-label" for="typePasswordX-2">Password</label>
+                        </div>
+
+                        <div class="form-check d-flex justify-content-start mb-4">
+                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
+                            <label class="form-check-label" for="form1Example3"> Remember password </label>
+                        </div>
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+                        <hr class="my-4">
+                        <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;"
+                            type="submit"><i class="fa fa-google me-2"></i> Sign in with google</button>
+                        <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+                            type="submit"><i class="fa fa-facebook-f me-2"></i>Sign in with facebook</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> --}}
+
+<div class="row">
+    <div class="col text-white d-flex justify-content-center p-0">
+        {{!-- <div class="card"> --}}
+            <form action="" method="post" class="card">
+                <div class="login-box">
+                    <div class="login-snip">
+                        <input id="tab-1" type="radio" name="tab" class="sign-in" checked>
+                        <label for="tab-1" class="tab">Login</label>
+                        <label for="tab-2" class="tab"><a href="/sign_up">Sign Up</a></label>
+                        <div class="login-space">
+                            <div class="login-form">
+                                <div class="group">
+                                    <label for="email" class="label">Email</label>
+                                    <input id="email" type="email" class="input" name="email"
+                                        placeholder="Enter your email" autofocus
+                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                                </div>
+                                <div class="group">
+                                    <label for="pass" class="label">Password</label>
+                                    <input id="pass" type="password" class="input" name="password" data-type="password"
+                                        placeholder="Enter your password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        required>
+                                </div>
+                                <div class="group">
+                                    <input id="check" type="checkbox" class="check" checked>
+                                    <label for="check"><span class="icon"></span> Keep me Signed in</label>
+                                </div>
+                                <div class="group">
+                                    <input type="submit" class="button" value="Sign In">
+                                </div>
+                                <hr>
+                                <div class="foot d-flex justify-content-between">
+                                    <a href="">Forgot Password?</a>
+                                    <a href="/sign_up"><label for="tab-2">Not a Member?</label></a>
+                                    {{!-- <a href="/sign_up">Create one here</a> --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {{!-- </div> --}}
+    </div>
+</div>

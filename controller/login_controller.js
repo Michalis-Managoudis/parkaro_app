@@ -45,6 +45,7 @@ function add_new_user(req, res) {
         if (!mail_regex.test(new_user.email)) fields_check = false;
         if (!password_regex.test(new_user.password)) fields_check = false;
         if (!phone_regex.test(new_user.phone)) fields_check = false;
+        if (!(new_user.password===req.body.password2)) fields_check = false;
         if (fields_check) {
             // check if user already exists (email and phone)
             dataModel.read_("user", "email", `email = "${new_user.email}"`, function (data) { // check if email exists
@@ -75,6 +76,10 @@ function add_new_user(req, res) {
                     //? alert("\n\n Το email χρήστη που βάλατε υπάρχει ήδη δοκιμάστε να συνδεθείτε με αυτό το email \n\n ");
                 }
             });
+        }
+        else {
+            console.log("Fields check failed");
+            res.redirect('/sign_up');
         }
     }
     else {
@@ -171,7 +176,7 @@ function login_user(req, res) {
         };
         // check if user credentials exist
         dataModel.auth_("user", user.email, user.password, function (data) {
-            if (data.id) { // user found
+            if (data) { // user found
                 // start new session
                 req.session.sid = data.id;
                 req.session.lang = data.lang;
@@ -225,7 +230,7 @@ function logout_user(req, res) {
         res.redirect('/')
     }
     else {
-        req.session.destroy((err) => { console.log("user session destroyed") })
+        req.session.destroy((err) => { console.log("user logged out") })
         res.redirect('/sign_in')
     }
 };

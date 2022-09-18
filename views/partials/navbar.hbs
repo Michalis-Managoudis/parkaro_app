@@ -1,25 +1,58 @@
 <!-- Navbar -->
-<nav>
-    <span class="n-el" id="n-logo">
-        <img src="/images/logo.jpg" alt="">
-    </span>
-    <span class="n-el" id="n-bar">
-        <ul>
-            {{#if is_user}}
-            <li> <a href="/home">{{#if lang}}Αρχική{{else}}Home{{/if}}</a> </li>
-            <li hidden> <a href="">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a> </li>
-            <li> <a href="/city">{{#if lang}}Πόλη{{else}}City{{/if}}</a> </li>
-            <li> <a href="/airport">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a> </li>
-            <li> <a href="/port">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a> </li>
-            <li> <a href="/info">{{#if lang}}Πληροφορίες{{else}}About us{{/if}}</a> </li>
-            {{else}}
-            <li> <a href="/parking_station/home">{{#if lang}}Αρχική{{else}}Home{{/if}}</a> </li>
-            <li hidden> <a href="">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a> </li>
-            <li> <a href="/parking_station/city">{{#if lang}}Πόλη{{else}}City{{/if}}</a> </li>
-            <li> <a href="/parking_station/airport">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a> </li>
-            <li> <a href="/parking_station/port">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a> </li>
-            <li> <a href="/parking_station/info">{{#if lang}}Πληροφορίες{{else}}About us{{/if}}</a> </li>
-            {{/if}}
-        </ul>
-    </span>
+
+{{!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> --}}
+{{!--<link href="css/font-awsome.min..css" media="all" type="text/css" rel="stylesheet"> --}}
+
+<nav class="navbar navbar-expand-sm sticky-top py-0 nav-line-2">
+    <a class="navbar-brand py-0" href="/home">
+        <img src="/images/logo.jpg" alt="" id="_n-logo-image">
+    </a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        {{!-- <div class="container-sm"> --}}
+            <ul class="navbar-nav">
+                {{#if is_user}}
+                <li class="nav-item nav-link active mx-4">
+                    <a href="/home" class="text-white"><i class="fa fa-home"></i> {{#if lang}}Αρχική{{else}}Home{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4" hidden>
+                    <a href="" class="text-white">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/city" class="text-white">{{#if lang}}Πόλη{{else}}City{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/airport" class="text-white">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/port" class="text-white">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/info" class="text-white">{{#if lang}}Πληροφορίες{{else}}Info{{/if}}</a>
+                </li>
+                {{else}}
+                <li class="nav-item nav-link active mx-4">
+                    <a href="/parking_station/home" class="text-white"><i class="fa fa-home"></i> {{#if lang}}Αρχική{{else}}Home{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4" hidden>
+                    <a href="">{{#if lang}}Πάρκαρε Τώρα{{else}}Park now{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/parking_station/city" class="text-white">{{#if lang}}Πόλη{{else}}City{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/parking_station/airport" class="text-white">{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/parking_station/port" class="text-white">{{#if lang}}Λιμάνι{{else}}Port{{/if}}</a>
+                </li>
+                <li class="nav-item nav-link mx-4">
+                    <a href="/parking_station/info" class="text-white">{{#if lang}}Πληροφορίες{{else}}Info{{/if}}</a>
+                </li>
+                {{/if}}
+            </ul>
+        </div>
+        {{!--</div> --}}
 </nav>

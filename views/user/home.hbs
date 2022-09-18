@@ -28,6 +28,7 @@
 </div> --}}
 
 <script>
+    //const axios = require('axios');
     const map = new mapboxgl.Map({
         accessToken: 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA',
         container: 'map',
@@ -41,19 +42,20 @@
     const data = {{{ parking_station_locations }}};
     //console.log(data);
     const marker_data = {
-            'type': 'geojson',
-            'data': {
-                'type': 'FeatureCollection',
-                'features': []
-            }
-        };
+        'type': 'geojson',
+        'data': {
+            'type': 'FeatureCollection',
+            'features': []
+        }
+    };
     map.on('load', () => {
         for (let i = 0; i < Object.keys(data).length; i++) {
             marker_data.data.features[i] = {
                 'type': 'Feature',
                 'properties': {
+                    'id': data[i].id,
                     'description':
-                        '<strong>' + data[i].id + '</strong> <a href="/info">BOOK NOW</a>',
+                        '<strong>' + data[i].id + '</strong> <a href="/book/'+ data[i].id +'" id="'+ data[i].id +'" class="m-h-ps_marker" onClick="pass_id('+ data[i].id +')">BOOK NOW</a>',
                     'icon': 'car-15'
                 },
                 'geometry': {
@@ -83,6 +85,7 @@
         // Copy coordinates array.
         const coordinates = e.features[0].geometry.coordinates;
         const description = e.features[0].properties.description;
+        //window.alert(e.features[0].properties.id);
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
@@ -101,6 +104,18 @@
         //popup.remove();
     });
 
+    //document.getElementsByClassName("m-h-ps_marker").addEventListener("click", function(e) {
+    //    console.log(e);
+        //sessionStorage.setItem("parking_station_target",e.properties.id);
+    //});
+
+    function pass_id(el_id) {
+        sessionStorage.setItem("parking_station_target",el_id);
+
+        //console.log(el_id);
+        //alert(el_id);
+    }
+
     //// map style
     //const layerList = document.getElementById('menu');
     //const inputs = layerList.getElementsByTagName('input');
@@ -110,5 +125,4 @@
     //        map.setStyle('mapbox://styles/mapbox/' + layerId);
     //    };
     //}
-
 </script>
