@@ -8,7 +8,7 @@ const session = require('express-session')
 const logger = require('morgan');
 const fs = require('fs')
 // load routers
-const user_router = require('./routes/user_router');
+const driver_router = require('./routes/driver_router');
 const parking_station_router = require('./routes/parking_station_router');
 const admin_router = require('./routes/admin_router');
 
@@ -57,7 +57,7 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 // use routers
-app.use('/', user_router);
+app.use('/', driver_router);
 app.use('/parking_station', parking_station_router);
 app.use('/admin', admin_router);
 // bootstrap

@@ -11,22 +11,22 @@ const tin_regex = /[0-9]+/;
 // const safe = require('safe-regex');
 // console.log(safe(tin_regex));
 
-function get_user_sign_up_page(req, res) {
+function get_driver_sign_up_page(req, res) {
     if (req.session.sid === undefined) {
-        res.render('user/sign_up', {
-            'is_user': true,
+        res.render('driver/sign_up', {
+            'is_driver': true,
             'login': false
         });
     }
     else {
-        console.log("user already logged in");
+        console.log("driver already logged in");
         res.redirect('/home');
     }
 };
 function get_parking_station_sign_up_page(req, res) {
     if (req.session.sid === undefined) {
         res.render('parking_station/sign_up', {
-            'is_user': false,
+            'is_driver': false,
             'login': false
         });
     }
@@ -36,30 +36,30 @@ function get_parking_station_sign_up_page(req, res) {
     }
 };
 
-function add_new_user(req, res) {
+function add_new_driver(req, res) {
     if (req.session.sid === undefined) {
-        let new_user = {};
-        for (let field of dataModel.schema_required["user"]) new_user[field] = req.body[field]; // dynamically get user keys and values
+        let new_driver = {};
+        for (let field of dataModel.schema_required["driver"]) new_driver[field] = req.body[field]; // dynamically get driver keys and values
         // check fields agree with patterns
         let fields_check = true;
-        if (!mail_regex.test(new_user.email)) fields_check = false;
-        if (!password_regex.test(new_user.password)) fields_check = false;
-        if (!phone_regex.test(new_user.phone)) fields_check = false;
-        if (!(new_user.password===req.body.password2)) fields_check = false;
+        if (!mail_regex.test(new_driver.email)) fields_check = false;
+        if (!password_regex.test(new_driver.password)) fields_check = false;
+        if (!phone_regex.test(new_driver.phone)) fields_check = false;
+        if (!(new_driver.password===req.body.password2)) fields_check = false;
         if (fields_check) {
-            // check if user already exists (email and phone)
-            dataModel.read_("user", "email", `email = "${new_user.email}"`, function (data) { // check if email exists
+            // check if driver already exists (email and phone)
+            dataModel.read_("driver", "email", `email = "${new_driver.email}"`, function (data) { // check if email exists
                 if (Object.keys(data).length === 0) { // if email not found in database
-                    dataModel.read_("user", "phone", `phone = "${new_user.phone}"`, function (data) { // check if phone exists
+                    dataModel.read_("driver", "phone", `phone = "${new_driver.phone}"`, function (data) { // check if phone exists
                         if (Object.keys(data).length === 0) { // phone not found in database
-                            // insert new_user to database
-                            const required_values = Object.values(new_user); // put required values in an array
-                            dataModel.create_("user", required_values, function () {
-                                dataModel.auth_("user", new_user.email, new_user.password, function (row) {
+                            // insert new_driver to database
+                            const required_values = Object.values(new_driver); // put required values in an array
+                            dataModel.create_("driver", required_values, function () {
+                                dataModel.auth_("driver", new_driver.email, new_driver.password, function (row) {
                                     req.session.sid = row.id;
                                     req.session.lang = row.lang;
-                                    console.log("user added succesfully");
-                                    res.redirect('/account'); // redirect new logged in user to account page or home page
+                                    console.log("driver added succesfully");
+                                    res.redirect('/account'); // redirect new logged in driver to account page or home page
                                 })
                             });
                         }
@@ -91,7 +91,7 @@ function add_new_user(req, res) {
 function add_new_parking_station(req, res) {
     if (req.session.sid === undefined) {
         let new_parking_station = {};
-        for (let field of dataModel.schema_required["parking_station"]) new_parking_station[field] = req.body[field]; // dynamically get user keys and values
+        for (let field of dataModel.schema_required["parking_station"]) new_parking_station[field] = req.body[field]; // dynamically get driver keys and values
         // check fields agree with patterns
         let fields_check = true;
         if (!mail_regex.test(new_parking_station.email)) fields_check = false;
@@ -143,22 +143,22 @@ function add_new_parking_station(req, res) {
 
 };
 
-function get_user_sign_in_page(req, res) {
+function get_driver_sign_in_page(req, res) {
     if (req.session.sid === undefined) {
-        res.render('user/sign_in', {
-            'is_user': true,
+        res.render('driver/sign_in', {
+            'is_driver': true,
             'login': false
         });
     }
     else {
-        console.log("user already logged in");
+        console.log("driver already logged in");
         res.redirect('/home');
     }
 };
 function get_parking_station_sign_in_page(req, res) {
     if (req.session.sid === undefined) {
         res.render('parking_station/sign_in', {
-            'is_user': false,
+            'is_driver': false,
             'login': false
         });
     }
@@ -168,15 +168,15 @@ function get_parking_station_sign_in_page(req, res) {
     }
 };
 
-function login_user(req, res) {
+function login_driver(req, res) {
     if (req.session.sid === undefined) {
-        const user = {
+        const driver = {
             "email": req.body.email,
             "password": req.body.password,
         };
-        // check if user credentials exist
-        dataModel.auth_("user", user.email, user.password, function (data) {
-            if (data) { // user found
+        // check if driver credentials exist
+        dataModel.auth_("driver", driver.email, driver.password, function (data) {
+            if (data) { // driver found
                 // start new session
                 req.session.sid = data.id;
                 req.session.lang = data.lang;
@@ -202,9 +202,9 @@ function login_parking_station(req, res) {
             "email": req.body.email,
             "password": req.body.password,
         };
-        // check if user credentials exist
+        // check if driver credentials exist
         dataModel.auth_("parking_station", parking_station.email, parking_station.password, function (data) {
-            if (data.id) { // user found
+            if (data.id) { // driver found
                 // start new session
                 req.session.sid = data.id;
                 req.session.lang = data.lang;
@@ -225,12 +225,12 @@ function login_parking_station(req, res) {
 
 };
 
-function logout_user(req, res) {
+function logout_driver(req, res) {
     if (req.session.sid === undefined) {
         res.redirect('/')
     }
     else {
-        req.session.destroy((err) => { console.log("user logged out") })
+        req.session.destroy((err) => { console.log("driver logged out") })
         res.redirect('/sign_in')
     }
 };
@@ -245,14 +245,14 @@ function logout_parking_station(req, res) {
 };
 
 module.exports = {
-    get_user_sign_up_page,
+    get_driver_sign_up_page,
     get_parking_station_sign_up_page,
-    add_new_user,
+    add_new_driver,
     add_new_parking_station,
-    get_user_sign_in_page,
+    get_driver_sign_in_page,
     get_parking_station_sign_in_page,
-    login_user,
+    login_driver,
     login_parking_station,
-    logout_user,
+    logout_driver,
     logout_parking_station
 }

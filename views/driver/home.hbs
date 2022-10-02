@@ -1,0 +1,128 @@
+{{#if lang}}
+
+
+{{else}}
+
+
+{{/if}}
+{{!-- <iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD6hcoZpFvgpckLmM-17cOqC19DYbeh3vY
+    &q=Space+Needle,Seattle+WA">
+</iframe>
+<p>direct embed google map</p> --}}
+
+
+<div id="map"></div>
+
+{{!-- <div id="menu">
+    <input id="satellite-v9" type="radio" name="rtoggle" value="satellite">
+    <label for="satellite-v9">satellite</label>
+    <input id="light-v10" type="radio" name="rtoggle" value="light">
+    <label for="light-v10">light</label>
+    <input id="dark-v10" type="radio" name="rtoggle" value="dark">
+    <label for="dark-v10">dark</label>
+    <input id="streets-v11" type="radio" name="rtoggle" value="streets" checked="checked">
+    <label for="streets-v11">streets</label>
+    <input id="outdoors-v11" type="radio" name="rtoggle" value="outdoors">
+    <label for="outdoors-v11">outdoors</label>
+</div> --}}
+
+<script>
+    //const axios = require('axios');
+    const map = new mapboxgl.Map({
+        accessToken: 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA',
+        container: 'map',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/streets-v11',
+        //center: [-77.04, 38.907],
+        center: [23.727539, 37.983810],
+        zoom: 11.15
+    });
+
+    const data = {{{ parking_station_locations }}};
+    //console.log(data);
+    const marker_data = {
+        'type': 'geojson',
+        'data': {
+            'type': 'FeatureCollection',
+            'features': []
+        }
+    };
+    map.on('load', () => {
+        for (let i = 0; i < Object.keys(data).length; i++) {
+            marker_data.data.features[i] = {
+                'type': 'Feature',
+                'properties': {
+                    'id': data[i].id,
+                    'description':
+                        '<strong>' + data[i].id + '</strong> <a href="/book/'+ data[i].id +'" id="'+ data[i].id +'" class="m-h-ps_marker" onClick="pass_id('+ data[i].id +')">BOOK NOW</a>',
+                    'icon': 'car-15'
+                },
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': data[i].location
+                }
+            };
+        }
+        map.addSource('places', marker_data);
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': '{icon}',
+                'icon-allow-overlap': true
+            }
+        });
+    });
+
+    //const popup = new mapboxgl.Popup();
+
+    // When a click event occurs on a feature in the places layer, open a popup at the
+    // location of the feature, with description HTML from its properties.
+    map.on('click', 'places', (e) => {
+        // Copy coordinates array.
+        const coordinates = e.features[0].geometry.coordinates;
+        const description = e.features[0].properties.description;
+        //window.alert(e.features[0].properties.id);
+
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'places', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'places', () => {
+        map.getCanvas().style.cursor = '';
+        //popup.remove();
+    });
+
+    //document.getElementsByClassName("m-h-ps_marker").addEventListener("click", function(e) {
+    //    console.log(e);
+        //sessionStorage.setItem("parking_station_target",e.properties.id);
+    //});
+
+    function pass_id(el_id) {
+        sessionStorage.setItem("parking_station_target",el_id);
+
+        //console.log(el_id);
+        //alert(el_id);
+    }
+
+    //// map style
+    //const layerList = document.getElementById('menu');
+    //const inputs = layerList.getElementsByTagName('input');
+    //for (const input of inputs) {
+    //    input.onclick = (layer) => {
+    //        const layerId = layer.target.id;
+    //        map.setStyle('mapbox://styles/mapbox/' + layerId);
+    //    };
+    //}
+</script>

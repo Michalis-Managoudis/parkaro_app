@@ -25,7 +25,7 @@
     </div>
     <div>
         <span class="text-nowrap">
-            {{#if is_user}}
+            {{#if is_driver}}
             <i class="fa fa-user"></i>
             {{!-- <img src="/images/h-user_icon.png" alt=""> --}}
             {{else}}
@@ -33,7 +33,7 @@
             {{!-- <img src="/images/h-business_icon.png" alt=""> --}}
             {{/if}}
             {{#if login}}
-            {{#if is_user}}
+            {{#if is_driver}}
             <div class="dropdown d-inline">
                 {{!-- <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Dropdown button
@@ -62,7 +62,7 @@
             </div>
             {{/if}}
             {{else}}
-            {{#if is_user}}
+            {{#if is_driver}}
             <a href="/sign_in"><span class="text-nowrap">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span></a>
         </span>
         <span class="text-nowrap me-4">

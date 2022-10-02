@@ -14,19 +14,22 @@ function change_language(req, res) {
     res.redirect('back');
 };
 
-function get_user_account_page(req, res) {
+function get_driver_account_page(req, res) {
     if (req.session.sid === undefined) {
         console.log("To see account page you must sign in first");
         res.redirect('/sign_in');
     }
     else {
-        dataModel.get_("user", req.session.sid, function (data) { // check if email exists
+        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
             if (data) {
-                res.render("user/account", {
-                    user: data,
-                    'is_user': true,
-                    'login': true,
-                    'lang': req.session.lang
+                dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars1) {
+                    res.render("driver/account", {
+                        cars: cars1,
+                        driver: data,
+                        'is_driver': true,
+                        'login': true,
+                        'lang': req.session.lang
+                    });
                 });
             }
         });
@@ -43,7 +46,7 @@ function get_parking_station_account_page(req, res) {
             if (data) {
                 res.render("parking_station/account", {
                     parking_station: data,
-                    'is_user': false,
+                    'is_driver': false,
                     'login': true,
                     'lang': req.session.lang
                 });
@@ -53,29 +56,29 @@ function get_parking_station_account_page(req, res) {
 
 }
 
-function update_user_data(req, res) {
+function update_driver_data(req, res) {
     if (req.session.sid === undefined) {
         console.log("important error!");
         res.redirect('/account');
     }
     else {
-        let user = {};
-        for (let field of dataModel.schema_editable["user"]) user[field] = req.body[field]; // dynamically get user keys and values
+        let driver = {};
+        for (let field of dataModel.schema_editable["driver"]) driver[field] = req.body[field]; // dynamically get driver keys and values
         // check fields agree with patterns
         let fields_check = true;
-        if (!mail_regex.test(user.email)) fields_check = false;
-        if (!password_regex.test(user.password)) fields_check = false;
-        if (!phone_regex.test(user.phone)) fields_check = false;
-        if (!(user.password===req.body.password2)) fields_check = false;
-        //? if (!user.name) fields_check = false;
+        if (!mail_regex.test(driver.email)) fields_check = false;
+        if (!password_regex.test(driver.password)) fields_check = false;
+        if (!phone_regex.test(driver.phone)) fields_check = false;
+        if (!(driver.password===req.body.password2)) fields_check = false;
+        //? if (!driver.name) fields_check = false;
         if (fields_check) {
-            // check if user already exists (email and phone)
-            dataModel.check_("user", req.session.sid, "email", user.email, function (bool1) {
+            // check if driver already exists (email and phone)
+            dataModel.check_("driver", req.session.sid, "email", driver.email, function (bool1) {
                 if (bool1) {
-                    dataModel.check_("user", req.session.sid, "phone", user.phone, function (bool2) {
+                    dataModel.check_("driver", req.session.sid, "phone", driver.phone, function (bool2) {
                         if (bool2) {
-                            user.id = req.session.sid;
-                            dataModel.update_("user", user, function () {
+                            driver.id = req.session.sid;
+                            dataModel.update_("driver", driver, function () {
                                 console.log("Data has been updated succesfully");
                                 res.redirect("/account");
                             });
@@ -107,7 +110,7 @@ function update_parking_station_data(req, res) {
     }
     else {
         let parking_station = {};
-        for (let field of dataModel.schema_editable["parking_station"]) parking_station[field] = req.body[field]; // dynamically get user keys and values
+        for (let field of dataModel.schema_editable["parking_station"]) parking_station[field] = req.body[field]; // dynamically get driver keys and values
         // check fields agree with patterns
         let fields_check = true;
         if (!mail_regex.test(parking_station.email)) fields_check = false;
@@ -122,7 +125,7 @@ function update_parking_station_data(req, res) {
         }
         //? if (!parking_station.name) fields_check = false;
         if (fields_check) {
-            // check if user already exists (email and phone)
+            // check if driver already exists (email and phone)
             dataModel.check_("parking_station", "email", parking_station.email, function (bool1) {
                 if (bool1) {
                     dataModel.check_("parking_station", "tin", parking_station.tin, function (bool2) {
@@ -148,14 +151,14 @@ function update_parking_station_data(req, res) {
 
 }
 
-function delete_user_account(req, res) {
+function delete_driver_account(req, res) {
     //! alert 
     if (req.session.sid === undefined) {
         console.log("important error!");
         res.redirect('/home');
     }
     else {
-        dataModel.delete_("user", req.session.sid, function () {
+        dataModel.delete_("driver", req.session.sid, function () {
             req.session.sid = undefined;
             res.redirect('/home');
         });
@@ -176,28 +179,28 @@ function delete_parking_station_account(req, res) {
 
 }
 
-function get_user_history_page(req, res) {
+function get_driver_history_page(req, res) {
     if (req.session.sid === undefined) {
         console.log("To see history page you must sign in first");
         res.redirect('/sign_in');
     }
     else {
-        dataModel.get_("user", req.session.sid, function (data) { // check if email exists
+        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
             if (data) {
-                dataModel.load_reservation_history("user",req.session.sid, function (data) {
+                dataModel.load_reservation_history("driver",req.session.sid, function (data) {
                     const dt = JSON.parse(JSON.stringify(data));
                     if (Object.keys(data).length !== 0) {
-                        res.render('user/history', {
+                        res.render('driver/history', {
                             records: dt,
-                            "is_user": true,
+                            "is_driver": true,
                             "login": (req.session.sid !== undefined),
                             'lang': req.session.lang
                         });
                     }
                     else {
-                        res.render('user/history', {
+                        res.render('driver/history', {
                             records: dt,
-                            "is_user": true,
+                            "is_driver": true,
                             "login": (req.session.sid !== undefined),
                             'lang': req.session.lang
                         });
@@ -208,13 +211,45 @@ function get_user_history_page(req, res) {
     }
 }
 
+function add_new_driver_car(req,res) {
+    if (req.session.sid === undefined) {
+        console.log("You must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
+            if (data) {
+                let car = {};
+                for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
+                    if (field === "driver_id") car[field] = req.session.sid;
+                    else car[field] = req.body[field];
+                }
+                dataModel.check2_("car", `plate = '${car.plate}'`, function (data2) {
+                    if (!data2) {
+                        const vls = Object.values(car);
+                        dataModel.create_("car", vls, function () {
+                            console.log("New car added succesfully");
+                            res.redirect('/account');
+                        })
+                    }
+                    else {
+                        console.log("Car is already in database");
+                        res.redirect('/account');
+                    }
+                });
+            }
+        });
+    }
+}
+
 module.exports = {
     change_language,
-    get_user_account_page,
+    get_driver_account_page,
     get_parking_station_account_page,
-    update_user_data,
+    update_driver_data,
     update_parking_station_data,
-    delete_user_account,
+    delete_driver_account,
     delete_parking_station_account,
-    get_user_history_page
+    get_driver_history_page,
+    add_new_driver_car
 }

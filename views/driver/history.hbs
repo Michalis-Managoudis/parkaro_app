@@ -1,0 +1,117 @@
+
+
+
+{{#if records}}
+    <h3 class="text-center">Reservations History</h3>
+    <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
+        <table class="table table-bordered m-0">
+            <thead style="position: sticky; top: 0" class="bg-dark text-white">
+                <tr>
+                    <th>Date started</th>
+                    <th>Date (to be) ended</th>
+                    <th>Price</th>
+                    <th>Car plate</th>
+                    <th>Parking name</th>
+                    <th>Add or update a review</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each records}}
+                {{!-- <p>{{this.price}}</p> --}}
+                <tr class="_resv" id="{{this.r_end}}">
+                    <td>{{this.r_start}}</td>
+                    <td>{{this.r_end}}</td>
+                    <td>{{this.price}} €</td>
+                    <td>{{this.plate}}</td>
+                    <td>{{this.name}} <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
+                    </td>
+                    <td>
+                        <div class="">
+                            <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-5 _btn_modal"
+                                style="font-size: 18px;">+</button>
+                            <div id="myModal-{{this.id}}" class="modal fade" tabindex="-1">
+                                <div class="modal-dialog modal-md">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Review</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/review/{{this.id}}/{{this.id1}}" method="post">
+                                                <p>Αστέρια</p>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" name="stars" id="radio1" value=1 checked>
+                                                    <label class="form-check-label" for="radioMale">1</label>
+                                                </div>
+                                                <div class="form-check form-check-inline ms-3">
+                                                    <input type="radio" class="form-check-input" name="stars" id="radio2" value=2>
+                                                    <label class="form-check-label" for="radioFemale">2</label>
+                                                </div>
+                                                <div class="form-check form-check-inline ms-3">
+                                                    <input type="radio" class="form-check-input" name="stars" id="radio3" value=3>
+                                                    <label class="form-check-label" for="radioFemale">3</label>
+                                                </div>
+                                                <div class="form-check form-check-inline ms-3">
+                                                    <input type="radio" class="form-check-input" name="stars" id="radio4" value=4>
+                                                    <label class="form-check-label" for="radioFemale">4</label>
+                                                </div>
+                                                <div class="form-check form-check-inline ms-3">
+                                                    <input type="radio" class="form-check-input" name="stars" id="radio5" value=5>
+                                                    <label class="form-check-label" for="radioFemale">5</label>
+                                                </div>
+                                                <p>Γράψτε μία κριτική</p>
+                                                <textarea name="description" id="" cols="45" rows="5"></textarea>
+                                                <div class="d-flex justify-content-between">
+                                                    <button type="button" class="btn btn-lg btn-secondary "
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <input type="submit" class="btn btn-lg btn-success" value="Save">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+{{else}}
+    <p class="p-3 text-center">Oops nothing found</p>
+    <p class="text-center"><a href="/home" class="text-center">Go to find a parking</a></p>
+{{/if}}
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var bn = document.querySelectorAll("._btn_modal");
+        var btns = [...bn];
+        btns.forEach(btn => {
+            var idd = btn.id.split("-")[1];
+            console.log(idd);
+            btn.addEventListener("click", function () {
+                var myModal = new bootstrap.Modal(document.getElementById("myModal-"+idd));
+                myModal.show();
+            }); 
+        });
+        //var btn = document.getElementById("myBtn");
+        //btn.addEventListener("click", function () {
+        //    var myModal = new bootstrap.Modal(document.getElementById("myModal"));
+        //    myModal.show();
+        //});
+    });
+    //dates.compare()
+    let resvs = document.querySelectorAll("._resv");
+    let dt = new Date();
+    let today = new Date();
+    resvs.forEach(el => {
+        dt = new Date(el.id);
+        el.className = "_resv";
+        if (dt > today) {
+            el.classList.add("bg-success");
+        }
+    });
+</script>
