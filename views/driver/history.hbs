@@ -23,7 +23,9 @@
                     <td>{{this.r_end}}</td>
                     <td>{{this.price}} €</td>
                     <td>{{this.plate}}</td>
-                    <td>{{this.name}} <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
+                    <td><a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}" target="_blank">
+                        <i class="fa fa-map-marker"></i> {{this.name}} </a>
+                        <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
                     </td>
                     <td>
                         <div class="">
