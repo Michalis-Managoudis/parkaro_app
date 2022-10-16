@@ -190,7 +190,7 @@ function get_driver_history_page(req, res) {
                 dataModel.load_reservation_history("driver",req.session.sid, function (data) {
                     const dt = JSON.parse(JSON.stringify(data));
                     for (let el of dt) {
-                        el.location = el.location.split("/")[1] + "," + el.location.split("/")[0]; 
+                        el.location = el.location.split("/")[1] + "," + el.location.split("/")[0];
                     }
                     if (Object.keys(data).length !== 0) {
                         res.render('driver/history', {
