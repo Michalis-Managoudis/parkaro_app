@@ -189,18 +189,28 @@ function get_driver_history_page(req, res) {
             if (data) {
                 dataModel.load_reservation_history("driver",req.session.sid, function (data) {
                     const dt = JSON.parse(JSON.stringify(data));
+                    let ids = [];
                     for (let el of dt) {
                         el.location = el.location.split("/")[1] + "," + el.location.split("/")[0];
+                        ids.push(el.id);
                     }
-                    if (Object.keys(data).length !== 0) {
-                        res.render('driver/history', {
-                            records: dt,
-                            "is_driver": true,
-                            "login": (req.session.sid !== undefined),
-                            'lang': req.session.lang
+                    if (Object.keys(data).length !== 0) { // if driver has reservation history
+                        dataModel.read_("review", "stars, description", "id IN ("+ids.toString()+")", function (data_2) {
+                            const dt_2 = JSON.parse(JSON.stringify(data_2));
+                            let rvs = {};
+                            for (let el2 of dt_2) {rvs[el2.id.toString()] = {"stars": el2.stars, "description": el2.description};}
+                            rvs = JSON.stringify(rvs);
+                            res.render('driver/history', {
+                                records: dt,
+                                reviews: rvs,
+                                "is_driver": true,
+                                "login": (req.session.sid !== undefined),
+                                'lang': req.session.lang
+                            });
+
                         });
                     }
-                    else {
+                    else { // if driever hasn't a reservation history
                         res.render('driver/history', {
                             records: dt,
                             "is_driver": true,

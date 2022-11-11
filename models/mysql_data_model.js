@@ -127,6 +127,22 @@ function check_(table, id, fld, vl, cb) {
     else cb(true);
   });
 };
+// get columns of a specific row with id of a table 
+function get2_(table, flds, id, cb) {
+  const sql = `SELECT id, ${flds} FROM ${table} WHERE id = "${id}"`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
+  });
+};
+// check if value already exist in database
+function check2_(table, cond, cb) {
+  const sql = `SELECT id FROM ${table} WHERE ${cond}`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
+  });
+};
 
 function load_reservation_history(md, id, cb) {
   let sql = ``;
@@ -143,7 +159,7 @@ function add_review(id, ps_id, star, desc, cb) {
   conn.query(sql1, function (err, data) {
     if (err) throw (err);
     if (JSON.parse(JSON.stringify(data)).length) {
-      const sql2 = `UPDATE review SET stars=${star}, description='${desc}'`;
+      const sql2 = `UPDATE review SET stars=${star}, description='${desc}' WHERE id=${id}`;
       conn.query(sql2, function (err, data) {
         if (err) throw (err);
         if (cb) cb(data);
@@ -166,22 +182,6 @@ function add_review(id, ps_id, star, desc, cb) {
 //     if (cb) cb(data);
 //   });
 // };
-
-function get2_(table, flds, id, cb) {
-  const sql = `SELECT id, ${flds} FROM ${table} WHERE id = "${id}"`;
-  conn.query(sql, function (err, data) {
-    if (err) throw (err);
-    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
-  });
-};
-
-function check2_(table, cond, cb) {
-  const sql = `SELECT id FROM ${table} WHERE ${cond}`;
-  conn.query(sql, function (err, data) {
-    if (err) throw (err);
-    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
-  });
-};
 
 // - ?????????????????????????????????????
 function get_parking_evaluation(id, cb) {

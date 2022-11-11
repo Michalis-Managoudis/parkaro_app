@@ -43,30 +43,37 @@
                                                 <p>Αστέρια</p>
                                                 <div class="form-check form-check-inline">
                                                     <input type="radio" class="form-check-input" name="stars" id="radio1" value=1 checked>
-                                                    <label class="form-check-label" for="radioMale">1</label>
+                                                    <label class="form-check-label" for="radio1">1</label>
                                                 </div>
                                                 <div class="form-check form-check-inline ms-3">
                                                     <input type="radio" class="form-check-input" name="stars" id="radio2" value=2>
-                                                    <label class="form-check-label" for="radioFemale">2</label>
+                                                    <label class="form-check-label" for="radio2">2</label>
                                                 </div>
                                                 <div class="form-check form-check-inline ms-3">
                                                     <input type="radio" class="form-check-input" name="stars" id="radio3" value=3>
-                                                    <label class="form-check-label" for="radioFemale">3</label>
+                                                    <label class="form-check-label" for="radio3">3</label>
                                                 </div>
                                                 <div class="form-check form-check-inline ms-3">
                                                     <input type="radio" class="form-check-input" name="stars" id="radio4" value=4>
-                                                    <label class="form-check-label" for="radioFemale">4</label>
+                                                    <label class="form-check-label" for="radio4">4</label>
                                                 </div>
                                                 <div class="form-check form-check-inline ms-3">
                                                     <input type="radio" class="form-check-input" name="stars" id="radio5" value=5>
-                                                    <label class="form-check-label" for="radioFemale">5</label>
+                                                    <label class="form-check-label" for="radio5">5</label>
                                                 </div>
                                                 <p>Γράψτε μία κριτική</p>
-                                                <textarea name="description" id="" cols="45" rows="5"></textarea>
+                                                <textarea name="description" id="desc" cols="45" rows="5"></textarea>
+                                                {{!-- <input type="range" min="1" max="5" value="3" class="slider" id="myRange"> --}}
+                                                {{!-- <input type="range" value="1" min="1" max="5" oninput="this.nextElementSibling.value = this.value">
+                                                <output>1</output>
+
+                                                <input type="range" name="amountRange" min="0" max="20" value="0" oninput="this.form.amountInput.value=this.value" />
+                                                <input type="number" name="amountInput" min="0" max="20" value="0" oninput="this.form.amountRange.value=this.value" /> --}}
+
                                                 <div class="d-flex justify-content-between">
                                                     <button type="button" class="btn btn-lg btn-secondary "
                                                         data-bs-dismiss="modal">Cancel</button>
-                                                    <input type="submit" class="btn btn-lg btn-success" value="Save">
+                                                    <input type="submit" id="_sbmt_btn" class="btn btn-lg btn-success" value="Add">
                                                 </div>
                                             </form>
                                         </div>
@@ -88,15 +95,47 @@
 
 
 <script>
+    const rev = {{{reviews}}};
+
     document.addEventListener("DOMContentLoaded", function () {
         var bn = document.querySelectorAll("._btn_modal");
         var btns = [...bn];
         btns.forEach(btn => {
             var idd = btn.id.split("-")[1];
-            console.log(idd);
+            //console.log(idd);
+            let mdl = "";
             btn.addEventListener("click", function () {
-                var myModal = new bootstrap.Modal(document.getElementById("myModal-"+idd));
+                mdl = 'myModal-'+idd;
+                var myModal = new bootstrap.Modal(document.getElementById(mdl));
                 myModal.show();
+
+                //document.querySelector('#'+mdl+' input[name="stars"]:checked').checked = false;
+                if (rev[idd]) {
+                    switch(rev[idd].stars) {
+                        case 1:
+                            document.querySelector("#"+mdl+" #radio1").checked = true;
+                            break;
+                        case 2:
+                            document.querySelector("#"+mdl+" #radio2").checked = true;
+                            break;
+                        case 3:
+                            document.querySelector("#"+mdl+" #radio3").checked = true;
+                            break;
+                        case 4:
+                            document.querySelector("#"+mdl+" #radio4").checked = true;
+                            break;
+                        case 5:
+                            document.querySelector("#"+mdl+" #radio5").checked = true;
+                            break;
+                        default:
+                            document.querySelector("#"+mdl+" #radio3").checked = true;
+                    }
+                    if (rev[idd].description) {
+                        document.querySelector("#"+mdl+" #desc").innerHTML = rev[idd].description;    
+                    }
+                    document.querySelector("#"+mdl+" #_sbmt_btn").value="Update";
+                }
+                
             }); 
         });
         //var btn = document.getElementById("myBtn");
@@ -115,5 +154,6 @@
         if (dt > today) {
             el.classList.add("bg-success");
         }
-    });
+    }); 
+    
 </script>
