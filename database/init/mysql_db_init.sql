@@ -1,24 +1,24 @@
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `driver`;
 DROP TABLE IF EXISTS `car`;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `parking_lot`;
 DROP TABLE IF EXISTS `parking_station`;
 DROP TABLE IF EXISTS `review`;
 
-CREATE TABLE `user` (
+CREATE TABLE `driver` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`email`					VARCHAR(100) NOT NULL UNIQUE,
 	`password`				VARCHAR(100) NOT NULL,
 	`name`					VARCHAR(100) NOT NULL,
 	`phone` 				BIGINT NOT NULL UNIQUE,
-	`lang`					TINYINT UNSIGNED NOT NULL DEFAULT 0, CHECK (lang = 0 OR lang = 1),
+	`lang`					TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, CHECK (lang = 0 OR lang = 1),
 	`photo` 				VARCHAR(100),
 	`points` 				INT UNSIGNED NOT NULL DEFAULT 0, CHECK (points >= 0)
 );
 
 CREATE TABLE `car` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	`user_id` 				INT UNSIGNED NOT NULL REFERENCES user(id),
+	`driver_id` 			INT UNSIGNED NOT NULL REFERENCES driver(id),
 	`plate` 				VARCHAR(100) NOT NULL UNIQUE,
 	`model` 				VARCHAR(100),
 	`color` 				VARCHAR(100) DEFAULT 'black',
@@ -29,8 +29,8 @@ CREATE TABLE `reservation` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`car_id` 				INT UNSIGNED NOT NULL REFERENCES car(id),
 	`parking_lot_id`		INT UNSIGNED NOT NULL REFERENCES parking_lot(id),
-	`start` 				VARCHAR(100) NOT NULL,
-	`end` 					VARCHAR(100) NOT NULL,
+	`r_start` 				BIGINT UNSIGNED NOT NULL,
+	`r_end` 				BIGINT UNSIGNED NOT NULL,
 	`price` 				DECIMAL(10,2) NOT NULL, CHECK (price >= 0)
 );
 
@@ -51,12 +51,12 @@ CREATE TABLE `parking_station` (
 	`lots` 					INT UNSIGNED NOT NULL, CHECK (lots >= 0),
 	`location` 				VARCHAR(100) NOT NULL,
 	`name` 					VARCHAR(100),
-	`type`					TINYINT UNSIGNED NOT NULL DEFAULT 0, CHECK (type = 0 OR type = 1 OR type = 2),
-	`lang`					TINYINT UNSIGNED NOT NULL DEFAULT 0, CHECK (lang = 0 OR lang = 1),
+	`parking_type`			TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, CHECK (parking_type = 0 OR parking_type = 1 OR parking_type = 2),
+	`lang`					TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, CHECK (lang = 0 OR lang = 1),
 	`photo` 				VARCHAR(100) NOT NULL UNIQUE,
 	`work_hours` 			VARCHAR(100) NOT NULL DEFAULT '24/7',
 	`price_list` 			VARCHAR(100) NOT NULL,
-	`discount` 				TINYINT UNSIGNED NOT NULL DEFAULT 0, CHECK (discount >= 0 AND discount <=100),
+	`discount` 				TINYINT(3) UNSIGNED NOT NULL DEFAULT 0, CHECK (discount >= 0 AND discount <=100),
 	`info` 					VARCHAR(100),
 	`s_height` 				DECIMAL(5,2) NOT NULL CHECK (s_height > 0),
 	`s_length` 				DECIMAL(5,2) NOT NULL CHECK (s_length > 0),
@@ -72,12 +72,15 @@ CREATE TABLE `parking_station` (
 CREATE TABLE `review` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT REFERENCES reservation(id),
 	`parking_id` 			INT UNSIGNED NOT NULL REFERENCES parking_station(id),
-	`stars` 				TINYINT UNSIGNED NOT NULL, CHECK (stars >= 0 OR stars <= 5),
+	`stars` 				TINYINT(1) UNSIGNED NOT NULL, CHECK (stars >= 0 OR stars <= 5),
 	`description` 			TEXT
 );
 
-INSERT INTO `user` VALUES (1,'1@1','1234','Anast','694444', 0,'444',5);
-INSERT INTO `user` VALUES (2,'2@2','2345','Mike','69444555', 1,'333',10);
+INSERT INTO `driver` VALUES (3,'mihosmike1999@gmail.com','@@@222AAAbbb','Μιχάλης Μαναγούδης','6937075205', 0,'444',5);
+INSERT INTO `driver` VALUES (1,'mihosmike11999@gmail.com','@@@222AAAbbb','Μιχάλης Μαναγούδης','6937075204', 0,'444',5);
 
 INSERT INTO `parking_station` VALUES (1,'2@2','2345','0123456789','Park&DriveA.E.','Chiou','Ritsou 19',6987453255,5,'23.717539/37.983810','ParknDrivee',0,0,'1.png','24/7','1-2-3-4-5',0,NULL,5.2,3.1,0,0,0,0,0,0,0);
-INSERT INTO `parking_station` VALUES (2,'2@3','23465','012345678910','Park&nDriveA.E.','Chiou','Ritsou 18',6987453254,10,'23.737539/37.983810','Parkn',0,1,'2.png','24/7','1-2-3-4-5',0,NULL,4.2,2.1,0,0,0,0,0,0,0);
+INSERT INTO `parking_station` VALUES (2,'mihosmike111999@gmail.com','23465','012345678910','Park&nDriveA.E.','Chiou','Ritsou 18',6987453254,10,'23.737539/37.983810','Parkn',0,1,'2.png','24/7','1-2-3-4-5',0,NULL,4.2,2.1,0,0,0,0,0,0,0);
+
+INSERT INTO `car` VALUES (1,3, 'xie9999', 'ford', 'black', 'xxx');
+INSERT INTO `parking_lot` VALUES (1,2);

@@ -14,6 +14,7 @@ const driver_controller = require('../controller/driver_controller');
 router.get('/', function (req, res) { res.redirect('/home'); });
 // home page
 router.get('/home', driver_controller.get_driver_home_page);
+router.post('/home', driver_controller.search_driver_home_page);
 // console.log(req.protocol); console.log(req.route); console.log(req.secure);
 // parking pages
 router.get('/city', driver_controller.get_driver_city_page);

@@ -23,18 +23,11 @@
             <form action="" method="post" class="col-8 border-end border-secondary">
                 <fieldset>
                     <p class="text-decoration-underline">Στοιχεία χρέωσης:</p>
-                    <label for="inputDate">Έναρξη χρέωσης (Άφιξη):</label>
+                    <label for="input_date1">Έναρξη χρέωσης (Άφιξη):</label>
+                    <input type="datetime-local" id="input_date1" name="s_date" required autofocus/>
+                    <label for="input_date2">Λήξη Χρέωσης (Αναχώρηση): </label>
                     <span class="text-nowrap">
-                        <input type="date" id="inputDate" name="s_date" required autofocus/>
-                        {{!-- <label for="tm1"></label> --}}
-                        <input type="time" id="tm1" name="s_time">
-                    </span>
-                    <label for="inputDate">Λήξη Χρέωσης (Αναχώρηση): </label>
-                    <span class="text-nowrap">
-                        <input type="date" id="inputDate" name="e_date" required />
-                        {{!-- <label for="tm2"></label> --}}
-                        <input type="time" id="tm2" name="e_time">
-                    </span>
+                    <input type="datetime-local" id="input_date2" name="e_date" required />
                     <div class="d-block">
                         <input type="checkbox" name="wash" id="ws">
                         <label for="ws">Wash</label>
@@ -74,6 +67,8 @@
                 <p>{{parking_station.phone}}</p>
                 <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{parking_station.location}}" target="_blank">
                     <i class="fa fa-map-marker"></i> Click here to navigate</a>
+                <p class="p-5 m-5"></p>
+                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">56</span>€</p>
                 {{!-- <p>{{parking_station.location}}</p> --}}
             </div>
         </div>
@@ -81,3 +76,32 @@
     <!-- End Card Body -->
 </div>
 <!-- End Card -->
+
+<script>
+    let _dt1 = document.getElementById("input_date1");
+    let _dt2 = document.getElementById("input_date2");
+    
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //January is 0!
+    let hh = today.getHours();
+    let mn = today.getMinutes();
+    if (dd < 10) {dd = '0' + dd;}
+    if (mm < 10) {mm = '0' + mm;}
+    if (hh < 10) {hh = '0' + hh;}
+    if (mn < 10) {mn = '0' + mn;}
+    today = today.getFullYear() + '-' + mm + '-' + dd + 'T' + hh + ':' + mn;
+
+    _dt1.min = today;
+    _dt2.min = today;
+
+    _dt2.addEventListener('change', function() {
+        _dt1.max = _dt2.value;
+        document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000;
+    });
+    _dt1.addEventListener('change', function() {
+        _dt2.min = _dt1.value;
+        document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000;
+    });
+
+</script>

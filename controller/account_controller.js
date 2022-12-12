@@ -193,9 +193,11 @@ function get_driver_history_page(req, res) {
                     for (let el of dt) {
                         el.location = el.location.split("/")[1] + "," + el.location.split("/")[0];
                         ids.push(el.id);
+                        // el.r_start = el.r_start.replace("T"," ");
+                        // el.r_end = el.r_end.replace("T"," ");
                     }
                     if (Object.keys(data).length !== 0) { // if driver has reservation history
-                        dataModel.read_("review", "stars, description", "id IN ("+ids.toString()+")", function (data_2) {
+                        dataModel.read_("review", "stars, description", `id IN (${ids.toString()})`, function (data_2) {
                             const dt_2 = JSON.parse(JSON.stringify(data_2));
                             let rvs = {};
                             for (let el2 of dt_2) {rvs[el2.id.toString()] = {"stars": el2.stars, "description": el2.description};}

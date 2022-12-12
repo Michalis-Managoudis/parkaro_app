@@ -1,6 +1,3 @@
-
-
-
 {{#if records}}
     <h3 class="text-center">Reservations History</h3>
     <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
@@ -19,8 +16,8 @@
                 {{#each records}}
                 {{!-- <p>{{this.price}}</p> --}}
                 <tr class="_resv" id="{{this.r_end}}">
-                    <td>{{this.r_start}}</td>
-                    <td>{{this.r_end}}</td>
+                    <td class="_t_replace">{{this.r_start}}</td>
+                    <td class="_t_replace">{{this.r_end}}</td>
                     <td>{{this.price}} €</td>
                     <td>{{this.plate}}</td>
                     <td><a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}" target="_blank">
@@ -97,6 +94,10 @@
 <script>
     const rev = {{{reviews}}};
 
+    var dat = document.querySelectorAll("._t_replace");
+    var dats = [...dat];
+    dats.forEach(datt => {datt.innerHTML = new Date(parseInt(datt.innerHTML)).toISOString().slice(0,16).replace("T"," ");;});
+
     document.addEventListener("DOMContentLoaded", function () {
         var bn = document.querySelectorAll("._btn_modal");
         var btns = [...bn];
@@ -146,10 +147,9 @@
     });
     //dates.compare()
     let resvs = document.querySelectorAll("._resv");
-    let dt = new Date();
     let today = new Date();
     resvs.forEach(el => {
-        dt = new Date(el.id);
+        dt = new Date(parseInt(el.id));
         el.className = "_resv";
         if (dt > today) {
             el.classList.add("bg-success");

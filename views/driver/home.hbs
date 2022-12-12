@@ -10,9 +10,40 @@
     &q=Space+Needle,Seattle+WA">
 </iframe>
 <p>direct embed google map</p> --}}
+<div class="row">
+    <div id="map" class="col-8"></div>
+
+    <div class="col-4">
+        <form action="" method="post">
+            {{!-- <div class="d-flex">
+                <input type="search" id="form1" class="form-control" placeholder="Search" />
+                <button type="button" class="btn btn-primary">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div> --}}
+            <div class="input-group">
+                <div class="form-outline">
+                    <input type="search" id="form1" class="form-control" placeholder="Search" />
+                    {{!-- <label class="form-label" for="form1">Search</label> --}}
+                </div>
+                <button type="button" class="btn btn-primary">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            {{!-- <br> --}}
+            <div id="_search">
+                <label for="search_date1">Άφιξη:</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="datetime-local" id="search_date1" name="s_dttm" required autofocus />
+                <label for="search_date2">Αναχώρηση:</label>
+                <input type="datetime-local" id="search_date2" name="e_dttm" required />
+            </div>
+            <button type="submit" class="btn btn-outline-primary">search</button>
+        </form>
+    </div>
+</div>
 
 
-<div id="map"></div>
+
 
 {{!-- <div id="menu">
     <input id="satellite-v9" type="radio" name="rtoggle" value="satellite">
@@ -55,7 +86,7 @@
                 'properties': {
                     'id': data[i].id,
                     'description':
-                        '<strong>' + data[i].id + '</strong> <a href="/book/'+ data[i].id +'" id="'+ data[i].id +'" class="m-h-ps_marker" onClick="pass_id('+ data[i].id +')">BOOK NOW</a>',
+                        '<strong>' + data[i].id + '</strong> <a href="/book/' + data[i].id + '" id="' + data[i].id + '" class="m-h-ps_marker" onClick="pass_id(' + data[i].id + ')">BOOK NOW</a>',
                     'icon': 'car-15'
                 },
                 'geometry': {
@@ -106,11 +137,11 @@
 
     //document.getElementsByClassName("m-h-ps_marker").addEventListener("click", function(e) {
     //    console.log(e);
-        //sessionStorage.setItem("parking_station_target",e.properties.id);
+    //sessionStorage.setItem("parking_station_target",e.properties.id);
     //});
 
     function pass_id(el_id) {
-        sessionStorage.setItem("parking_station_target",el_id);
+        sessionStorage.setItem("parking_station_target", el_id);
 
         //console.log(el_id);
         //alert(el_id);
@@ -125,4 +156,35 @@
     //        map.setStyle('mapbox://styles/mapbox/' + layerId);
     //    };
     //}
+</script>
+
+<script>
+    let _dt1 = document.getElementById("search_date1");
+    let _dt2 = document.getElementById("search_date2");
+    let _srch = document.getElementById("_search");
+
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //January is 0!
+    let hh = today.getHours();
+    let mn = today.getMinutes();
+    if (dd < 10) { dd = '0' + dd; }
+    if (mm < 10) { mm = '0' + mm; }
+    if (hh < 10) { hh = '0' + hh; }
+    if (mn < 10) { mn = '0' + mn; }
+    today = today.getFullYear() + '-' + mm + '-' + dd + 'T' + hh + ':' + mn;
+
+    _dt1.min = today;
+    _dt2.min = today;
+
+    _dt2.addEventListener('change', function () {
+        _dt1.max = _dt2.value;
+    });
+    _dt1.addEventListener('change', function () {
+        _dt2.min = _dt1.value;
+    });
+    _srch.addEventListener('change', function () {
+        //search in backend for available parking
+    });
+
 </script>

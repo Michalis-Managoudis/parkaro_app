@@ -2,9 +2,9 @@
 // const dataModel = require('../models/sqlite_data_model.js');
 const dataModel = require('../models/mysql_data_model.js');
 
-
 function get_driver_home_page(req, res) {
     dataModel.read_("parking_station", "id, location", "parking_type = 0", function (rows) {
+        
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
         res.render('driver/home', {
             "is_driver": true,
@@ -15,6 +15,20 @@ function get_driver_home_page(req, res) {
     });
 };
 
+function search_driver_home_page(req, res) {
+
+    //console.log(req.body.s_dttm);
+    let cond = `parking_type = 0 AND id IN (SELECT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.body.s_dttm+"Z")} < r_end AND ${Date.parse(req.body.e_dttm+"Z")} > r_start)))`;
+    dataModel.read_("parking_station", "id, location", cond, function (rows) {
+        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
+        res.render('driver/home', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            parking_station_locations: JSON.stringify(rows)
+        });
+    });
+};
 
 function get_driver_city_page(req, res) {
     // dataModel2.query("SELECT * FROM driver", function (err, data) {
@@ -33,7 +47,6 @@ function get_driver_city_page(req, res) {
 
 };
 
-
 function get_driver_airport_page(req, res) {
     dataModel.read_("parking_station", "id, location", "parking_type = 0", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
@@ -45,6 +58,7 @@ function get_driver_airport_page(req, res) {
         });
     });
 };
+
 function get_driver_port_page(req, res) {
     dataModel.read_("parking_station", "id, location", "parking_type = 0", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
@@ -101,7 +115,6 @@ function get_driver_book_page(req, res) {
             }
         });
     }
-
 };
 
 function add_driver_review(req, res) {
@@ -130,17 +143,29 @@ function add_driver_reservation(req, res) {
         const ps_id = req.params.ps_id;
         let resv = {};
         resv.car_id = req.body.car;
-        resv.pl_id = 1;
-        resv.r_start = req.body.s_date + " " + req.body.s_time;
-        resv.r_end = req.body.e_date + " " + req.body.e_time;
-        resv.price = 5.2;
-        // const required_values = "'" + Object.values(resv).join("', '") + "'";
-        // dataModel.add_new_reservation(required_values, function () {
-        //     res.redirect('/history');
-        // });
-        const required_values = Object.values(resv);
-        dataModel.create_("reservation", required_values, function () {
-            res.redirect('/history');
+       
+        let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.body.s_date+"Z")} < r_end AND ${Date.parse(req.body.e_date+"Z")} > r_start)) LIMIT 1`;
+        dataModel.read_("parking_lot", "", cond, function (ids) {
+            let _id = JSON.parse(JSON.stringify(ids));
+            if (_id[0] === undefined) {
+                console.log("Can't find an available parking space try again other datetimes or another parking station");
+                res.redirect('/home');
+            }
+            else{
+                _id = _id[0].id;
+                resv.pl_id = _id;
+                resv.r_start = Date.parse(req.body.s_date); //new Date(req.body.s_date).getTime();
+                resv.r_end = Date.parse(req.body.e_date); //new Date(req.body.e_date).getTime();
+                resv.price = 10 * (new Date(req.body.e_date) - new Date(req.body.s_date)) / 3600000;
+                // const required_values = "'" + Object.values(resv).join("', '") + "'";
+                // dataModel.add_new_reservation(required_values, function () {
+                //     res.redirect('/history');
+                // });
+                const required_values = Object.values(resv);
+                dataModel.create_("reservation", required_values, function () {
+                    res.redirect('/history');
+                });
+            }
         });
     }
 };
@@ -148,6 +173,7 @@ function add_driver_reservation(req, res) {
 module.exports = {
     get_driver_info_page,
     get_driver_home_page,
+    search_driver_home_page,
     get_driver_city_page,
     get_driver_airport_page,
     get_driver_port_page,
