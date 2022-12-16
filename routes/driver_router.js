@@ -18,10 +18,16 @@ router.post('/home', driver_controller.search_driver_home_page);
 // console.log(req.protocol); console.log(req.route); console.log(req.secure);
 // parking pages
 router.get('/city', driver_controller.get_driver_city_page);
+
 router.get('/airport', driver_controller.get_driver_airport_page);
+router.post('/airport', driver_controller.search_driver_airport_page);
+
 router.get('/port', driver_controller.get_driver_port_page);
+router.post('/port', driver_controller.search_driver_port_page);
+
 router.get('/book/:ps_id', driver_controller.get_driver_book_page);
-router.post('/book/:ps_id', driver_controller.add_driver_reservation);
+router.post('/book', driver_controller.check_reservation_availability);
+router.post('/book/add', driver_controller.add_driver_reservation);
 router.post('/review/:res_id/:ps_id', driver_controller.add_driver_review);
 // change language page
 router.get('/language', account_controller.change_language);                                //? !!!!!!! ready

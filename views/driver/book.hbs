@@ -20,14 +20,14 @@
     <div class="card-body">
         <div class="row">
             <!-- Start Form -->
-            <form action="" method="post" class="col-8 border-end border-secondary">
+            <form action="/book" id="_form" method="post" class="col-8 border-end border-secondary">
                 <fieldset>
                     <p class="text-decoration-underline">Στοιχεία χρέωσης:</p>
                     <label for="input_date1">Έναρξη χρέωσης (Άφιξη):</label>
-                    <input type="datetime-local" id="input_date1" name="s_date" required autofocus/>
+                    <input type="datetime-local" id="input_date1" name="s_date" value="{{dates.start}}" required autofocus/>
                     <label for="input_date2">Λήξη Χρέωσης (Αναχώρηση): </label>
                     <span class="text-nowrap">
-                    <input type="datetime-local" id="input_date2" name="e_date" required />
+                    <input type="datetime-local" id="input_date2" name="e_date" value="{{dates.end}}" required />
                     <div class="d-block">
                         <input type="checkbox" name="wash" id="ws">
                         <label for="ws">Wash</label>
@@ -59,7 +59,8 @@
                     {{/if}}               
                 </fieldset>
                 <div class="d-flex justify-content-end">
-                    <input type="submit" class="btn btn-lg btn-success" value="Reserve">
+                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success" value="Reserve" onclick="add_resv();">
+                    <p {{#if found}}hidden{{/if}} class="bg-warning my-2 px-2">There is no avaliable parking space try another parking station or another datetime</p>
                 </div>
             </form>
             <div class="col-4">
@@ -68,7 +69,7 @@
                 <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{parking_station.location}}" target="_blank">
                     <i class="fa fa-map-marker"></i> Click here to navigate</a>
                 <p class="p-5 m-5"></p>
-                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">56</span>€</p>
+                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">0</span>€</p>
                 {{!-- <p>{{parking_station.location}}</p> --}}
             </div>
         </div>
@@ -94,14 +95,36 @@
 
     _dt1.min = today;
     _dt2.min = today;
+    _dt1.max = _dt2.value;
+    _dt2.min = _dt1.value;
+    document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000; // calculate final price
 
     _dt2.addEventListener('change', function() {
         _dt1.max = _dt2.value;
-        document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000;
+        check_available();
     });
     _dt1.addEventListener('change', function() {
         _dt2.min = _dt1.value;
-        document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000;
+        check_available();
     });
 
+    function check_available() {
+        if (_dt1.value != "" && _dt2.value != "") {
+            document.getElementById("f_price").innerHTML = 10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000; // calculate final price
+            form=document.getElementById('_form');
+            //form.target='_blank';
+            form.action="/book";
+            form.submit();
+            //document.getElementById("_form").submit();
+        }
+    }
+
+    function add_resv() {
+        form=document.getElementById('_form');
+        //form.target='_blank';
+        form.action="add";
+        form.submit();
+        //form.action='/';
+        //form.target='';
+    }
 </script>
