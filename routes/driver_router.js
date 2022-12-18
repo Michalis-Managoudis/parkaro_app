@@ -7,7 +7,6 @@ const account_controller = require('../controller/account_controller');
 const login_controller = require('../controller/login_controller');
 const driver_controller = require('../controller/driver_controller');
 
-//!!!!!!!!
 // const dataModel = require('../models/sqlite_data_model.js');
 // const db = require('../database/db');
 

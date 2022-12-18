@@ -47,9 +47,9 @@
                     <input type="tel" id="m-f-phone" name="phone" placeholder="69********" 
                         pattern="[0-9]{10}" {{#if login}}value="{{driver.phone}}" {{/if}} required>
 
-                    <label for="">Όχημα</label>
+                    <label for="_c">Όχημα</label>
                     {{#if driver_car}}
-                        <select name="car" id="">
+                        <select name="car" id="_c">
                             {{#each driver_car}}
                                 <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} - {{this.color}})</span></option>
                             {{/each}}

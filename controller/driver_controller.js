@@ -20,22 +20,6 @@ function get_driver_home_page(req, res) {
     });
 };
 
-function search_driver_home_page(req, res) {
-    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
-    req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 0 AND id IN (SELECT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
-    dataModel.read_("parking_station", "id, location", cond, function (rows) {
-        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        res.render('driver/home', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            dates: req.session._dts,
-            parking_station_locations: JSON.stringify(rows)
-        });
-    });
-};
-
 function get_driver_city_page(req, res) {
     dataModel.read_("parking_station", "id, location", "parking_type = 0", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
@@ -73,12 +57,52 @@ function get_driver_port_page(req, res) {
     });
 };
 
+function search_driver_home_page(req, res) {
+    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._ready_to_add_reservation = true;
+    let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    dataModel.read_("parking_station", "id, location", cond, function (rows) {
+        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
+        res.render('driver/home', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            dates: req.session._dts,
+            parking_station_locations: JSON.stringify(rows)
+        });
+    });
+};
+
 function search_driver_airport_page(req, res) {
-    
+    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._ready_to_add_reservation = true;
+    let cond = `parking_type = 1 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    dataModel.read_("parking_station", "id, location", cond, function (rows) {
+        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
+        res.render('driver/home', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            dates: req.session._dts,
+            parking_station_locations: JSON.stringify(rows)
+        });
+    });
 };
 
 function search_driver_port_page(req, res) {
-    
+    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._ready_to_add_reservation = true;
+    let cond = `parking_type = 2 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    dataModel.read_("parking_station", "id, location", cond, function (rows) {
+        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
+        res.render('driver/home', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            dates: req.session._dts,
+            parking_station_locations: JSON.stringify(rows)
+        });
+    });
 };
 
 function get_driver_info_page(req, res) {

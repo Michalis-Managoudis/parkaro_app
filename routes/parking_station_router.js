@@ -7,11 +7,16 @@ const account_controller = require('../controller/account_controller');
 const login_controller = require('../controller/login_controller');
 const parking_station_controller = require('../controller/parking_station_controller');
 
-router.get('/', function(req, res) {res.redirect('/parking_station/home');});
 
+
+
+router.get('/', function(req, res) {res.redirect('/parking_station/home');});
+router.get('/history', function(req, res) {res.redirect('/parking_station/home');});
 // home page
 router.get('/home', parking_station_controller.get_parking_station_home_page);
 //!router.get('/my_parking', function(req, res) {res.render('parking_station/my_parking');});
+// change language page
+router.get('/language', account_controller.change_language);                                            //? !!!!!!! ready
 // account page
 router.get('/account', account_controller.get_parking_station_account_page);                            //? !!!!!!! ready
 router.post('/account', account_controller.update_parking_station_data);                                //? !!!!!!! ready

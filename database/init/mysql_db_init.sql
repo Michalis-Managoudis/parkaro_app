@@ -80,7 +80,7 @@ INSERT INTO `driver` VALUES (3,'mihosmike1999@gmail.com','@@@222AAAbbb','Μιχ�
 INSERT INTO `driver` VALUES (1,'mihosmike11999@gmail.com','@@@222AAAbbb','Μιχάλης Μαναγούδης','6937075204', 0,'444',5);
 
 INSERT INTO `parking_station` VALUES (1,'2@2','2345','0123456789','Park&DriveA.E.','Chiou','Ritsou 19',6987453255,5,'23.717539/37.983810','ParknDrivee',0,0,'1.png','24/7','1-2-3-4-5',0,NULL,5.2,3.1,0,0,0,0,0,0,0);
-INSERT INTO `parking_station` VALUES (2,'mihosmike111999@gmail.com','23465','012345678910','Park&nDriveA.E.','Chiou','Ritsou 18',6987453254,10,'23.737539/37.983810','Parkn',0,1,'2.png','24/7','1-2-3-4-5',0,NULL,4.2,2.1,0,0,0,0,0,0,0);
+INSERT INTO `parking_station` VALUES (2,'mihosmike111999@gmail.com','@@@222AAAbbb','012345678910','Park&nDriveA.E.','Chiou','Ritsou 18',6987453254,10,'23.737539/37.983810','Parkn',0,1,'2.png','24/7','1-2-3-4-5',0,NULL,4.2,2.1,0,0,0,0,0,0,0);
 
 INSERT INTO `car` VALUES (1,3, 'xie9999', 'ford', 'black', 'xxx');
 INSERT INTO `parking_lot` VALUES (1,2);
