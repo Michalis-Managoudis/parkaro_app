@@ -45,7 +45,8 @@ function get_parking_station_account_page(req, res) {
         dataModel.get_("parking_station", req.session.sid, function (data) { // check if email exists
             if (data) {
                 res.render("parking_station/account", {
-                    parking_station: data,
+                    ps_data: JSON.stringify(data),
+                    //ps_data: data,
                     'is_driver': false,
                     'login': true,
                     'lang': req.session.lang
@@ -110,29 +111,69 @@ function update_parking_station_data(req, res) {
     }
     else {
         let parking_station = {};
-        for (let field of dataModel.schema_editable["parking_station"]) parking_station[field] = req.body[field]; // dynamically get driver keys and values
+        for (let field of dataModel.schema_editable["parking_station"]) {
+            if (field == "work_hours") {
+                parking_station.work_hours = "";
+                for (let i = 1 ; i <= 7 ; i++) {
+                    parking_station.work_hours = parking_station.work_hours + req.body["work_hours"+i] + "-" + req.body["work_hours"+i+"b"];
+                    if (i !== 7) parking_station.work_hours = parking_station.work_hours + ",";
+                }
+            }
+            else if (field == "price_list") {
+                parking_station.price_list = "h";
+                for (let i = 1 ; i <= 12 ; i++) {
+                    parking_station.price_list = parking_station.price_list + req.body["price_list"+i];
+                    if (i === 4) parking_station.price_list = parking_station.price_list + "d";
+                    else if (i === 8) parking_station.price_list = parking_station.price_list + "m";
+                    else if (i !== 12) parking_station.price_list = parking_station.price_list + ",";
+                }
+            } else {
+                parking_station[field] = req.body[field]; // dynamically get driver keys and values
+            }
+        }
+        parking_station.parking_type = parseInt(parking_station.parking_type);
+        parking_station.tin = parseInt(parking_station.tin);
+        parking_station.lots = parseInt(parking_station.lots);
+        parking_station.s_height = parseFloat(parking_station.s_height);
+        parking_station.s_length = parseFloat(parking_station.s_length);
         // check fields agree with patterns
         let fields_check = true;
         if (!mail_regex.test(parking_station.email)) fields_check = false;
         if (!password_regex.test(parking_station.password)) fields_check = false;
         if (!tin_regex.test(parking_station.tin)) fields_check = false;
         if (!phone_regex.test(parking_station.phone)) fields_check = false;
+        if (!(parking_station.parking_type === 0 || parking_station.parking_type === 1 ||parking_station.parking_type === 2)) fields_check = false;
         if (!(parking_station.lots >= 0)) fields_check = false;
-        if (!(parking_station.height > 0)) fields_check = false;
-        if (!(parking_station.length > 0)) fields_check = false;
+        if (!(parking_station.s_height > 0)) fields_check = false;
+        if (!(parking_station.s_length > 0)) fields_check = false;
         for (let field of dataModel.schema_parking_station_boolean) {
+            parking_station[field] = parseInt(parking_station[field]);
             if (!(parking_station[field] === 0 || parking_station[field] === 1)) fields_check = false;
         }
         //? if (!parking_station.name) fields_check = false;
         if (fields_check) {
             // check if driver already exists (email and phone)
-            dataModel.check_("parking_station", "email", parking_station.email, function (bool1) {
+            dataModel.check_("parking_station", req.session.sid, "email", parking_station.email, function (bool1) {
                 if (bool1) {
-                    dataModel.check_("parking_station", "tin", parking_station.tin, function (bool2) {
+                    dataModel.check_("parking_station", req.session.sid, "tin", parking_station.tin, function (bool2) {
                         if (bool2) {
-                            dataModel.update_("parking_station", parking_station, function () {
-                                console.log("Data has been updated succesfully");
-                                res.redirect("/parking_station/account");
+                            parking_station.id = req.session.sid;
+                            dataModel.get2_("parking_station", "lots", parking_station.id, function (data) {
+                                let diff = parking_station.lots - data.lots;
+                                if (diff >= 0) {
+                                    for (let i = 0 ; i < diff ; i++) {
+                                        dataModel.create_("parking_lot", [parking_station.id]);
+                                    }
+                                    dataModel.update_("parking_station", parking_station, function () {
+                                        console.log("Data has been updated succesfully");
+                                        res.redirect("/parking_station/account");
+                                    });
+                                }
+                                else if (diff < 0) {
+                                    //! for this version parking_station cann't decrease parking lots only increase
+                                    console.log("Error - Can't decrease parking lots!");
+                                    res.redirect('/parking_station/account');
+                                }
                             });
                         }
                         else {
@@ -173,6 +214,7 @@ function delete_parking_station_account(req, res) {
     }
     else {
         dataModel.delete_("parking_station", req.session.sid, function () {
+            req.session.sid = undefined;
             res.redirect('/parking_station/home');
         });
     }

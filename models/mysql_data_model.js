@@ -175,6 +175,14 @@ function add_review(id, ps_id, star, desc, cb) {
   });
 };
 
+function delete_p_lots(table, id, cb) {
+  const sql = `DELETE FROM ${table} WHERE id = ${id};`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
 // function add_new_reservation(vls, cb) {
 //   const sql = `INSERT INTO reservation (car_id, parking_lot_id, r_start, r_end, price) VALUES (${vls})`;
 //   conn.query(sql, function (err, data) {

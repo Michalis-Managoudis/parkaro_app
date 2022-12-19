@@ -102,11 +102,10 @@ function add_new_parking_station(req, res) {
             else if (field == "price_list") {
                 new_parking_station.price_list = "h";
                 for (let i = 1 ; i <= 12 ; i++) {
-                    //new_parking_station.price_list = "h" + new_parking_station.price_list;
                     new_parking_station.price_list = new_parking_station.price_list + req.body["price_list"+i];
                     if (i === 4) new_parking_station.price_list = new_parking_station.price_list + "d";
                     else if (i === 8) new_parking_station.price_list = new_parking_station.price_list + "m";
-                    else new_parking_station.price_list = new_parking_station.price_list + ",";
+                    else if (i !== 12) new_parking_station.price_list = new_parking_station.price_list + ",";
                 }
             } else {
                 new_parking_station[field] = req.body[field]; // dynamically get driver keys and values

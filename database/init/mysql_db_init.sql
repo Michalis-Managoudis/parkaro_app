@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS `driver`;
-DROP TABLE IF EXISTS `car`;
+DROP TABLE IF EXISTS `review`;
 DROP TABLE IF EXISTS `reservation`;
+DROP TABLE IF EXISTS `car`;
+DROP TABLE IF EXISTS `driver`;
 DROP TABLE IF EXISTS `parking_lot`;
 DROP TABLE IF EXISTS `parking_station`;
-DROP TABLE IF EXISTS `review`;
 
 CREATE TABLE `driver` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -18,25 +18,12 @@ CREATE TABLE `driver` (
 
 CREATE TABLE `car` (
 	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	`driver_id` 			INT UNSIGNED NOT NULL REFERENCES driver(id),
+	`driver_id` 			INT UNSIGNED NOT NULL,
+    CONSTRAINT `fk_dr_id` FOREIGN KEY (`driver_id`) REFERENCES `driver` (`id`) ON DELETE CASCADE,
 	`plate` 				VARCHAR(100) NOT NULL UNIQUE,
 	`model` 				VARCHAR(100),
 	`color` 				VARCHAR(100) DEFAULT 'black',
 	`photo` 				VARCHAR(100)
-);
-
-CREATE TABLE `reservation` (
-	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	`car_id` 				INT UNSIGNED NOT NULL REFERENCES car(id),
-	`parking_lot_id`		INT UNSIGNED NOT NULL REFERENCES parking_lot(id),
-	`r_start` 				BIGINT UNSIGNED NOT NULL,
-	`r_end` 				BIGINT UNSIGNED NOT NULL,
-	`price` 				DECIMAL(10,2) NOT NULL, CHECK (price >= 0)
-);
-
-CREATE TABLE `parking_lot` (
-	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	`parking_station_id`	INT UNSIGNED NOT NULL REFERENCES parking_station(id)
 );
 
 CREATE TABLE `parking_station` (
@@ -69,9 +56,28 @@ CREATE TABLE `parking_station` (
 	`s_wash` 				BOOLEAN NOT NULL DEFAULT 0, CHECK (s_wash = 0 OR s_wash = 1)
 );
 
+CREATE TABLE `parking_lot` (
+	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`parking_station_id`	INT UNSIGNED NOT NULL,
+    CONSTRAINT `fk_ps_id` FOREIGN KEY (`parking_station_id`) REFERENCES `parking_station` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `reservation` (
+	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`car_id` 				INT UNSIGNED,
+    CONSTRAINT `fk_cr_id` FOREIGN KEY (`car_id`) REFERENCES `car` (`id`) ON DELETE SET NULL,
+	`parking_lot_id`		INT UNSIGNED,
+    CONSTRAINT `fk_plot_id` FOREIGN KEY (`parking_lot_id`) REFERENCES `parking_lot` (`id`) ON DELETE SET NULL,
+	`r_start` 				BIGINT UNSIGNED NOT NULL,
+	`r_end` 				BIGINT UNSIGNED NOT NULL,
+	`price` 				DECIMAL(10,2) NOT NULL, CHECK (price >= 0)
+);
+
 CREATE TABLE `review` (
-	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT REFERENCES reservation(id),
-	`parking_id` 			INT UNSIGNED NOT NULL REFERENCES parking_station(id),
+	`id`					INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    CONSTRAINT `fk_id` FOREIGN KEY (`id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE,
+	`parking_id` 			INT UNSIGNED,
+    CONSTRAINT `fk_p_id` FOREIGN KEY (`parking_id`) REFERENCES `parking_station` (`id`) ON DELETE SET NULL,
 	`stars` 				TINYINT(1) UNSIGNED NOT NULL, CHECK (stars >= 0 OR stars <= 5),
 	`description` 			TEXT
 );

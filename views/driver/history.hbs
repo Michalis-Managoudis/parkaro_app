@@ -93,10 +93,9 @@
 
 <script>
     const rev = {{{reviews}}};
-
     var dat = document.querySelectorAll("._t_replace");
     var dats = [...dat];
-    dats.forEach(datt => {datt.innerHTML = new Date(parseInt(datt.innerHTML)).toISOString().slice(0,16).replace("T"," ");;});
+    dats.forEach(datt => {datt.innerHTML = new Date(parseInt(datt.innerHTML)).toISOString().slice(0,16).replace("T"," ");});
 
     document.addEventListener("DOMContentLoaded", function () {
         var bn = document.querySelectorAll("._btn_modal");
@@ -106,10 +105,9 @@
             //console.log(idd);
             let mdl = "";
             btn.addEventListener("click", function () {
-                mdl = 'myModal-'+idd;
+                mdl = 'myModal-' + idd;
                 var myModal = new bootstrap.Modal(document.getElementById(mdl));
                 myModal.show();
-
                 //document.querySelector('#'+mdl+' input[name="stars"]:checked').checked = false;
                 if (rev[idd]) {
                     switch(rev[idd].stars) {
@@ -135,8 +133,7 @@
                         document.querySelector("#"+mdl+" #desc").innerHTML = rev[idd].description;    
                     }
                     document.querySelector("#"+mdl+" #_sbmt_btn").value="Update";
-                }
-                
+                }                
             }); 
         });
         //var btn = document.getElementById("myBtn");
@@ -145,6 +142,7 @@
         //    myModal.show();
         //});
     });
+    
     //dates.compare()
     let resvs = document.querySelectorAll("._resv");
     let today = new Date();

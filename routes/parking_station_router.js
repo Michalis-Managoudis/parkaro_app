@@ -20,7 +20,7 @@ router.get('/language', account_controller.change_language);                    
 // account page
 router.get('/account', account_controller.get_parking_station_account_page);                            //? !!!!!!! ready
 router.post('/account', account_controller.update_parking_station_data);                                //? !!!!!!! ready
-router.get('/delete_account', account_controller.delete_parking_station_account); // delete account     //? !!!!!!! ready
+router.get('/account/delete', account_controller.delete_parking_station_account); // delete account     //? !!!!!!! ready
 // info page
 router.get('/info', parking_station_controller.get_parking_station_info_page);                          //? !!!!!!! ready
 // load sign pages
