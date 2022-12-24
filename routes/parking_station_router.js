@@ -11,10 +11,12 @@ const parking_station_controller = require('../controller/parking_station_contro
 
 
 router.get('/', function(req, res) {res.redirect('/parking_station/home');});
-router.get('/history', function(req, res) {res.redirect('/parking_station/home');});
+//router.get('/history', function(req, res) {res.redirect('/parking_station/home');});
 // home page
 router.get('/home', parking_station_controller.get_parking_station_home_page);
-//!router.get('/my_parking', function(req, res) {res.render('parking_station/my_parking');});
+router.post('/home', parking_station_controller.search_parking_station_new_reservation);
+router.post('/add_reservation', parking_station_controller.add_reservation);
+router.get('/my_parking',parking_station_controller.get_parking_station_my_parking_page);
 // change language page
 router.get('/language', account_controller.change_language);                                            //? !!!!!!! ready
 // account page

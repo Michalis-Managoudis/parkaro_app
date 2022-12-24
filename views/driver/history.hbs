@@ -4,8 +4,8 @@
         <table class="table table-bordered m-0">
             <thead style="position: sticky; top: 0" class="bg-dark text-white">
                 <tr>
-                    <th>Date started</th>
-                    <th>Date (to be) ended</th>
+                    <th>Date start</th>
+                    <th>Date end</th>
                     <th>Price</th>
                     <th>Car plate</th>
                     <th>Parking name</th>
@@ -14,7 +14,6 @@
             </thead>
             <tbody>
                 {{#each records}}
-                {{!-- <p>{{this.price}}</p> --}}
                 <tr class="_resv" id="{{this.r_end}}">
                     <td class="_t_replace">{{this.r_start}}</td>
                     <td class="_t_replace">{{this.r_end}}</td>
@@ -95,7 +94,9 @@
     const rev = {{{reviews}}};
     var dat = document.querySelectorAll("._t_replace");
     var dats = [...dat];
-    dats.forEach(datt => {datt.innerHTML = new Date(parseInt(datt.innerHTML)).toISOString().slice(0,16).replace("T"," ");});
+    dats.forEach(datt => {
+        datt.innerHTML = date_to_string(parseInt(datt.innerHTML));
+    });
 
     document.addEventListener("DOMContentLoaded", function () {
         var bn = document.querySelectorAll("._btn_modal");
@@ -153,5 +154,13 @@
             el.classList.add("bg-success");
         }
     }); 
-    
+
+    function date_to_string(num) {
+        let dtm_h = new Date(num);
+        let dt_h = dtm_h.toLocaleDateString().split("/");
+        let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
+        let tm = dtm_h.toTimeString().split(" ")[0].slice(0,5);
+        let dtm = dt + " " + tm;
+        return dtm;
+    }
 </script>

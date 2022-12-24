@@ -227,7 +227,7 @@ function get_driver_history_page(req, res) {
         res.redirect('/sign_in');
     }
     else {
-        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
+        dataModel.get_("driver", req.session.sid, function (data) { // check if id exists
             if (data) {
                 dataModel.load_reservation_history("driver",req.session.sid, function (data) {
                     const dt = JSON.parse(JSON.stringify(data));
@@ -254,7 +254,7 @@ function get_driver_history_page(req, res) {
 
                         });
                     }
-                    else { // if driever hasn't a reservation history
+                    else { // if driver hasn't a reservation history
                         res.render('driver/history', {
                             records: dt,
                             "is_driver": true,
@@ -287,7 +287,7 @@ function add_new_driver_car(req,res) {
                         dataModel.create_("car", vls, function () {
                             console.log("New car added succesfully");
                             res.redirect('/account');
-                        })
+                        });
                     }
                     else {
                         console.log("Car is already in database");

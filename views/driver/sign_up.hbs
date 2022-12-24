@@ -69,25 +69,30 @@
                             <div class="sign-up-form">
                                 <div class="group">
                                     <label for="eml" class="label">Email</label>
-                                    <input id="eml" type="email" name="email" class="input" placeholder="Enter your email">
+                                    <input id="eml" type="email" name="email" class="input"
+                                        placeholder="someone@example.com" autofocus
+                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                                 </div>
                                 <div class="group">
                                     <label for="pass" class="label">Password</label>
                                     <input id="pass" type="password" name="password" class="input" data-type="password"
-                                        placeholder="Create your password">
+                                        placeholder="Create your password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        required>
                                 </div>
                                 <div class="group">
                                     <label for="pass2" class="label">Repeat Password</label>
-                                    <input id="pass2" type="password" name="password2" class="input" data-type="password"
-                                        placeholder="Repeat your password">
+                                    <input id="pass2" type="password" name="password2" class="input"
+                                        data-type="password" placeholder="Repeat your password" required>
                                 </div>
                                 <div class="group">
                                     <label for="nm" class="label">Full Name</label>
-                                    <input id="nm" type="text" name="name" class="input" placeholder="Enter your full name">
+                                    <input id="nm" type="text" name="name" class="input"
+                                        placeholder="Enter your full name" required>
                                 </div>
                                 <div class="group">
                                     <label for="tl" class="label">Phone</label>
-                                    <input id="tl" type="tel" name="phone" class="input" placeholder="Enter your phone number">
+                                    <input id="tl" type="tel" name="phone" class="input" placeholder="69********"
+                                        pattern="[0-9]{10}" required>
                                 </div>
                                 <div class="group">
                                     <input type="submit" class="button" value="Sign Up">
@@ -101,6 +106,7 @@
                     </div>
                 </div>
             </form>
-        {{!-- </div> --}}
+            {{!--
+        </div> --}}
     </div>
 </div>

@@ -60,7 +60,7 @@ function get_driver_port_page(req, res) {
 function search_driver_home_page(req, res) {
     req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
     req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
         res.render('driver/home', {
@@ -76,7 +76,7 @@ function search_driver_home_page(req, res) {
 function search_driver_airport_page(req, res) {
     req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
     req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 1 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    let cond = `parking_type = 1 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
         res.render('driver/home', {
@@ -92,7 +92,7 @@ function search_driver_airport_page(req, res) {
 function search_driver_port_page(req, res) {
     req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
     req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 2 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)))`;
+    let cond = `parking_type = 2 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
         res.render('driver/home', {
@@ -133,23 +133,6 @@ function get_driver_book_page(req, res) {
                 });
             }
             else {
-
-                //!
-                // const ps_id = req.session.ps_id;
-                // req.session._dts = {"start": req.body.s_date,"end": req.body.e_date};
-                // let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)) LIMIT 1`;
-                // dataModel.read_("parking_lot", "", cond, function (ids) {
-                //     let _id = JSON.parse(JSON.stringify(ids));
-                //     if (_id[0] === undefined) {
-                //         req.session._ready_to_add_reservation = false;
-                //         console.log("Can't find an available parking space try again other datetimes or another parking station!!");
-                //     }
-                //     else {
-                //         req.session._ready_to_add_reservation = true;
-                //         console.log("find an available parking space");
-                //     }
-                //!
-
                 dataModel.get_("driver", req.session.sid, function (data) {
                     if (data) {
                         dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars) {
@@ -198,7 +181,7 @@ function add_driver_reservation(req, res) {
         let resv = {};
         resv.car_id = req.body.car;
         
-        let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.body.s_date+"Z")} < r_end AND ${Date.parse(req.body.e_date+"Z")} > r_start)) LIMIT 1`;
+        let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.body.s_date)} < r_end AND ${Date.parse(req.body.e_date)} > r_start)) LIMIT 1`;
         dataModel.read_("parking_lot", "", cond, function (ids) {
             let _id = JSON.parse(JSON.stringify(ids));
             if (_id[0] === undefined) {
@@ -231,7 +214,7 @@ function add_driver_reservation(req, res) {
 function check_reservation_availability(req,res) {
     const ps_id = req.session.ps_id;
     req.session._dts = {"start": req.body.s_date,"end": req.body.e_date};
-    let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start+"Z")} < r_end AND ${Date.parse(req.session._dts.end+"Z")} > r_start)) LIMIT 1`;
+    let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)) LIMIT 1`;
     dataModel.read_("parking_lot", "", cond, function (ids) {
         let _id = JSON.parse(JSON.stringify(ids));
         if (_id[0] === undefined) {

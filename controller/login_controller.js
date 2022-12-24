@@ -86,7 +86,6 @@ function add_new_driver(req, res) {
         console.log("important error!");
         res.redirect('/account');
     }
-
 };
 function add_new_parking_station(req, res) {
     if (req.session.sid === undefined) {

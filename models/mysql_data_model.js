@@ -146,13 +146,29 @@ function check2_(table, cond, cb) {
 
 function load_reservation_history(md, id, cb) {
   let sql = ``;
-  if (md === "driver") { sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, p.name, p.phone, p.address, p.id1, p.location FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.driver_id FROM (reservation r JOIN car c ON r.car_id=c.id) WHERE c.driver_id=${id}) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address, ps.location FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id)) p ON rc.parking_lot_id=p.id2 ORDER BY rc.r_start DESC, rc.r_end`; }
-  else if (md === "parking_station") { sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, rc.driver_id, p.name, p.phone, p.address FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.driver_id FROM (reservation r JOIN car c ON r.car_id=c.id)) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id) WHERE ps.id=${id}) p ON rc.parking_lot_id=p.id2`; }
+  if (md === "driver") { sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, p.name, p.phone, p.address, p.id1, p.location FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.driver_id FROM (reservation r JOIN car c ON r.car_id=c.id) WHERE c.driver_id=${id}) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address, ps.location FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id)) p ON rc.parking_lot_id=p.id2 ORDER BY rc.r_end DESC, rc.r_start DESC`; }
+  else if (md === "parking_station") { sql = ``; }
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
   });
 };
+
+function load_parking_station_current_reservations(id, now, cb) {
+  let sql = `SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, dc.email, dc.name, dc.phone, dc.plate, dc.model, dc.color FROM (SELECT * FROM reservation WHERE r_end > ${now} AND parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${id})) r JOIN (SELECT d.email, d.name, d.phone, c.plate, c.model, c.color, c.id FROM driver d JOIN car c ON d.id = c.driver_id) dc ON r.car_id = dc.id ORDER BY r.r_start, r.r_end `;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+}
+
+function find_free_parking_lots_of_parking_station(_id, _start, _end, cb) {
+  let sql = `SELECT id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${_id}) AND ${_start} < r_end AND ${_end} > r_start) AND parking_station_id = ${_id}`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+}
 
 function add_review(id, ps_id, star, desc, cb) {
   const sql1 = `SELECT id FROM review WHERE id = ${id}`;
@@ -172,14 +188,6 @@ function add_review(id, ps_id, star, desc, cb) {
         if (cb) cb(data);
       });
     }
-  });
-};
-
-function delete_p_lots(table, id, cb) {
-  const sql = `DELETE FROM ${table} WHERE id = ${id};`;
-  conn.query(sql, function (err, data) {
-    if (err) throw (err);
-    if (cb) cb(data);
   });
 };
 
@@ -215,6 +223,8 @@ module.exports = {
   check_,
   load_reservation_history,
   add_review,
+  load_parking_station_current_reservations,
+  find_free_parking_lots_of_parking_station,
   //add_new_reservation,
   get2_,
   check2_

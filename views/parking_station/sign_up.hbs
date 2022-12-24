@@ -13,6 +13,10 @@
         <input type="password" id="m-f-pswd" name="password" placeholder=""
             pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
 
+        <label for="pass2" class="label">Repeat Password</label>
+        <input id="pass2" type="password" name="password2" class="input" data-type="password"
+            placeholder="Repeat your password" required>
+
         <label for="m-f-tin">ΑΦΜ:</label>
         <input type="number" id="m-f-tin" name="tin" placeholder="" pattern="[0-9]+" required>
 
@@ -158,8 +162,8 @@
 
 <script>
     document.getElementById("_form3").addEventListener('submit', () => {
-        for (let i = 1 ; i <= 7 ; i++) {
-            if (document.getElementById("m-f-"+i).checked) document.getElementById("m-f-"+i+"h").disabled = true;
+        for (let i = 1; i <= 7; i++) {
+            if (document.getElementById("m-f-" + i).checked) document.getElementById("m-f-" + i + "h").disabled = true;
         }
     });
 </script>
