@@ -160,8 +160,8 @@ function add_driver_review(req, res) {
         res.redirect('/sign_in')
     }
     else {
-        const res_id = req.params.res_id;
-        const ps_id = req.params.ps_id;
+        const res_id = req.body._id;
+        const ps_id = req.body.parking_station_id;
         const stars = req.body.stars;
         const description = req.body.description;
         dataModel.add_review(res_id, ps_id, stars, description, function () {
@@ -181,24 +181,18 @@ function add_driver_reservation(req, res) {
         let resv = {};
         resv.car_id = req.body.car;
         
-        let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.body.s_date)} < r_end AND ${Date.parse(req.body.e_date)} > r_start)) LIMIT 1`;
-        dataModel.read_("parking_lot", "", cond, function (ids) {
-            let _id = JSON.parse(JSON.stringify(ids));
+        dataModel.find_free_parking_lots_of_parking_station(ps_id, Date.parse(req.body.s_date), Date.parse(req.body.e_date), function (data) {
+            let _id = JSON.parse(JSON.stringify(data));
             if (_id[0] === undefined) {
                 req.session._ready_to_add_reservation = false;
                 console.log("Can't find an available parking space try again other datetimes or another parking station");
                 res.redirect('/home');
             }
             else{
-                _id = _id[0].id;
-                resv.pl_id = _id;
+                resv.pl_id = _id[0].id;
                 resv.r_start = Date.parse(req.body.s_date); //new Date(req.body.s_date).getTime();
                 resv.r_end = Date.parse(req.body.e_date); //new Date(req.body.e_date).getTime();
                 resv.price = 10 * (new Date(req.body.e_date) - new Date(req.body.s_date)) / 3600000;
-                // const required_values = "'" + Object.values(resv).join("', '") + "'";
-                // dataModel.add_new_reservation(required_values, function () {
-                //     res.redirect('/history');
-                // });
                 const required_values = Object.values(resv);
                 req.session._ready_to_add_reservation = false;
                 // req.session._dts = {};
@@ -211,12 +205,11 @@ function add_driver_reservation(req, res) {
     }
 };
 
-function check_reservation_availability(req,res) {
+function search_driver_reservation_availability(req,res) {
     const ps_id = req.session.ps_id;
     req.session._dts = {"start": req.body.s_date,"end": req.body.e_date};
-    let cond = `parking_station_id = ${ps_id} AND id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)) LIMIT 1`;
-    dataModel.read_("parking_lot", "", cond, function (ids) {
-        let _id = JSON.parse(JSON.stringify(ids));
+    dataModel.find_free_parking_lots_of_parking_station(ps_id, Date.parse(req.session._dts.start), Date.parse(req.session._dts.end), function (data) {
+        let _id = JSON.parse(JSON.stringify(data));
         if (_id[0] === undefined) {
             req.session._ready_to_add_reservation = false;
             console.log("Can't find an available parking space try again other datetimes or another parking station!!");
@@ -241,5 +234,5 @@ module.exports = {
     get_driver_book_page,
     add_driver_review,
     add_driver_reservation,
-    check_reservation_availability
+    search_driver_reservation_availability
 }

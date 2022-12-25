@@ -1,97 +1,95 @@
 {{#if records}}
-    <h3 class="text-center">Reservations History</h3>
-    <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
-        <table class="table table-bordered m-0">
-            <thead style="position: sticky; top: 0" class="bg-dark text-white">
-                <tr>
-                    <th>Date start</th>
-                    <th>Date end</th>
-                    <th>Price</th>
-                    <th>Car plate</th>
-                    <th>Parking name</th>
-                    <th>Add or update a review</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each records}}
-                <tr class="_resv" id="{{this.r_end}}">
-                    <td class="_t_replace">{{this.r_start}}</td>
-                    <td class="_t_replace">{{this.r_end}}</td>
-                    <td>{{this.price}} €</td>
-                    <td>{{this.plate}}</td>
-                    <td><a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}" target="_blank">
+<h3 class="text-center">Reservations History</h3>
+<div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
+    <table class="table table-bordered m-0" id="res_tbl">
+        <thead style="position: sticky; top: 0" class="bg-dark text-white">
+            <tr>
+                <th>ID</th>
+                <th>Date start</th>
+                <th>Date end</th>
+                <th>Price</th>
+                <th>Car plate</th>
+                <th>Parking name</th>
+                <th>Add or update a review</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each records}}
+            <tr class="_resv" id="{{this.id}}">
+                <td>{{this.id}}</td>
+                <td class="_t_replace">{{this.r_start}}</td>
+                <td class="_t_replace">{{this.r_end}}</td>
+                <td>{{this.price}} €</td>
+                <td>{{this.plate}}</td>
+                <td><a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}"
+                        target="_blank">
                         <i class="fa fa-map-marker"></i> {{this.name}} </a>
-                        <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
-                    </td>
-                    <td>
-                        <div class="">
-                            <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-5 _btn_modal"
-                                style="font-size: 18px;">+</button>
-                            <div id="myModal-{{this.id}}" class="modal fade" tabindex="-1">
-                                <div class="modal-dialog modal-md">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Review</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="/review/{{this.id}}/{{this.id1}}" method="post">
-                                                <p>Αστέρια</p>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" class="form-check-input" name="stars" id="radio1" value=1 checked>
-                                                    <label class="form-check-label" for="radio1">1</label>
-                                                </div>
-                                                <div class="form-check form-check-inline ms-3">
-                                                    <input type="radio" class="form-check-input" name="stars" id="radio2" value=2>
-                                                    <label class="form-check-label" for="radio2">2</label>
-                                                </div>
-                                                <div class="form-check form-check-inline ms-3">
-                                                    <input type="radio" class="form-check-input" name="stars" id="radio3" value=3>
-                                                    <label class="form-check-label" for="radio3">3</label>
-                                                </div>
-                                                <div class="form-check form-check-inline ms-3">
-                                                    <input type="radio" class="form-check-input" name="stars" id="radio4" value=4>
-                                                    <label class="form-check-label" for="radio4">4</label>
-                                                </div>
-                                                <div class="form-check form-check-inline ms-3">
-                                                    <input type="radio" class="form-check-input" name="stars" id="radio5" value=5>
-                                                    <label class="form-check-label" for="radio5">5</label>
-                                                </div>
-                                                <p>Γράψτε μία κριτική</p>
-                                                <textarea name="description" id="desc" cols="45" rows="5"></textarea>
-                                                {{!-- <input type="range" min="1" max="5" value="3" class="slider" id="myRange"> --}}
-                                                {{!-- <input type="range" value="1" min="1" max="5" oninput="this.nextElementSibling.value = this.value">
-                                                <output>1</output>
-
-                                                <input type="range" name="amountRange" min="0" max="20" value="0" oninput="this.form.amountInput.value=this.value" />
-                                                <input type="number" name="amountInput" min="0" max="20" value="0" oninput="this.form.amountRange.value=this.value" /> --}}
-
-                                                <div class="d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-lg btn-secondary "
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <input type="submit" id="_sbmt_btn" class="btn btn-lg btn-success" value="Add">
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
+                </td>
+                <td>
+                    <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-5 _btn_modal" style="font-size: 18px;" title="{{this.id1}}">+</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/add_review" method="post" id="myForm">
+                        <input type="number" id="rev_id" hidden name="_id" value="">
+                        <input type="number" id="ps_id" hidden name="parking_station_id" value="">
+                        <p>Αστέρια</p>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="stars" id="radio1" value=1 checked>
+                            <label class="form-check-label" for="radio1">1</label>
                         </div>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
+                        <div class="form-check form-check-inline ms-3">
+                            <input type="radio" class="form-check-input" name="stars" id="radio2" value=2>
+                            <label class="form-check-label" for="radio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input type="radio" class="form-check-input" name="stars" id="radio3" value=3>
+                            <label class="form-check-label" for="radio3">3</label>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input type="radio" class="form-check-input" name="stars" id="radio4" value=4>
+                            <label class="form-check-label" for="radio4">4</label>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input type="radio" class="form-check-input" name="stars" id="radio5" value=5>
+                            <label class="form-check-label" for="radio5">5</label>
+                        </div>
+                        <p>Γράψτε μία κριτική</p>
+                        <textarea name="description" id="desc" cols="45" rows="5"></textarea>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-lg btn-secondary "
+                                data-bs-dismiss="modal">Cancel</button>
+                            <input type="submit" id="_sbmt_btn" class="btn btn-lg btn-success" value="Add">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
 {{else}}
-    <p class="p-3 text-center">Oops nothing found</p>
-    <p class="text-center"><a href="/home" class="text-center">Go to find a parking</a></p>
+<p class="p-3 text-center">Oops nothing found</p>
+<p class="text-center"><a href="/home" class="text-center">Go to find a parking</a></p>
 {{/if}}
 
 
 <script>
-    const rev = {{{reviews}}};
+    const rev = {{{ reviews }}};
+    //const rrr = {{{ records }}};
+    //console.log(rrr);
+
     var dat = document.querySelectorAll("._t_replace");
     var dats = [...dat];
     dats.forEach(datt => {
@@ -103,63 +101,80 @@
         var btns = [...bn];
         btns.forEach(btn => {
             var idd = btn.id.split("-")[1];
-            //console.log(idd);
-            let mdl = "";
             btn.addEventListener("click", function () {
-                mdl = 'myModal-' + idd;
-                var myModal = new bootstrap.Modal(document.getElementById(mdl));
+                var myModal = new bootstrap.Modal(document.getElementById("myModal"));
                 myModal.show();
-                //document.querySelector('#'+mdl+' input[name="stars"]:checked').checked = false;
                 if (rev[idd]) {
-                    switch(rev[idd].stars) {
+                    switch (rev[idd].stars) {
                         case 1:
-                            document.querySelector("#"+mdl+" #radio1").checked = true;
+                            document.querySelector("#myModal #radio1").checked = true;
                             break;
                         case 2:
-                            document.querySelector("#"+mdl+" #radio2").checked = true;
+                            document.querySelector("#myModal #radio2").checked = true;
                             break;
                         case 3:
-                            document.querySelector("#"+mdl+" #radio3").checked = true;
+                            document.querySelector("#myModal #radio3").checked = true;
                             break;
                         case 4:
-                            document.querySelector("#"+mdl+" #radio4").checked = true;
+                            document.querySelector("#myModal #radio4").checked = true;
                             break;
                         case 5:
-                            document.querySelector("#"+mdl+" #radio5").checked = true;
+                            document.querySelector("#myModal #radio5").checked = true;
                             break;
                         default:
-                            document.querySelector("#"+mdl+" #radio3").checked = true;
+                            document.querySelector("#myModal #radio3").checked = true;
                     }
                     if (rev[idd].description) {
-                        document.querySelector("#"+mdl+" #desc").innerHTML = rev[idd].description;    
+                        document.querySelector("#myModal #desc").innerHTML = rev[idd].description;
                     }
-                    document.querySelector("#"+mdl+" #_sbmt_btn").value="Update";
-                }                
-            }); 
+                    document.querySelector("#myModal #_sbmt_btn").value = "Update";
+                }
+                else {
+                    document.querySelector("#myModal #radio3").checked = true;
+                    document.querySelector("#myModal #desc").innerHTML = "";
+                    document.querySelector("#myModal #_sbmt_btn").value = "Add";
+                }
+                document.getElementById("rev_id").value = idd;
+                document.getElementById("ps_id").value = btn.title;
+            });
+            disable_review_future_reservations(idd);
         });
-        //var btn = document.getElementById("myBtn");
-        //btn.addEventListener("click", function () {
-        //    var myModal = new bootstrap.Modal(document.getElementById("myModal"));
-        //    myModal.show();
-        //});
     });
-    
-    //dates.compare()
-    let resvs = document.querySelectorAll("._resv");
-    let today = new Date();
-    resvs.forEach(el => {
-        dt = new Date(parseInt(el.id));
-        el.className = "_resv";
-        if (dt > today) {
-            el.classList.add("bg-success");
+    highlight_future_reservations();
+
+    function disable_review_future_reservations(_id) {
+        let tday = new Date();
+        let h_dt = "";
+        let rd = "";
+        rd = document.getElementById(_id).cells[2].textContent;
+        rd = rd.split(" ");
+        rd[0] = rd[0].split("/");
+        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+        if (tday.getTime() < Date.parse(h_dt)) document.getElementById("myBtn-" + _id).disabled = true;
+    }
+
+    function highlight_future_reservations() {
+        let tbl = document.getElementById("res_tbl");
+        let tday = new Date();
+        let h_dt = "";
+        let rd = "";
+        for (let i = 1; i < tbl.rows.length; i++) {
+            rd = tbl.rows[i].cells[1].textContent;
+            rd = rd.split(" ");
+            rd[0] = rd[0].split("/");
+            h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+            //console.log(h_dt);
+            if (tday.getTime() < Date.parse(h_dt)) {
+                tbl.rows[i].classList.add("bg-success");
+            }
         }
-    }); 
+    }
 
     function date_to_string(num) {
         let dtm_h = new Date(num);
         let dt_h = dtm_h.toLocaleDateString().split("/");
         let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
-        let tm = dtm_h.toTimeString().split(" ")[0].slice(0,5);
+        let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
         let dtm = dt + " " + tm;
         return dtm;
     }

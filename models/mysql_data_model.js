@@ -160,7 +160,23 @@ function load_parking_station_current_reservations(id, now, cb) {
     if (err) throw (err);
     if (cb) cb(data);
   });
-}
+};
+
+function load_parking_station_reservations(id, cb) {
+  let sql = `SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, dc.email, dc.name, dc.phone, dc.plate, dc.model, dc.color FROM (SELECT * FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${id})) r JOIN (SELECT d.email, d.name, d.phone, c.plate, c.model, c.color, c.id FROM driver d JOIN car c ON d.id = c.driver_id) dc ON r.car_id = dc.id ORDER BY r.r_end DESC, r.r_start DESC`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
+function calculate_income(id, dt_start, dt_end, cb){
+  let sql = `SELECT SUM(r.price) AS price FROM (reservation r JOIN parking_lot pl ON r.parking_lot_id = pl.id) WHERE pl.parking_station_id = ${id} AND r.r_end > ${dt_start} AND r.r_end < ${dt_end}`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
 
 function find_free_parking_lots_of_parking_station(_id, _start, _end, cb) {
   let sql = `SELECT id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${_id}) AND ${_start} < r_end AND ${_end} > r_start) AND parking_station_id = ${_id}`;
@@ -168,7 +184,7 @@ function find_free_parking_lots_of_parking_station(_id, _start, _end, cb) {
     if (err) throw (err);
     if (cb) cb(data);
   });
-}
+};
 
 function add_review(id, ps_id, star, desc, cb) {
   const sql1 = `SELECT id FROM review WHERE id = ${id}`;
@@ -224,7 +240,9 @@ module.exports = {
   load_reservation_history,
   add_review,
   load_parking_station_current_reservations,
+  load_parking_station_reservations,
   find_free_parking_lots_of_parking_station,
+  calculate_income,
   //add_new_reservation,
   get2_,
   check2_

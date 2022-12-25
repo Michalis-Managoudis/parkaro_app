@@ -1,5 +1,148 @@
-    {{#if lang}}
+{{#if lang}}
 
-    {{else}}
+{{else}}
+
+{{/if}}
+
+<div class="d-flex justify-content-around">
+    <div>
+        <h2>Today income:</h2>
+        <p id="incm_today">0 €</p>
+    </div>
+
+    <div>
+        <h2>Month income:</h2>
+        <p id="incm_monthly">0 €</p>
+    </div>
+
+</div>
+
+
+{{#if records}}
+<h3 class="text-center">Reservations</h3>
+<div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
+    <table class="table table-bordered m-0" id="res_table">
+        <thead style="position: sticky; top: 0" class="bg-dark text-white">
+            <tr>
+                <th>ID</th>
+                <th>Parking lot</th>
+                <th>Date start</th>
+                <th>Date end</th>
+                <th>Price</th>
+                <th>Driver</th>
+                <th>Plate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each records}}
+            <tr class="_resv" id="{{this.id}}">
+                <td>{{this.id}}</td>
+                <td>{{this.parking_lot_id}}</td>
+                <td class="_t_replace">{{this.r_start}}</td>
+                <td class="_t_replace">{{this.r_end}}</td>
+                <td>{{this.price}} €</td>
+                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2">{{this.email}}</p>
+                </td>
+                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
+                </td>
+                <td>U/D</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+{{else}}
+<p class="p-3 text-center">Oops none current reservation found</p>
+{{/if}}
+
+<script>
+    // let f_dt = {{{ form_data }}};
+    var dat = document.querySelectorAll("._t_replace");
+    var dats = [...dat];
+    dats.forEach(datt => {
+        datt.innerHTML = date_to_string(parseInt(datt.innerHTML));
+    });
+
+    let inc = {{{ income }}};
+    console.log(inc);
+    for (let field of Object.keys(inc)) if (inc[field]) document.getElementById("incm_" + field).textContent = inc[field] + " €";
+
+    highlight_future_reservations();
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     if (f_dt) {
+    //         var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
+    //         myModal.show();
+    //         for (let field of Object.keys(f_dt)) {
+    //             document.getElementById("ff-" + field).value = f_dt[field];
+    //         }
+    //     }
+    //     var btn = document.getElementById("myBtn-nr");
+    //     btn.addEventListener("click", function () {
+    //         var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
+    //         myModal.show();
+    //     });
+    // });
+
+    // let _dt1 = document.getElementById("ff-r_start");
+    // let _dt2 = document.getElementById("ff-r_end");
+
+    // let today = new Date();
+    // let dd = today.getDate();
+    // let mm = today.getMonth() + 1; //January is 0!
+    // let hh = today.getHours();
+    // let mn = today.getMinutes();
+    // if (dd < 10) { dd = '0' + dd; }
+    // if (mm < 10) { mm = '0' + mm; }
+    // if (hh < 10) { hh = '0' + hh; }
+    // if (mn < 10) { mn = '0' + mn; }
+    // today = today.getFullYear() + '-' + mm + '-' + dd + 'T' + hh + ':' + mn;
+
+    // _dt1.min = today;
+    // _dt2.min = today;
+    // _dt1.value = today;
+    // _dt1.max = _dt2.value;
+    // _dt2.min = _dt1.value;
+    // let prc = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
+    // if (prc >= 0) document.getElementById("ff-price").innerHTML = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
+    // else document.getElementById("ff-price").innerHTML = "";
+
+    // _dt2.addEventListener('change', function () {
+    //     _dt1.max = _dt2.value;
+    //     check_available();
+    // });
+    // _dt1.addEventListener('change', function () {
+    //     _dt2.min = _dt1.value;
+    //     check_available();
+    // });
+
+
+    // highlight future reservations
     
-    {{/if}}
+    function highlight_future_reservations() {
+        let tbl = document.getElementById("res_table");
+        let tday = new Date();
+        let h_dt = "";
+        let rd = "";
+        for (let i = 1; i < tbl.rows.length; i++) {
+            rd = tbl.rows[i].cells[3].textContent;
+            rd = rd.split(" ");
+            rd[0] = rd[0].split("/");
+            h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+            //console.log(h_dt);
+            if (tday.getTime() < Date.parse(h_dt)) {
+                tbl.rows[i].classList.add("bg-info");
+            }
+        }
+    }
+
+    function date_to_string(num) {
+        let dtm_h = new Date(num);
+        let dt_h = dtm_h.toLocaleDateString().split("/");
+        let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
+        let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
+        let dtm = dt + " " + tm;
+        return dtm;
+    }
+</script>

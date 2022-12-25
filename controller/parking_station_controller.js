@@ -29,7 +29,7 @@ function get_parking_station_home_page(req, res) {
                             records: dt,
                             pl_per: per,
                             form_data: false,
-                            empty_lots: false, //! had to be found from db
+                            empty_lots: false,
                             "is_driver": false,
                             "login": (req.session.sid !== undefined),
                             'lang': req.session.lang
@@ -42,7 +42,7 @@ function get_parking_station_home_page(req, res) {
     }
 };
 
-function search_parking_station_new_reservation(req, res) {
+function search_parking_station_reservation_availability(req, res) {
     if (req.session.sid === undefined) {
         console.log("To see home page you must sign in first");
         res.redirect('/parking_station/sign_in');
@@ -84,8 +84,7 @@ function search_parking_station_new_reservation(req, res) {
     }
 };
 
-function add_reservation(req, res) {
-
+function add_parking_station_reservation(req, res) {
     if (req.session.sid !== undefined) {
         // add user
         let new_driver = {};
@@ -99,17 +98,14 @@ function add_reservation(req, res) {
         let fields_check = true;
         if (!mail_regex.test(new_driver.email)) fields_check = false;
         if (!phone_regex.test(new_driver.phone)) fields_check = false;
-        // add car
 
         // add reservation
         if (fields_check) {
             // check if driver already exists (email and phone)
-            dataModel.read_("driver", "email", `email = "${new_driver.email}"`, function (data) { // check if email exists
-            //!dataModel.check2_("driver", `email = ${new_driver.email}`, function (data) {
-                if (Object.keys(data).length === 0) { // if email not found in database
-                    dataModel.read_("driver", "phone", `phone = "${new_driver.phone}"`, function (data2) { // check if phone exists
-                    //!dataModel.check2_("driver", `phone = ${new_driver.phone}`, function (data2) {
-                        if (Object.keys(data2).length === 0) { // phone not found in database
+            dataModel.check2_("driver", `email = "${new_driver.email}"`, function (data) {  // check if email exists
+                if (!data) { // if email not found in database
+                    dataModel.check2_("driver", `phone = "${new_driver.phone}"`, function (data2) { // check if phone exists
+                        if (!data2) { // phone not found in database
                             // insert new_driver to database
                             const required_values = Object.values(new_driver); // put required values in an array
                             dataModel.create_("driver", required_values, function () {
@@ -122,13 +118,14 @@ function add_reservation(req, res) {
                                     }
                                     dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
                                         if (!data4) {
+                                            // add car
                                             const vls = Object.values(car);
                                             dataModel.create_("car", vls, function () {
-                                                dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
+                                                dataModel.check2_("car", `plate = "${car.plate}"`, function (data5) {
                                                     console.log("New car added succesfully");
                                                     let resv = {};
                                                     for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
-                                                        if (field === "car_id") resv[field] = data4.id;
+                                                        if (field === "car_id") resv[field] = data5.id;
                                                         else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
                                                         else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
                                                         else resv[field] = req.body[field];
@@ -174,11 +171,46 @@ function add_reservation(req, res) {
 };
 
 function get_parking_station_my_parking_page(req, res) {
-    res.render('parking_station/my_parking', {
-        "is_driver": false,
-        "login": (req.session.sid !== undefined),
-        'lang': req.session.lang
-    });
+    if (req.session.sid === undefined) {
+        console.log("To see home page you must sign in first");
+        res.redirect('/parking_station/sign_in');
+    }
+    else {
+        dataModel.get_("parking_station", req.session.sid, function (data) { // check if id exists
+            if (data) {
+                dataModel.load_parking_station_reservations(req.session.sid, function (data) {
+                    const dt = JSON.parse(JSON.stringify(data));
+                    let today = new Date();
+                    let tday = new Date();
+                    let tod = tday.toLocaleDateString().split("/"); //! not right format
+                    let tod2 = tod[2] + "-" + tod[1] + "-" + tod[0];
+                    let dt_st = Date.parse(tod2 + "T00:00:00");
+                    let dt_en = Date.parse(today);
+                    dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data2) { // today income
+                        const dt2 = JSON.parse(JSON.stringify(data2));
+                        tday.setDate(tday.getMonth() - 1);
+                        let tod3 = tday.toLocaleDateString().split("/"); //! not right format
+                        let tod4 = tod3[2] + "-" + tod3[1] + "-" + tod3[0];
+                        let dt_st = Date.parse(tod4 + "T00:00:00");
+                        let dt_en = Date.parse(today);
+                        dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data3) { // monthly income
+                            const dt3 = JSON.parse(JSON.stringify(data3));
+                            let incom = {"today": dt2[0].price, "monthly": dt3[0].price};
+                            incom = JSON.stringify(incom);
+                            res.render('parking_station/my_parking', {
+                                records: dt,
+                                income: incom,
+                                "is_driver": false,
+                                "login": (req.session.sid !== undefined),
+                                'lang': req.session.lang
+                            });
+                        });
+                    });
+                });
+
+            }
+        });
+    }
 };
 
 function get_parking_station_info_page(req, res) {
@@ -191,8 +223,8 @@ function get_parking_station_info_page(req, res) {
 
 module.exports = {
     get_parking_station_home_page,
-    search_parking_station_new_reservation,
+    search_parking_station_reservation_availability,
     get_parking_station_my_parking_page,
     get_parking_station_info_page,
-    add_reservation
+    add_parking_station_reservation
 }

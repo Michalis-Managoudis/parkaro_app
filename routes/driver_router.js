@@ -25,9 +25,9 @@ router.get('/port', driver_controller.get_driver_port_page);
 router.post('/port', driver_controller.search_driver_port_page);
 
 router.get('/book/:ps_id', driver_controller.get_driver_book_page);
-router.post('/book', driver_controller.check_reservation_availability);
+router.post('/book', driver_controller.search_driver_reservation_availability);
 router.post('/book/add', driver_controller.add_driver_reservation);
-router.post('/review/:res_id/:ps_id', driver_controller.add_driver_review);
+router.post('/add_review', driver_controller.add_driver_review);
 // change language page
 router.get('/language', account_controller.change_language);                                //? !!!!!!! ready
 // account page

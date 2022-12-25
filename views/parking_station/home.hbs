@@ -24,8 +24,9 @@
                     <form action="/parking_station/home" method="post" id="_form2">
                         <div class="text-nowrap">
                             <label for="ff-email" class="label">Email</label>
-                            <input id="ff-email" type="email" name="email" class="input" placeholder="someone@example.com"
-                                autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                            <input id="ff-email" type="email" name="email" class="input"
+                                placeholder="someone@example.com" autofocus
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-name" class="label">Full Name</label>
@@ -77,7 +78,8 @@
                         <div class="d-flex justify-content-between mt-5">
                             <button type="button" class="btn btn-lg btn-secondary"
                                 data-bs-dismiss="modal">Cancel</button>
-                            <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success" value="Add" onclick="add_resv()">
+                            <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success"
+                                value="Add" onclick="add_resv()">
                         </div>
                     </form>
                 </div>
@@ -88,7 +90,7 @@
 {{#if records}}
 <h3 class="text-center">Reservations</h3>
 <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
-    <table class="table table-bordered m-0">
+    <table class="table table-bordered m-0" id="resv_table">
         <thead style="position: sticky; top: 0" class="bg-dark text-white">
             <tr>
                 <th>ID</th>
@@ -113,13 +115,14 @@
                 </td>
                 <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
                 </td>
+                <td>U/D</td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
 {{else}}
-<p class="p-3 text-center">Oops nothing found</p>
+<p class="p-3 text-center">Oops none current reservation found</p>
 {{/if}}
 
 
@@ -172,7 +175,7 @@
     _dt2.min = _dt1.value;
     let prc = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
     if (prc >= 0) document.getElementById("ff-price").innerHTML = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
-    else document.getElementById("ff-price").innerHTML = "" ;
+    else document.getElementById("ff-price").innerHTML = "";
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
@@ -182,6 +185,22 @@
         _dt2.min = _dt1.value;
         check_available();
     });
+    // highlight future reservations
+    let tbl = document.getElementById("resv_table");
+    let tday = new Date();
+    let h_dt = "";
+    let rd = "";
+    for (let i = 1 ; i < tbl.rows.length; i++) {
+        rd = tbl.rows[i].cells[2].textContent;
+        rd = rd.split(" ");
+        rd[0] = rd[0].split("/");
+        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+        //console.log(h_dt);
+        if (tday.getTime() < Date.parse(h_dt)) {
+        console.log("ops");
+            tbl.rows[i].classList.add("bg-info");
+        }
+    }
 
     function check_available() {
         if (_dt1.value != "" && _dt2.value != "") {

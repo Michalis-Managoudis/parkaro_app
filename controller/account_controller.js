@@ -244,6 +244,7 @@ function get_driver_history_page(req, res) {
                             let rvs = {};
                             for (let el2 of dt_2) {rvs[el2.id.toString()] = {"stars": el2.stars, "description": el2.description};}
                             rvs = JSON.stringify(rvs);
+                            //dt = JSON.stringify(dt);
                             res.render('driver/history', {
                                 records: dt,
                                 reviews: rvs,
