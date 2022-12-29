@@ -10,7 +10,7 @@
                 <th>Price</th>
                 <th>Car plate</th>
                 <th>Parking name</th>
-                <th>Add or update a review</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,19 +21,23 @@
                 <td class="_t_replace">{{this.r_end}}</td>
                 <td>{{this.price}} €</td>
                 <td>{{this.plate}}</td>
-                <td><a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}"
-                        target="_blank">
-                        <i class="fa fa-map-marker"></i> {{this.name}} </a>
+                <td id="P-{{this.id1}}">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}"
+                        target="_blank"><i class="fa fa-map-marker"></i> {{this.name}} </a>
                     <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
                 </td>
-                <td>
-                    <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-5 _btn_modal" style="font-size: 18px;" title="{{this.id1}}">+</button>
+                <td class="d-flex">
+                    <div>
+                        <button type="button" id="myBtn-{{this.id}}"
+                            class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;"><i
+                                class="fa fa-plus"></i> Review</button>
+                    </div>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
-    <div id="myModal" class="modal fade" tabindex="-1">
+    <div id="myModalRev" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -67,12 +71,66 @@
                         </div>
                         <p>Γράψτε μία κριτική</p>
                         <textarea name="description" id="desc" cols="45" rows="5"></textarea>
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-lg btn-secondary "
-                                data-bs-dismiss="modal">Cancel</button>
-                            <input type="submit" id="_sbmt_btn" class="btn btn-lg btn-success" value="Add">
-                        </div>
                     </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
+                    <div id="del_btn">
+                        <button type="submit" form="myForm" class="btn btn-lg btn-danger"
+                            formaction="/delete_review">Delete Review</button>
+                    </div>
+                    <input type="submit" form="myForm" id="_sbmt_btn" class="btn btn-lg btn-success" value="Add">
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- <div id="myModalEdit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reservation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/update_reservation" method="post" id="myEditForm">
+                        <input type="number" id="resv__id" hidden name="_id" value="">
+                        <input type="number" id="resv__ps_id" hidden name="ps_id" value="">
+                        <div class="text-nowrap">
+                            <label for="ff-date-1">Έναρξη χρέωσης (Άφιξη):</label>
+                            <input type="datetime-local" id="ff-date-1" name="s_date" value="" required autofocus>
+                        </div>
+                        <div class="text-nowrap">
+                            <label for="ff-date-2">Λήξη Χρέωσης (Αναχώρηση): </label>
+                            <input type="datetime-local" id="ff-date-2" name="e_date" value="" required>
+                        </div>
+                        <p class="bg-danger mt-5 w-50">Τελική τιμή: <span id="ff_price">0</span>€</p>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" form="myEditForm" id="" class="btn btn-lg btn-success" value="Update">
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    <div id="myModalDel" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="_modal-text">Are you sure you want to delete this reservation?</p>
+                    <form action="/delete_reservation" method="post" id="myDelForm">
+                        <input type="number" id="resv_id" hidden name="_id" value="">
+                        <input type="text" id="resv_prc" hidden name="_price" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" form="myDelForm" id="" class="btn btn-lg btn-danger"
+                        value="Delete Reservation">
                 </div>
             </div>
         </div>
@@ -84,12 +142,8 @@
 <p class="text-center"><a href="/home" class="text-center">Go to find a parking</a></p>
 {{/if}}
 
-
 <script>
     const rev = {{{ reviews }}};
-    //const rrr = {{{ records }}};
-    //console.log(rrr);
-
     var dat = document.querySelectorAll("._t_replace");
     var dats = [...dat];
     dats.forEach(datt => {
@@ -97,50 +151,125 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-        var bn = document.querySelectorAll("._btn_modal");
-        var btns = [...bn];
-        btns.forEach(btn => {
-            var idd = btn.id.split("-")[1];
+        highlight_future_reservations();
+        enable_edit_delete_actions();
+
+        review_buttons();
+        // edit_buttons();
+        delete_buttons();
+    });
+
+    function del_rev() {
+        form = document.getElementById('myForm');
+        form.action = "/delete_review";
+        form.submit();
+    }
+
+    function delete_buttons() {
+        let bn = document.querySelectorAll("._btn_del");
+        let btns = [...bn];
+        let myModal = new bootstrap.Modal(document.getElementById("myModalDel"));
+        let idd = "";
+        btns.forEach(function (btn, idd) {
+            idd = btn.id.split("-")[1];
             btn.addEventListener("click", function () {
-                var myModal = new bootstrap.Modal(document.getElementById("myModal"));
+                myModal.show();
+                document.getElementById("resv_id").value = idd;
+                document.getElementById("resv_prc").value = document.getElementById(idd).cells[3].textContent.split(" ")[0];
+            });
+        });
+    }
+
+    // function edit_buttons() {
+    //     let bn = document.querySelectorAll("._btn_edit");
+    //     let btns = [...bn];
+    //     let myModal = new bootstrap.Modal(document.getElementById("myModalEdit"));
+    //     let idd = "";
+    //     let h_dt = "";
+    //     let rd = "";
+    //     btns.forEach(function (btn, idd) {
+    //         idd = btn.id.split("-")[1];
+    //         btn.addEventListener("click", function () {
+    //             myModal.show();
+    //             for (let i = 1; i <= 2; i++) { // for each of 2 dates
+    //                 rd = document.getElementById(idd).cells[i].textContent;
+    //                 rd = rd.split(" ");
+    //                 rd[0] = rd[0].split("/");
+    //                 h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
+    //                 document.getElementById("ff-date-" + i).value = h_dt;
+    //             }
+    //             document.getElementById("resv__id").value = idd;
+    //             document.getElementById("resv__ps_id").value = document.getElementById(idd).cells[5].id;
+    //             modal_dates();
+    //         });
+    //     });
+    // }
+
+    function review_buttons() {
+        let bn = document.querySelectorAll("._btn_rev");
+        let btns = [...bn];
+        let myModal = new bootstrap.Modal(document.getElementById("myModalRev"));
+        let idd = "";
+        btns.forEach(function (btn, idd) {
+            idd = btn.id.split("-")[1];
+            btn.addEventListener("click", function () {
                 myModal.show();
                 if (rev[idd]) {
                     switch (rev[idd].stars) {
                         case 1:
-                            document.querySelector("#myModal #radio1").checked = true;
+                            document.querySelector("#myModalRev #radio1").checked = true;
                             break;
                         case 2:
-                            document.querySelector("#myModal #radio2").checked = true;
+                            document.querySelector("#myModalRev #radio2").checked = true;
                             break;
                         case 3:
-                            document.querySelector("#myModal #radio3").checked = true;
+                            document.querySelector("#myModalRev #radio3").checked = true;
                             break;
                         case 4:
-                            document.querySelector("#myModal #radio4").checked = true;
+                            document.querySelector("#myModalRev #radio4").checked = true;
                             break;
                         case 5:
-                            document.querySelector("#myModal #radio5").checked = true;
+                            document.querySelector("#myModalRev #radio5").checked = true;
                             break;
                         default:
-                            document.querySelector("#myModal #radio3").checked = true;
+                            document.querySelector("#myModalRev #radio3").checked = true;
                     }
                     if (rev[idd].description) {
-                        document.querySelector("#myModal #desc").innerHTML = rev[idd].description;
+                        document.querySelector("#myModalRev #desc").innerHTML = rev[idd].description;
                     }
-                    document.querySelector("#myModal #_sbmt_btn").value = "Update";
+                    document.querySelector("#myModalRev #_sbmt_btn").value = "Update";
+                    document.getElementById("del_btn").hidden = false; // enable delete button
                 }
                 else {
-                    document.querySelector("#myModal #radio3").checked = true;
-                    document.querySelector("#myModal #desc").innerHTML = "";
-                    document.querySelector("#myModal #_sbmt_btn").value = "Add";
+                    document.querySelector("#myModalRev #radio3").checked = true;
+                    document.querySelector("#myModalRev #desc").innerHTML = "";
+                    document.querySelector("#myModalRev #_sbmt_btn").value = "Add";
+                    document.getElementById("del_btn").hidden = true; // disable delete button
                 }
                 document.getElementById("rev_id").value = idd;
-                document.getElementById("ps_id").value = btn.title;
+                document.getElementById("ps_id").value = document.getElementById(idd).cells[5].id.split("-")[1];
             });
             disable_review_future_reservations(idd);
         });
-    });
-    highlight_future_reservations();
+    }
+
+    function enable_edit_delete_actions() { // only on future reservations
+        let tbl = document.getElementById("res_tbl");
+        let tday = new Date();
+        let h_dt = "";
+        let rd = "";
+        for (let i = 1; i < tbl.rows.length; i++) {
+            rd = tbl.rows[i].cells[1].textContent;
+            rd = rd.split(" ");
+            rd[0] = rd[0].split("/");
+            h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+            //console.log(h_dt);
+            if (tday.getTime() < Date.parse(h_dt)) {
+                tbl.rows[i].cells[6].innerHTML = `<div><button type="button" id="myDelBtn-${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[6].innerHTML;
+                // +++ <div><button type="button" id="myEditBtn-${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
+            }
+        }
+    }
 
     function disable_review_future_reservations(_id) {
         let tday = new Date();
@@ -149,8 +278,9 @@
         rd = document.getElementById(_id).cells[2].textContent;
         rd = rd.split(" ");
         rd[0] = rd[0].split("/");
-        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
         if (tday.getTime() < Date.parse(h_dt)) document.getElementById("myBtn-" + _id).disabled = true;
+        //console.log(_id);
     }
 
     function highlight_future_reservations() {
@@ -173,6 +303,8 @@
     function date_to_string(num) {
         let dtm_h = new Date(num);
         let dt_h = dtm_h.toLocaleDateString().split("/");
+        if (dt_h[0] < 10) { dt_h[0] = '0' + dt_h[0]; }
+        if (dt_h[1] < 10) { dt_h[1] = '0' + dt_h[1]; }
         let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
         let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
         let dtm = dt + " " + tm;

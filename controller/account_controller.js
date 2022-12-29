@@ -221,85 +221,6 @@ function delete_parking_station_account(req, res) {
 
 }
 
-function get_driver_history_page(req, res) {
-    if (req.session.sid === undefined) {
-        console.log("To see history page you must sign in first");
-        res.redirect('/sign_in');
-    }
-    else {
-        dataModel.get_("driver", req.session.sid, function (data) { // check if id exists
-            if (data) {
-                dataModel.load_reservation_history("driver",req.session.sid, function (data) {
-                    const dt = JSON.parse(JSON.stringify(data));
-                    let ids = [];
-                    for (let el of dt) {
-                        el.location = el.location.split("/")[1] + "," + el.location.split("/")[0];
-                        ids.push(el.id);
-                        // el.r_start = el.r_start.replace("T"," ");
-                        // el.r_end = el.r_end.replace("T"," ");
-                    }
-                    if (Object.keys(data).length !== 0) { // if driver has reservation history
-                        dataModel.read_("review", "stars, description", `id IN (${ids.toString()})`, function (data_2) {
-                            const dt_2 = JSON.parse(JSON.stringify(data_2));
-                            let rvs = {};
-                            for (let el2 of dt_2) {rvs[el2.id.toString()] = {"stars": el2.stars, "description": el2.description};}
-                            rvs = JSON.stringify(rvs);
-                            //dt = JSON.stringify(dt);
-                            res.render('driver/history', {
-                                records: dt,
-                                reviews: rvs,
-                                "is_driver": true,
-                                "login": (req.session.sid !== undefined),
-                                'lang': req.session.lang
-                            });
-
-                        });
-                    }
-                    else { // if driver hasn't a reservation history
-                        res.render('driver/history', {
-                            records: dt,
-                            "is_driver": true,
-                            "login": (req.session.sid !== undefined),
-                            'lang': req.session.lang
-                        });
-                    }
-                })
-            }
-        });
-    }
-}
-
-function add_new_driver_car(req,res) {
-    if (req.session.sid === undefined) {
-        console.log("You must sign in first");
-        res.redirect('/sign_in');
-    }
-    else {
-        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
-            if (data) {
-                let car = {};
-                for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
-                    if (field === "driver_id") car[field] = req.session.sid;
-                    else car[field] = req.body[field];
-                }
-                dataModel.check2_("car", `plate = '${car.plate}'`, function (data2) {
-                    if (!data2) {
-                        const vls = Object.values(car);
-                        dataModel.create_("car", vls, function () {
-                            console.log("New car added succesfully");
-                            res.redirect('/account');
-                        });
-                    }
-                    else {
-                        console.log("Car is already in database");
-                        res.redirect('/account');
-                    }
-                });
-            }
-        });
-    }
-}
-
 module.exports = {
     change_language,
     get_driver_account_page,
@@ -307,7 +228,5 @@ module.exports = {
     update_driver_data,
     update_parking_station_data,
     delete_driver_account,
-    delete_parking_station_account,
-    get_driver_history_page,
-    add_new_driver_car
+    delete_parking_station_account
 }

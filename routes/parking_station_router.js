@@ -17,6 +17,8 @@ router.get('/home', parking_station_controller.get_parking_station_home_page);
 router.post('/home', parking_station_controller.search_parking_station_reservation_availability);
 router.post('/add_reservation', parking_station_controller.add_parking_station_reservation);
 router.get('/my_parking',parking_station_controller.get_parking_station_my_parking_page);
+router.post('/delete_reservation', parking_station_controller.delete_parking_station_reservation);
+router.post('/update_reservation', parking_station_controller.update_parking_station_reservation);
 // change language page
 router.get('/language', account_controller.change_language);                                            //? !!!!!!! ready
 // account page

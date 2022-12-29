@@ -58,7 +58,7 @@ function get_driver_port_page(req, res) {
 };
 
 function search_driver_home_page(req, res) {
-    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
     req.session._ready_to_add_reservation = true;
     let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
@@ -74,7 +74,7 @@ function search_driver_home_page(req, res) {
 };
 
 function search_driver_airport_page(req, res) {
-    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
     req.session._ready_to_add_reservation = true;
     let cond = `parking_type = 1 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
@@ -90,7 +90,7 @@ function search_driver_airport_page(req, res) {
 };
 
 function search_driver_port_page(req, res) {
-    req.session._dts = {"start": req.body.s_dttm,"end": req.body.e_dttm};
+    req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
     req.session._ready_to_add_reservation = true;
     let cond = `parking_type = 2 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
     dataModel.read_("parking_station", "id, location", cond, function (rows) {
@@ -171,6 +171,19 @@ function add_driver_review(req, res) {
     }
 };
 
+function delete_driver_review(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("To delete a review you must sign in first");
+        res.redirect('/sign_in')
+    }
+    else {
+        dataModel.delete_("review", req.body._id, function () {
+            console.log("Review deleted succesfully");
+            res.redirect('/history');
+        });
+    }
+};
+
 function add_driver_reservation(req, res) {
     if (req.session.sid === undefined) {
         console.log("To add a reservation you must sign in first");
@@ -180,7 +193,7 @@ function add_driver_reservation(req, res) {
         const ps_id = req.session.ps_id;
         let resv = {};
         resv.car_id = req.body.car;
-        
+
         dataModel.find_free_parking_lots_of_parking_station(ps_id, Date.parse(req.body.s_date), Date.parse(req.body.e_date), function (data) {
             let _id = JSON.parse(JSON.stringify(data));
             if (_id[0] === undefined) {
@@ -188,7 +201,7 @@ function add_driver_reservation(req, res) {
                 console.log("Can't find an available parking space try again other datetimes or another parking station");
                 res.redirect('/home');
             }
-            else{
+            else {
                 resv.pl_id = _id[0].id;
                 resv.r_start = Date.parse(req.body.s_date); //new Date(req.body.s_date).getTime();
                 resv.r_end = Date.parse(req.body.e_date); //new Date(req.body.e_date).getTime();
@@ -197,17 +210,66 @@ function add_driver_reservation(req, res) {
                 req.session._ready_to_add_reservation = false;
                 // req.session._dts = {};
                 dataModel.create_("reservation", required_values, function () {
-                    console.log("Reservation booked");
-                    res.redirect('/history');
+                    dataModel.update_points(req.session.sid, parseInt(resv.price / 10), function () {
+                        console.log("Reservation booked");
+                        res.redirect('/history');
+                    });
                 });
             }
         });
     }
 };
 
-function search_driver_reservation_availability(req,res) {
-    const ps_id = req.session.ps_id;
-    req.session._dts = {"start": req.body.s_date,"end": req.body.e_date};
+function delete_driver_reservation(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("To delete a reservation you must sign in first");
+        res.redirect('/sign_in')
+    }
+    else {
+        dataModel.get_("reservation", req.body._id, function (data) { // check if reservation exists
+            if (data) {
+                data = JSON.parse(JSON.stringify(data));
+                let today = new Date();
+                if (today.getTime() < data.r_start) { // check if reservation is future
+                    dataModel.delete_("reservation", req.body._id, function () {
+                        dataModel.update_points(req.session.sid, -parseInt(req.body._price / 10), function () {
+                            console.log("Reservation deleted succesfully");
+                            res.redirect('/history');
+                        });
+                    });
+                }
+            }
+        });
+    }
+};
+
+// function update_driver_reservation(req, res) {
+//     if (req.session.sid === undefined) {
+//         console.log("To delete a reservation you must sign in first");
+//         res.redirect('/sign_in')
+//     }
+//     else {
+//         dataModel.get_("reservation", req.body._id, function (data) { // check if reservation exists
+//             if (data) {
+//                 data = JSON.parse(JSON.stringify(data));
+//                 let today = new Date();
+//                 if (today.getTime() < data.r_start) { // check if reservation is future
+// 
+//                     dataModel.update("reservation", req.body._id, function () {
+//                         console.log("Reservation deleted succesfully");
+//                         res.redirect('/history');
+//                     });
+//                 }
+//             }
+//         });
+//     }
+// };
+
+function search_driver_reservation_availability(req, res) {
+    let ps_id = "";
+    if (req.session.ps_id) ps_id = req.session.ps_id;
+    // else ps_id = req.body.ps_id; //! only if history page
+    req.session._dts = { "start": req.body.s_date, "end": req.body.e_date }; //! if history page need ;
     dataModel.find_free_parking_lots_of_parking_station(ps_id, Date.parse(req.session._dts.start), Date.parse(req.session._dts.end), function (data) {
         let _id = JSON.parse(JSON.stringify(data));
         if (_id[0] === undefined) {
@@ -222,6 +284,85 @@ function search_driver_reservation_availability(req,res) {
     });
 };
 
+function get_driver_history_page(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("To see history page you must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        dataModel.get_("driver", req.session.sid, function (data) { // check if id exists
+            if (data) {
+                dataModel.load_reservation_history("driver", req.session.sid, function (data2) {
+                    const dt = JSON.parse(JSON.stringify(data2));
+                    let ids = [];
+                    for (let el of dt) {
+                        el.location = el.location.split("/")[1] + "," + el.location.split("/")[0];
+                        ids.push(el.id);
+                        // el.r_start = el.r_start.replace("T"," ");
+                        // el.r_end = el.r_end.replace("T"," ");
+                    }
+                    if (Object.keys(data2).length !== 0) { // if driver has reservation history
+                        dataModel.read_("review", "stars, description", `id IN (${ids.toString()})`, function (data_3) {
+                            const dt_2 = JSON.parse(JSON.stringify(data_3));
+                            let rvs = {};
+                            for (let el2 of dt_2) { rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description }; }
+                            rvs = JSON.stringify(rvs);
+                            //dt = JSON.stringify(dt);
+                            res.render('driver/history', {
+                                records: dt,
+                                reviews: rvs,
+                                "is_driver": true,
+                                "login": (req.session.sid !== undefined),
+                                'lang': req.session.lang
+                            });
+
+                        });
+                    }
+                    else { // if driver hasn't a reservation history
+                        res.render('driver/history', {
+                            records: dt,
+                            "is_driver": true,
+                            "login": (req.session.sid !== undefined),
+                            'lang': req.session.lang
+                        });
+                    }
+                })
+            }
+        });
+    }
+}
+
+function add_new_driver_car(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("You must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
+            if (data) {
+                let car = {};
+                for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
+                    if (field === "driver_id") car[field] = req.session.sid;
+                    else car[field] = req.body[field];
+                }
+                dataModel.check2_("car", `plate = '${car.plate}'`, function (data2) {
+                    if (!data2) {
+                        const vls = Object.values(car);
+                        dataModel.create_("car", vls, function () {
+                            console.log("New car added succesfully");
+                            res.redirect('/account');
+                        });
+                    }
+                    else {
+                        console.log("Car is already in database");
+                        res.redirect('/account');
+                    }
+                });
+            }
+        });
+    }
+}
+
 module.exports = {
     get_driver_info_page,
     get_driver_home_page,
@@ -233,6 +374,11 @@ module.exports = {
     get_driver_port_page,
     get_driver_book_page,
     add_driver_review,
+    delete_driver_review,
     add_driver_reservation,
-    search_driver_reservation_availability
+    // update_driver_reservation,
+    delete_driver_reservation,
+    search_driver_reservation_availability,
+    get_driver_history_page,
+    add_new_driver_car
 }

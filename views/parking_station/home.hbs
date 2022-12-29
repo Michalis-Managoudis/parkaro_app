@@ -111,15 +111,63 @@
                 <td class="_t_replace">{{this.r_start}}</td>
                 <td class="_t_replace">{{this.r_end}}</td>
                 <td>{{this.price}} €</td>
-                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2">{{this.email}}</p>
+                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p>
                 </td>
                 <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
                 </td>
-                <td>U/D</td>
+                <td class="d-flex">
+
+                </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
+    <div id="myModalEdit-" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reservation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/parking_station/update_reservation" method="post" id="myEditForm-">
+                        <input type="number" id="resv__id-" hidden name="_id" value="">
+                        <input type="email" id="resv_d_email-" hidden name="d_email" value="">
+                        <div class="text-nowrap">
+                            <label for="ff-price">Price:</label>
+                            <input type="text" id="ff-price-" name="price" placeholder="" value=""> €
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value="Update">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="myModalDel-" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="_modal-text">Are you sure you want to delete this reservation?</p>
+                    <form action="/parking_station/delete_reservation" method="post" id="myDelForm-">
+                        <input type="number" id="resv_id--" hidden name="_id" value="">
+                        <input type="text" id="resv_prc-" hidden name="_price" value="">
+                        <input type="email" id="resv_d_email--" hidden name="d_email" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value="Delete Reservation">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {{else}}
 <p class="p-3 text-center">Oops none current reservation found</p>
@@ -152,6 +200,12 @@
             var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
             myModal.show();
         });
+
+        highlight_future_reservations();
+        enable_edit_delete_actions();
+
+        edit_buttons();
+        delete_buttons();
     });
 
     let _dt1 = document.getElementById("ff-r_start");
@@ -185,20 +239,70 @@
         _dt2.min = _dt1.value;
         check_available();
     });
-    // highlight future reservations
-    let tbl = document.getElementById("resv_table");
-    let tday = new Date();
-    let h_dt = "";
-    let rd = "";
-    for (let i = 1 ; i < tbl.rows.length; i++) {
-        rd = tbl.rows[i].cells[2].textContent;
-        rd = rd.split(" ");
-        rd[0] = rd[0].split("/");
-        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
-        //console.log(h_dt);
-        if (tday.getTime() < Date.parse(h_dt)) {
-        console.log("ops");
-            tbl.rows[i].classList.add("bg-info");
+
+    function delete_buttons() {
+        let bn = document.querySelectorAll("._btn_del");
+        if (bn.length) {
+            let btns = [...bn];
+            let myModal = new bootstrap.Modal(document.getElementById("myModalDel-"));
+            let idd = "";
+            btns.forEach(function (btn, idd) {
+                idd = btn.id.split("--")[1];
+                btn.addEventListener("click", function () {
+                    myModal.show();
+                    document.getElementById("resv_id--").value = idd;
+                    document.getElementById("resv_prc-").value = document.getElementById(idd).cells[4].textContent.split(" ")[0];
+                    document.getElementById("resv_d_email--").value = document.getElementById("eml-" + idd).textContent;
+                });
+            });
+        }
+    }
+
+    function edit_buttons() {
+        let bn = document.querySelectorAll("._btn_edit");
+        if (bn.length) {
+            let btns = [...bn];
+            let myModal = new bootstrap.Modal(document.getElementById("myModalEdit-"));
+            let idd = "";
+            let h_dt = "";
+            let rd = "";
+            btns.forEach(function (btn, idd) {
+                idd = btn.id.split("--")[1];
+                btn.addEventListener("click", function () {
+                    myModal.show();
+                    document.getElementById("resv__id-").value = idd;
+                    document.getElementById("resv_d_email-").value = document.getElementById("eml-" + idd).textContent;
+                });
+            });
+        }
+    }
+
+    function enable_edit_delete_actions() { // only on future reservations
+        let tbl = document.getElementById("resv_table");
+        if (tbl) {
+            for (let i = 1; i < tbl.rows.length; i++) {
+                tbl.rows[i].cells[7].innerHTML = `<div><button type="button" id="myEditBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
+                <div><button type="button" id="myDelBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[7].innerHTML;
+            }
+        }
+    }
+
+    function highlight_future_reservations() { // highlight future reservations
+        let tbl = document.getElementById("resv_table");
+        if (tbl) {
+            let tday = new Date();
+            let h_dt = "";
+            let rd = "";
+            for (let i = 1; i < tbl.rows.length; i++) {
+                rd = tbl.rows[i].cells[3].textContent;
+                rd = rd.split(" ");
+                rd[0] = rd[0].split("/");
+                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+                //console.log(h_dt);
+                if (tday.getTime() < Date.parse(h_dt)) {
+                    tbl.rows[i].classList.add("bg-info");
+                }
+            }
         }
     }
 
@@ -225,6 +329,8 @@
     function date_to_string(num) {
         let dtm_h = new Date(num);
         let dt_h = dtm_h.toLocaleDateString().split("/");
+        if (dt_h[0] < 10) { dt_h[0] = '0' + dt_h[0]; }
+        if (dt_h[1] < 10) { dt_h[1] = '0' + dt_h[1]; }
         let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
         let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
         let dtm = dt + " " + tm;

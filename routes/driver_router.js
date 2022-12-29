@@ -27,15 +27,20 @@ router.post('/port', driver_controller.search_driver_port_page);
 router.get('/book/:ps_id', driver_controller.get_driver_book_page);
 router.post('/book', driver_controller.search_driver_reservation_availability);
 router.post('/book/add', driver_controller.add_driver_reservation);
+router.post('/delete_reservation', driver_controller.delete_driver_reservation);
+//! router.post('/update_reservation', driver_controller.update_driver_reservation);
 router.post('/add_review', driver_controller.add_driver_review);
+router.post('/delete_review', driver_controller.delete_driver_review);
+//! router.post('/history', driver_controller.search_driver_reservation_availability);
 // change language page
-router.get('/language', account_controller.change_language);                                //? !!!!!!! ready
+router.get('/language', account_controller.change_language);                                    //? !!!!!!! ready
 // account page
 router.get('/account', account_controller.get_driver_account_page);                           //? !!!!!!! ready
 router.post('/account', account_controller.update_driver_data); // update account             //? !!!!!!! ready
 router.get('/account/delete', account_controller.delete_driver_account); // delete account    //? !!!!!!! ready
-router.get('/history', account_controller.get_driver_history_page);
-router.post('/account/add_new_car', account_controller.add_new_driver_car); 
+
+router.get('/history', driver_controller.get_driver_history_page);
+router.post('/account/add_new_car', driver_controller.add_new_driver_car); 
 // info page
 router.get('/info', driver_controller.get_driver_info_page);                                    //? !!!!!!! ready
 // load sign pages
