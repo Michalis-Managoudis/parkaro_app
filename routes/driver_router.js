@@ -28,6 +28,8 @@ router.get('/book/:ps_id', driver_controller.get_driver_book_page);
 router.post('/book', driver_controller.search_driver_reservation_availability);
 router.post('/book/add', driver_controller.add_driver_reservation);
 router.post('/delete_reservation', driver_controller.delete_driver_reservation);
+router.post('/delete_car', driver_controller.delete_driver_car);
+router.post('/update_car', driver_controller.update_driver_car);
 //! router.post('/update_reservation', driver_controller.update_driver_reservation);
 router.post('/add_review', driver_controller.add_driver_review);
 router.post('/delete_review', driver_controller.delete_driver_review);

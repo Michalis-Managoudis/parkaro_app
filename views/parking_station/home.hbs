@@ -44,24 +44,23 @@
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-model">Model</label>
-                            <input type="text" id="ff-model" name="model" placeholder="">
+                            <input type="text" id="ff-model" name="model">
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-color">Color</label>
-                            <input type="text" id="ff-color" name="color" placeholder="">
+                            <input type="text" id="ff-color" name="color">
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-r_start">Έναρξη χρέωσης (Άφιξη):</label>
-                            <input type="datetime-local" id="ff-r_start" name="r_start" value="" required>
+                            <input type="datetime-local" id="ff-r_start" name="r_start" required>
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-r_end">Λήξη Χρέωσης (Αναχώρηση): </label>
-                            <input type="datetime-local" id="ff-r_end" name="r_end" value="" required>
+                            <input type="datetime-local" id="ff-r_end" name="r_end" required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-price">Price:</label>
-                            {{!-- price calculate --}}
-                            <input type="text" id="ff-price" name="price" placeholder="" value=""> €
+                            <label for="ff-price">Price: </label>
+                            <input type="text" id="ff-price" name="price"> €
                         </div>
                         <div class="text-nowrap">
                             {{#if empty_lots}}
@@ -134,7 +133,7 @@
                         <input type="number" id="resv__id-" hidden name="_id" value="">
                         <input type="email" id="resv_d_email-" hidden name="d_email" value="">
                         <div class="text-nowrap">
-                            <label for="ff-price">Price:</label>
+                            <label for="ff-price-">Price:</label>
                             <input type="text" id="ff-price-" name="price" placeholder="" value=""> €
                         </div>
                     </form>
@@ -227,9 +226,9 @@
     _dt1.value = today;
     _dt1.max = _dt2.value;
     _dt2.min = _dt1.value;
-    let prc = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
-    if (prc >= 0) document.getElementById("ff-price").innerHTML = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
-    else document.getElementById("ff-price").innerHTML = "";
+    //document.getElementById("ff-price").innerHTML = final_price_calculation("h5,7,9,1d20,30,40,5m50,70,90,10", _dt1.value, _dt2.value);
+    //if (prc >= 0) document.getElementById("ff-price").innerHTML = prc; // calculate final price
+    //else document.getElementById("ff-price").innerHTML = "";
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
@@ -308,7 +307,7 @@
 
     function check_available() {
         if (_dt1.value != "" && _dt2.value != "") {
-            document.getElementById("ff-price").value = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
+            //document.getElementById("ff-price").value = final_price_calculation("h5,7,9,1d20,30,40,5m50,70,90,10", _dt1.value, _dt2.value); // calculate final price
             form = document.getElementById('_form2');
             //form.target='_blank';
             form.action = "/parking_station/home";

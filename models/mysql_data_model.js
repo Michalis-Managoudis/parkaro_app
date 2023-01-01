@@ -39,7 +39,8 @@ const schema_show = { //? , "lang";;;;;;;
 };
 const schema_editable = {
   "driver": ["email", "password", "name", "phone", "lang", "photo"],
-  "car": ["plate", "model", "color", "photo"],
+  // "car": ["plate", "model", "color", "photo"],
+  "car": ["model", "color"],
   "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   //"reservation": ["car_id", "r_start", "r_end", "price"],
   "reservation": ["price"],

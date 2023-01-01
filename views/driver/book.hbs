@@ -68,7 +68,7 @@
                 <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{parking_station.location}}" target="_blank">
                     <i class="fa fa-map-marker"></i> Click here to navigate</a>
                 <p class="p-5 m-5"></p>
-                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">0</span>€</p>
+                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">{{price}}</span>€</p>
                 {{!-- <p>{{parking_station.location}}</p> --}}
             </div>
         </div>
@@ -95,10 +95,10 @@
     _dt1.min = today;
     _dt2.min = today;
     _dt1.max = _dt2.value;
-    _dt2.min = _dt1.value;
-    let prc = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
-    if (prc >= 0) document.getElementById("f_price").innerHTML = prc ;
-    else document.getElementById("f_price").innerHTML = 0 ;
+    //final_price_calculation();
+    //let prc = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
+    //if (prc >= 0) document.getElementById("f_price").innerHTML = prc ;
+    //else document.getElementById("f_price").innerHTML = 0 ;
 
     _dt2.addEventListener('change', function() {
         _dt1.max = _dt2.value;
@@ -111,7 +111,7 @@
 
     function check_available() {
         if (_dt1.value != "" && _dt2.value != "") {
-            document.getElementById("f_price").innerHTML = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
+            //document.getElementById("f_price").innerHTML = (10 * (new Date(_dt2.value) - new Date(_dt1.value)) / 3600000).toFixed(2); // calculate final price
             form=document.getElementById('_form');
             //form.target='_blank';
             form.action="/book";

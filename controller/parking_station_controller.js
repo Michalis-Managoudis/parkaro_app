@@ -48,8 +48,8 @@ function search_parking_station_reservation_availability(req, res) {
         res.redirect('/parking_station/sign_in');
     }
     else {
-        dataModel.get_("parking_station", req.session.sid, function (data) { // check if id exists
-            if (data) {
+        dataModel.get_("parking_station", req.session.sid, function (data0) { // check if id exists
+            if (data0) {
                 let n_dt = new Date();
                 n_dt = n_dt.getTime();
                 dataModel.load_parking_station_current_reservations(req.session.sid, n_dt, function (data) {
@@ -65,6 +65,7 @@ function search_parking_station_reservation_availability(req, res) {
                             for (let el of dt3) e_lots.push(el.id);
                             let f_dt = {};
                             let flds = ["email", "name", "phone", "plate", "model", "color", "r_start", "r_end", "price"];
+                            req.body.price = final_price_calculation(data0.price_list, req.body.r_start, req.body.r_end);
                             for (let field of flds) f_dt[field] = req.body[field];
                             res.render('parking_station/home', {
                                 records: dt,
@@ -186,13 +187,18 @@ function get_parking_station_my_parking_page(req, res) {
                     let today = new Date();
                     let tday = new Date();
                     let tod = tday.toLocaleDateString().split("/"); //! not right format
+                    if (tod[0] < 10) { tod[0] = '0' + tod[0]; }
+                    if (tod[1] < 10) { tod[1] = '0' + tod[1]; }
                     let tod2 = tod[2] + "-" + tod[1] + "-" + tod[0];
                     let dt_st = Date.parse(tod2 + "T00:00:00");
+                    console.log(tod2 + "T00:00:00");
                     let dt_en = Date.parse(today);
                     dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data2) { // today income
                         const dt2 = JSON.parse(JSON.stringify(data2));
                         tday.setDate(tday.getMonth() - 1);
                         let tod3 = tday.toLocaleDateString().split("/"); //! not right format
+                        if (tod3[0] < 10) { tod3[0] = '0' + tod3[0]; }
+                        if (tod3[1] < 10) { tod3[1] = '0' + tod3[1]; }
                         let tod4 = tod3[2] + "-" + tod3[1] + "-" + tod3[0];
                         let dt_st = Date.parse(tod4 + "T00:00:00");
                         let dt_en = Date.parse(today);
@@ -284,6 +290,36 @@ function get_parking_station_info_page(req, res) {
         'lang': req.session.lang
     });
 };
+
+function final_price_calculation(price_list, dt1, dt2) {
+    let h = price_list.split("d")[0].slice(1).split(",");
+    let d = price_list.split("d")[1].split("m")[0].split(",");
+    let m = price_list.split("m")[1].split(",");
+    for (let i = 0; i < 4; i++) {
+        h[i] = parseFloat(h[i]);
+        d[i] = parseFloat(d[i]);
+        m[i] = parseFloat(m[i]);
+    }
+    let dif = Date.parse(dt2) - Date.parse(dt1);
+    let price = 0;
+    dif = dif / 3600000;
+    if (dif < 24) { // hours
+        dif = Math.ceil(dif);
+        if (dif <= 3) price = h[dif - 1];
+        else price = h[2] + (dif - 3) * h[3];
+    }
+    else if (dif < 24 * 30) { // days
+        dif = Math.ceil(dif / 24);
+        if (dif <= 3) price = d[dif - 1];
+        else price = d[2] + (dif - 3) * d[3];
+    } else { // months
+        dif = Math.ceil(dif / 24 * 30);
+        if (dif <= 3) price = m[dif - 1];
+        else price = m[2] + (dif - 3) * m[3];
+    }
+    //price = price.toFixed(2);
+    return price;
+}
 
 module.exports = {
     get_parking_station_home_page,
