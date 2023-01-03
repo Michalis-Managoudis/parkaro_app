@@ -138,6 +138,7 @@ function get2_(table, flds, id, cb) {
     if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
   });
 };
+
 // check if value already exist in database
 function check2_(table, cond, cb) {
   const sql = `SELECT id FROM ${table} WHERE ${cond}`;
@@ -183,6 +184,14 @@ function calculate_income(id, dt_start, dt_end, cb){
 
 function find_free_parking_lots_of_parking_station(_id, _start, _end, cb) {
   let sql = `SELECT id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${_id}) AND ${_start} < r_end AND ${_end} > r_start) AND parking_station_id = ${_id}`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
+function find_free_parking_lots_of_parking_station2(_id, _start, _end, cb) {
+  let sql = `SELECT pl.id, ps.work_hours FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id = ps.id) WHERE pl.id NOT IN (SELECT parking_lot_id FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${_id}) AND ${_start} < r_end AND ${_end} > r_start) AND parking_station_id = ${_id}`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
@@ -254,6 +263,7 @@ module.exports = {
   load_parking_station_current_reservations,
   load_parking_station_reservations,
   find_free_parking_lots_of_parking_station,
+  find_free_parking_lots_of_parking_station2,
   calculate_income,
   //add_new_reservation,
   get2_,

@@ -147,43 +147,35 @@
         delete_buttons();
     });
 
-    function delete_buttons() {
-        let bn = document.querySelectorAll("._btn_del");
-        if (bn.length) {
-            let btns = [...bn];
-            let myModal = new bootstrap.Modal(document.getElementById("myModalDel-"));
-            let idd = "";
-            btns.forEach(function (btn, idd) {
-                idd = btn.id.split("--")[1];
-                btn.addEventListener("click", function () {
-                    myModal.show();
-                    document.getElementById("resv_id--").value = idd;
-                    document.getElementById("resv_prc-").value = document.getElementById(idd).cells[4].textContent.split(" ")[0];
-                    document.getElementById("resv_d_email--").value = document.getElementById("eml-" + idd).textContent;
-                });
-            });
-        }
-    }
-
-    function edit_buttons() {
-        let bn = document.querySelectorAll("._btn_edit");
-        if (bn.length) {
-            let btns = [...bn];
-            let myModal = new bootstrap.Modal(document.getElementById("myModalEdit-"));
-            let idd = "";
+    function highlight_future_reservations() { // highlight future reservations
+        let tbl = document.getElementById("res_table");
+        if (tbl) {
+            let tday = new Date();
             let h_dt = "";
             let rd = "";
-            btns.forEach(function (btn, idd) {
-                idd = btn.id.split("--")[1];
-                btn.addEventListener("click", function () {
-                    myModal.show();
-                    document.getElementById("resv__id-").value = idd;
-                    document.getElementById("resv_d_email-").value = document.getElementById("eml-" + idd).textContent;
-                });
-            });
+            for (let i = 1; i < tbl.rows.length; i++) {
+                rd = tbl.rows[i].cells[3].textContent;
+                rd = rd.split(" ");
+                rd[0] = rd[0].split("/");
+                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+                //console.log(h_dt);
+                if (tday.getTime() < Date.parse(h_dt)) {
+                    tbl.rows[i].classList.add("bg-info");
+                }
+            }
         }
     }
 
+    function enable_edit_delete_actions() { // only on future reservations
+        let tbl = document.getElementById("res_table");
+        if (tbl) {
+            for (let i = 1; i < tbl.rows.length; i++) {
+                tbl.rows[i].cells[7].innerHTML = `<div><button type="button" id="myEditBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
+                <div><button type="button" id="myDelBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[7].innerHTML;
+            }
+        }
+    }
+    
     function review_buttons() {
         let bn = document.querySelectorAll("._btn_rev");
         if (bn.length) {
@@ -220,32 +212,40 @@
         //console.log(_id);
     }
 
-    function enable_edit_delete_actions() { // only on future reservations
-        let tbl = document.getElementById("res_table");
-        if (tbl) {
-            for (let i = 1; i < tbl.rows.length; i++) {
-                tbl.rows[i].cells[7].innerHTML = `<div><button type="button" id="myEditBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
-                <div><button type="button" id="myDelBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[7].innerHTML;
-            }
+    function edit_buttons() {
+        let bn = document.querySelectorAll("._btn_edit");
+        if (bn.length) {
+            let btns = [...bn];
+            let myModal = new bootstrap.Modal(document.getElementById("myModalEdit-"));
+            let idd = "";
+            let h_dt = "";
+            let rd = "";
+            btns.forEach(function (btn, idd) {
+                idd = btn.id.split("--")[1];
+                btn.addEventListener("click", function () {
+                    myModal.show();
+                    document.getElementById("resv__id-").value = idd;
+                    document.getElementById("resv_d_email-").value = document.getElementById("eml-" + idd).textContent;
+                });
+            });
         }
     }
 
-    function highlight_future_reservations() { // highlight future reservations
-        let tbl = document.getElementById("res_table");
-        if (tbl) {
-            let tday = new Date();
-            let h_dt = "";
-            let rd = "";
-            for (let i = 1; i < tbl.rows.length; i++) {
-                rd = tbl.rows[i].cells[3].textContent;
-                rd = rd.split(" ");
-                rd[0] = rd[0].split("/");
-                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
-                //console.log(h_dt);
-                if (tday.getTime() < Date.parse(h_dt)) {
-                    tbl.rows[i].classList.add("bg-info");
-                }
-            }
+    function delete_buttons() {
+        let bn = document.querySelectorAll("._btn_del");
+        if (bn.length) {
+            let btns = [...bn];
+            let myModal = new bootstrap.Modal(document.getElementById("myModalDel-"));
+            let idd = "";
+            btns.forEach(function (btn, idd) {
+                idd = btn.id.split("--")[1];
+                btn.addEventListener("click", function () {
+                    myModal.show();
+                    document.getElementById("resv_id--").value = idd;
+                    document.getElementById("resv_prc-").value = document.getElementById(idd).cells[4].textContent.split(" ")[0];
+                    document.getElementById("resv_d_email--").value = document.getElementById("eml-" + idd).textContent;
+                });
+            });
         }
     }
 

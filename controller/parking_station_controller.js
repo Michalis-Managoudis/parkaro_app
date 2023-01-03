@@ -24,7 +24,6 @@ function get_parking_station_home_page(req, res) {
                     dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) {
                         let dt2 = JSON.parse(JSON.stringify(data2));
                         let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
-                        //dataModel.find_free_parking_lots_of_parking_station(req.session.sid,Date.parse(),Date.parse());
                         res.render('parking_station/home', {
                             records: dt,
                             pl_per: per,
@@ -62,11 +61,13 @@ function search_parking_station_reservation_availability(req, res) {
                         dataModel.find_free_parking_lots_of_parking_station(req.session.sid, Date.parse(req.body.r_start), Date.parse(req.body.r_end), function (data3) {
                             const dt3 = JSON.parse(JSON.stringify(data3));
                             let e_lots = [];
-                            for (let el of dt3) e_lots.push(el.id);
                             let f_dt = {};
                             let flds = ["email", "name", "phone", "plate", "model", "color", "r_start", "r_end", "price"];
                             req.body.price = final_price_calculation(data0.price_list, req.body.r_start, req.body.r_end);
                             for (let field of flds) f_dt[field] = req.body[field];
+                            if (check_work_hours(data0.work_hours, req.body.r_start, req.body.r_end)) {
+                                for (let el of dt3) e_lots.push(el.id);
+                            }
                             res.render('parking_station/home', {
                                 records: dt,
                                 pl_per: per,
@@ -319,6 +320,32 @@ function final_price_calculation(price_list, dt1, dt2) {
     }
     //price = price.toFixed(2);
     return price;
+}
+
+function check_work_hours(work_hours, dt1, dt2) {
+    const hrs = work_hours.split(",");
+    dt1 = new Date(dt1);
+    dt2 = new Date(dt2);
+    let d1 = new Date(dt1).toLocaleTimeString();
+    let d2 = new Date(dt2).toLocaleTimeString();
+    d1 = convert_12h_to_24h(d1);
+    d2 = convert_12h_to_24h(d2);
+
+    if (d1 > hrs[dt1.getDay()].split("-")[0] && d1 < hrs[dt1.getDay()].split("-")[1]) { // if start date between parking station work hours of that day
+        if (d2 > hrs[dt2.getDay()].split("-")[0] && d2 < hrs[dt2.getDay()].split("-")[1]) { // if end date between parking station work hours of that day
+            return true;
+        }
+    }
+    return false;
+}
+function convert_12h_to_24h(time12h) {
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+    if (hours === "12") hours = "00";
+    if (modifier === "PM" || modifier === "μ.μ.") hours = parseInt(hours) + 12;
+    if (hours < 10) { hours = '0' + hours; }
+    if (minutes < 10) { minutes = '0' + parseInt(minutes); }
+    return `${hours}:${minutes}`;
 }
 
 module.exports = {

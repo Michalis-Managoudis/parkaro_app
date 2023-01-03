@@ -33,7 +33,8 @@
             {{!-- <br> --}}
             <div id="_search">
                 <label for="search_date1">Άφιξη:</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                <input type="datetime-local" id="search_date1" name="s_dttm" value="{{dates.start}}" required autofocus />
+                <input type="datetime-local" id="search_date1" name="s_dttm" value="{{dates.start}}" required
+                    autofocus />
                 <label for="search_date2">Αναχώρηση:</label>
                 <input type="datetime-local" id="search_date2" name="e_dttm" value="{{dates.end}}" required />
             </div>
@@ -176,7 +177,7 @@
 
     _dt1.min = today;
     _dt2.min = today;
-    
+
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
@@ -186,14 +187,10 @@
         _dt2.min = _dt1.value;
         check_available();
     });
-    _srch.addEventListener('change', function () {
-        //search in backend for available parking
-    });
 
     function check_available() {
         if (_dt1.value != "" && _dt2.value != "") {
             document.getElementById("_form2").submit();
         }
     }
-
 </script>
