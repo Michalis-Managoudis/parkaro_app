@@ -81,13 +81,23 @@
         }
     };
     map.on('load', () => {
+        let stars = "";
+        let prc = "";
         for (let i = 0; i < Object.keys(data).length; i++) {
+            stars = "";
+            if (data[i].rating === "NaN") {
+                stars = '<i class="fa fa-star-o"></i>';
+                data[i].rating = 0;
+            }
+            for (let j = 1 ; j <= data[i].rating ; j++) stars = stars + '<i class="fa fa-star"></i>';
+            if (!Number.isInteger(data[i].rating)) stars = stars + '<i class="fa fa-star-half-empty"></i>';
+            if (data[i].price) prc = '<p class="m-0"> Price: ' + data[i].price + ' €</p>';
             marker_data.data.features[i] = {
                 'type': 'Feature',
                 'properties': {
                     'id': data[i].id,
                     'description':
-                        '<strong>' + data[i].id + '</strong> <a href="/book/' + data[i].id + '" id="' + data[i].id + '" class="m-h-ps_marker" onClick="pass_id(' + data[i].id + ')">BOOK NOW</a>',
+                        '<strong>' + data[i].name + '</strong> <span>'+ stars + '('+ data[i].rating +'/5)' +'</span> <br> <div class="d-flex justify-content-between">' + prc + ' <a href="/book/' + data[i].id + '" id="' + data[i].id + '" class="m-h-ps_marker bg-info">BOOK NOW</a></div>',
                     'icon': 'car-15'
                 },
                 'geometry': {
@@ -141,12 +151,11 @@
     //sessionStorage.setItem("parking_station_target",e.properties.id);
     //});
 
-    function pass_id(el_id) {
-        sessionStorage.setItem("parking_station_target", el_id);
-
+    //function pass_id(el_id) {
+        //sessionStorage.setItem("parking_station_target", el_id);
         //console.log(el_id);
         //alert(el_id);
-    }
+    //}
 
     //// map style
     //const layerList = document.getElementById('menu');

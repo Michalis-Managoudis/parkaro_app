@@ -32,6 +32,7 @@ const schema_required = {
 const schema_show = { //? , "lang";;;;;;;
   "driver": ["email", "name", "phone", "photo", "points"],
   "car": ["plate", "model", "color", "photo"],
+  // "parking_station": ["address", "phone", "location", "name", "parking_type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
@@ -139,6 +140,14 @@ function get2_(table, flds, id, cb) {
   });
 };
 
+function read2_(cond, cb) {
+  let sql = `SELECT ps.id, ps.name, ps.work_hours, ps.price_list, ps.location, rv.rating FROM (SELECT id, name, work_hours, price_list, location FROM parking_station WHERE ${cond}) ps LEFT JOIN (SELECT parking_station_id, AVG(stars) AS rating FROM review GROUP BY parking_station_id) rv ON ps.id = rv.parking_station_id`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
 // check if value already exist in database
 function check2_(table, cond, cb) {
   const sql = `SELECT id FROM ${table} WHERE ${cond}`;
@@ -237,7 +246,12 @@ function update_points(id, pts, cb) {
 
 // - ?????????????????????????????????????
 function get_parking_evaluation(id, cb) {
-  const sql = `SELECT avg(stars) FROM review WHERE parking_id = ${id};`;
+  const sql = `SELECT AVG(stars) FROM review WHERE parking_id = ${id};`;
+  //const sql = `SELECT AVG(stars) FROM review WHERE id IN (SELECT id FROM reservation WHERE parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${id}));`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
+  });
 };
 
 function find_parking_space(id, cb) {
@@ -256,6 +270,7 @@ module.exports = {
   delete_,
   auth_,
   get_,
+  read2_,
   check_,
   load_reservation_history,
   add_review,
@@ -267,5 +282,6 @@ module.exports = {
   calculate_income,
   //add_new_reservation,
   get2_,
-  check2_
+  check2_,
+  get_parking_evaluation
 }

@@ -207,14 +207,22 @@ function get_parking_station_my_parking_page(req, res) {
                             const dt3 = JSON.parse(JSON.stringify(data3));
                             let incom = { "today": dt2[0].price, "monthly": dt3[0].price };
                             incom = JSON.stringify(incom);
-                            dataModel.read_("review", "stars, description", `parking_station_id = ${req.session.sid}`, function (data_2) {
-                                const dt_2 = JSON.parse(JSON.stringify(data_2));
+                            dataModel.read_("review", "stars, description", `parking_station_id = ${req.session.sid}`, function (data4) {
+                                const dt_2 = JSON.parse(JSON.stringify(data4));
                                 let rvs = {};
-                                for (let el2 of dt_2) { rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description }; }
+                                let sum = 0;
+                                let count = 0;
+                                for (let el2 of dt_2) {
+                                    rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description };
+                                    sum = sum + el2.stars;
+                                    count++;
+                                }
+                                const rat = (sum / count).toFixed(1) ;
                                 rvs = JSON.stringify(rvs);
                                 res.render('parking_station/my_parking', {
                                     records: dt,
                                     income: incom,
+                                    rating: rat,
                                     reviews: rvs,
                                     "is_driver": false,
                                     "login": (req.session.sid !== undefined),

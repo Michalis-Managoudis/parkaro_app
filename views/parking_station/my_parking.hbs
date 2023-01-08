@@ -17,7 +17,7 @@
 
     <div>
         <h2>Rating:</h2>
-        <p id="rating">0/5 <i class="fa fa-star"></i></p>
+        <p id="rating"></p>
     </div>
 
 </div>
@@ -137,6 +137,11 @@
     });
     let inc = {{{ income }}};
     for (let field of Object.keys(inc)) if (inc[field]) document.getElementById("incm_" + field).textContent = inc[field] + " €";
+    const rat = {{{ rating }}};
+    for (let i = 1 ; i < rat ; i++) {
+        document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star"></i>';
+    }
+    document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + `<i class="fa fa-star-half-empty"> (${rat} / 5)`;
 
     document.addEventListener("DOMContentLoaded", function () {
         highlight_future_reservations();

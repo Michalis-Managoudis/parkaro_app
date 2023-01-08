@@ -20,11 +20,12 @@
     <div class="card-body">
         <div class="row">
             <!-- Start Form -->
-            <form action="/book" id="_form" method="post" class="col-8 border-end border-secondary">
+            <form action="/book" id="_form" method="post" class="col-7 border-end border-secondary">
                 <fieldset>
                     <p class="text-decoration-underline">Στοιχεία χρέωσης:</p>
                     <label for="input_date1">Έναρξη χρέωσης (Άφιξη):</label>
-                    <input type="datetime-local" id="input_date1" name="s_date" value="{{dates.start}}" required autofocus/>
+                    <input type="datetime-local" id="input_date1" name="s_date" value="{{dates.start}}" required
+                        autofocus />
                     <label for="input_date2">Λήξη Χρέωσης (Αναχώρηση): </label>
                     <input type="datetime-local" id="input_date2" name="e_date" value="{{dates.end}}" required />
                     <div class="d-block">
@@ -37,39 +38,46 @@
                     <p class="text-decoration-underline">Στοιχεία Πελάτη:</p>
                     <label for="m-f-email">Email:</label>
                     <input type="email" id="m-f-email" name="email" placeholder="someone@example.com"
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}" {{/if}} required>
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}" {{/if}}
+                        required>
 
                     <label for="m-f-name">Ονοματεπώνυμο:</label>
-                    <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" {{#if login}}value="{{driver.name}}" {{/if}} required>
+                    <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" {{#if
+                        login}}value="{{driver.name}}" {{/if}} required>
 
                     <label for="m-f-phone">Τηλέφωνο:</label>
-                    <input type="tel" id="m-f-phone" name="phone" placeholder="69********" 
-                        pattern="[0-9]{10}" {{#if login}}value="{{driver.phone}}" {{/if}} required>
+                    <input type="tel" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" {{#if
+                        login}}value="{{driver.phone}}" {{/if}} required>
 
                     <label for="_c">Όχημα</label>
                     {{#if driver_car}}
-                        <select name="car" id="_c">
-                            {{#each driver_car}}
-                                <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} - {{this.color}})</span></option>
-                            {{/each}}
-                        </select>
+                    <select name="car" id="_c">
+                        {{#each driver_car}}
+                        <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} -
+                                {{this.color}})</span></option>
+                        {{/each}}
+                    </select>
                     {{else}}
-                        <input type="text" name="car">
-                    {{/if}}               
+                    <input type="text" name="car">
+                    {{/if}}
                 </fieldset>
                 <div class="d-flex justify-content-end">
-                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success" value="Reserve" onclick="add_resv()">
-                    <p {{#if found}}hidden{{/if}} class="bg-warning my-2 px-2">There is no avaliable parking space try another parking station or another datetime</p>
+                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success"
+                        value="Reserve" onclick="add_resv()">
+                    <p {{#if found}}hidden{{/if}} class="bg-warning my-2 px-2">There is no avaliable parking space try
+                        another parking station or another datetime</p>
                 </div>
             </form>
-            <div class="col-4">
-                <p>{{parking_station.name}}</p>
-                <p>{{parking_station.phone}}</p>
-                <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{parking_station.location}}" target="_blank">
-                    <i class="fa fa-map-marker"></i> Click here to navigate</a>
-                <p class="p-5 m-5"></p>
-                <p class="bg-danger mt-5">Τελική τιμή: <span id="f_price">{{#unless price}}0{{/unless}}{{price}}</span>€</p>
-                {{!-- <p>{{parking_station.location}}</p> --}}
+            <div class="col-5" id="p_info">
+                <p id="info_name"></p>
+                <p id="info_address" class="p_info_el"></p>
+                <a id="info_location" href="https://www.google.com/maps/dir/?api=1&origin=&destination=" 
+                    target="_blank"><i class="fa fa-map-marker"></i> Click here to navigate</a>
+                <p id="info_phone" class="p_info_el mt-3"></p>
+                {{!-- <p id="info_photo" class="p_info_el"></p> --}}
+                <p id="info_discount" class="bg-info w-25"></p>
+                <p id="info_work_hours"></p>
+                <p id="info_info" class="p_info_el"></p>
             </div>
         </div>
     </div>
@@ -78,45 +86,103 @@
 <!-- End Card -->
 
 <script>
+    let ps = {{{ parking_station }}};
+    let prc = {{{ price }}};
+    let servs = {{{ services }}};
     let _dt1 = document.getElementById("input_date1");
     let _dt2 = document.getElementById("input_date2");
-    
+
     let today = new Date();
     let dd = today.getDate();
     let mm = today.getMonth() + 1; //January is 0!
     let hh = today.getHours();
     let mn = today.getMinutes();
-    if (dd < 10) {dd = '0' + dd;}
-    if (mm < 10) {mm = '0' + mm;}
-    if (hh < 10) {hh = '0' + hh;}
-    if (mn < 10) {mn = '0' + mn;}
+    if (dd < 10) { dd = '0' + dd; }
+    if (mm < 10) { mm = '0' + mm; }
+    if (hh < 10) { hh = '0' + hh; }
+    if (mn < 10) { mn = '0' + mn; }
     today = today.getFullYear() + '-' + mm + '-' + dd + 'T' + hh + ':' + mn;
 
     _dt1.min = today;
     _dt2.min = today;
     _dt1.max = _dt2.value;
 
-    _dt2.addEventListener('change', function() {
+    _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
         check_available();
     });
-    _dt1.addEventListener('change', function() {
+    _dt1.addEventListener('change', function () {
         _dt2.min = _dt1.value;
         check_available();
     });
 
+    show_parking_info();
+
+    function show_parking_info() {
+        // parking info
+        let tp = "";
+        switch (ps.parking_type) {
+            case 0: 
+                tp = "Πόλη";
+            break;
+            case 1: 
+                tp = "Αεροδρόμιο";
+            break;
+            case 2: 
+                tp = "Λιμάνι";
+            break;
+        }
+        document.getElementById("info_name").innerText = ps.name + ` (${tp})`;
+        document.getElementById("info_location").href = document.getElementById("info_location").href + ps.location;
+        document.getElementById("info_work_hours").innerText = ps.work_hours.split(",").join(" // ");
+        if (ps.discount) document.getElementById("info_discount").innerText = ps.discount + "% έκπτωση";
+        let arr = document.querySelectorAll(".p_info_el");
+        if (arr.length) {
+            let els = [...arr];
+            let field = "";
+            els.forEach(function (el, field) {
+                field = el.id.slice(5);
+                el.innerText = ps[field];
+            });
+        }
+
+        // services
+        const addd0 = document.createElement("ul");
+        addd0.id = "services";
+        addd0.innerText = "Υπηρεσίες:"
+        document.getElementById("p_info").appendChild(addd0);
+        for (let field of servs) {
+            if (ps[field]) {
+                const addd1 = document.createElement("li");
+                addd1.innerText = field.slice(2);
+                document.getElementById("services").appendChild(addd1);
+            }
+        }
+        // final price area
+        const addd = document.createElement("p");
+        addd.className = "bg-danger mt-1 w-50";
+        addd.innerHTML = "Τελική τιμή: ";
+        const addd2 = document.createElement("span");
+        addd2.id = "f_price";
+        if (prc) addd2.innerText = prc;
+        else addd2.innerText = 0;
+        addd.appendChild(addd2);
+        addd.innerText = addd.innerText + "€";
+        document.getElementById("p_info").appendChild(addd);
+    }
+
     function check_available() {
         if (_dt1.value != "" && _dt2.value != "") {
-            form=document.getElementById('_form');
-            form.action="/book";
+            form = document.getElementById('_form');
+            form.action = "/book";
             form.submit();
         }
     }
 
     function add_resv() {
-        form=document.getElementById('_form');
+        form = document.getElementById('_form');
         //form.target='_blank';
-        form.action="add";
+        form.action = "add";
         form.submit();
         //form.action='/';
         //form.target='';

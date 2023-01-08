@@ -3,19 +3,25 @@
 const dataModel = require('../models/mysql_data_model.js');
 
 function get_driver_home_page(req, res) {
-    // if (req.session._dts) {
-    //     if (req.session._dts.start != undefined && req.session._dts.end != undefined) {
-    //         req.session._ready_to_add_reservation = false;
-    //     }
-    // }
-    dataModel.read_("parking_station", "location", "parking_type = 0", function (rows) {
-        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
+    // dataModel.read_("parking_station", "name, work_hours, price_list, location", "parking_type = 0", function (rows) {
+    dataModel.read2_("parking_type = 0", function (data) {
+        data = JSON.parse(JSON.stringify(data));
+        for (let row of data) {
+            row.location = row.location.split("/").map(parseFloat);
+            //get price for each parking
+            let prc = 0;
+            if (req.session._dts) {
+                if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, req.session._dts.start, req.session._dts.end);
+            }
+            row.price = prc;
+            row.rating = parseFloat(row.rating).toFixed(1);
+        }
         res.render('driver/home', {
             "is_driver": true,
             "login": (req.session.sid !== undefined),
             'lang': req.session.lang,
             dates: req.session._dts,
-            parking_station_locations: JSON.stringify(rows)
+            parking_station_locations: JSON.stringify(data)
         });
     });
 };
@@ -58,11 +64,18 @@ function search_driver_home_page(req, res) {
     req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
     req.session._ready_to_add_reservation = true;
     let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
-    dataModel.read_("parking_station", "location, work_hours", cond, function (rows) {
-        rows = JSON.parse(JSON.stringify(rows));
+    dataModel.read2_(cond, function (data) {
+        data = JSON.parse(JSON.stringify(data));
         let valid_rows = [];
-        for (let row of rows) {
+        for (let row of data) {
             row.location = row.location.split("/").map(parseFloat);
+            let prc = 0;
+            if (req.session._dts) {
+                if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, req.session._dts.start, req.session._dts.end);
+            }
+            row.price = prc;
+            row.rating = parseFloat(row.rating).toFixed(1);
+
             if (check_work_hours(row.work_hours, req.session._dts.start, req.session._dts.end)) {
                 valid_rows.push(row);
             }
@@ -138,7 +151,8 @@ function get_driver_book_page(req, res) {
     else {
         //const ps_id = req.params.ps_id;
         req.session.ps_id = req.params.ps_id;
-        dataModel.get2_("parking_station", "name, location, photo, phone, price_list, work_hours", req.session.ps_id, function (ps) {
+        // dataModel.get2_("parking_station", "name, location, photo, phone, price_list, work_hours", req.session.ps_id, function (ps) {
+        dataModel.get_("parking_station", req.session.ps_id, function (ps) {
             ps.location = ps.location.split("/")[1] + "," + ps.location.split("/")[0];
             if (req.session.sid === undefined) {
                 res.render('driver/book', {
@@ -154,17 +168,19 @@ function get_driver_book_page(req, res) {
                         dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars) {
                             let prc = 0;
                             if (req.session._dts) {
-                                // if (check_work_hours(ps.work_hours, req.session._dts.start, req.session._dts.end)) {
-                                //     prc = final_price_calculation(ps.price_list, req.session._dts.start, req.session._dts.end);
-                                // }
+                                // if (check_work_hours(ps.work_hours, req.session._dts.start, req.session._dts.end)) prc = final_price_calculation(ps.price_list, req.session._dts.start, req.session._dts.end);
                                 prc = final_price_calculation(ps.price_list, req.session._dts.start, req.session._dts.end);
                             }
+                            for (let field of ["lots", "tax_office", "company_name", "tin", "email", "price_list"]) delete ps[field];
+                            ps = JSON.stringify(ps);
+                            let srv = JSON.stringify(dataModel.schema_parking_station_boolean);
                             res.render('driver/book', {
-                                price: prc,
-                                parking_station: ps,
-                                driver_car: cars,
                                 driver: data,
+                                driver_car: cars,
+                                parking_station: ps,
+                                price: prc,
                                 dates: req.session._dts,
+                                services: srv,
                                 "is_driver": true,
                                 "found": req.session._ready_to_add_reservation,
                                 "login": (req.session.sid !== undefined),
