@@ -14,6 +14,7 @@ router.get('/', function (req, res) { res.redirect('/home'); });
 // home page
 router.get('/home', driver_controller.get_driver_home_page);
 router.post('/home', driver_controller.search_driver_home_page);
+router.get('/rd_notif', driver_controller.read_driver_notifications);
 // console.log(req.protocol); console.log(req.route); console.log(req.secure);
 // parking pages
 router.get('/city', driver_controller.get_driver_city_page);

@@ -24,6 +24,7 @@
 
     </div>
     <div>
+        {{#if is_driver}}{{#if login}}<span class="mx-4">Points: <i class="fa fa-diamond"></i></span>{{/if}}{{/if}}
         <span class="text-nowrap">
             {{#if is_driver}}
             <i class="fa fa-user"></i>
@@ -38,9 +39,12 @@
                 {{!-- <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Dropdown button
                 </button> --}}
-                <a href="/account" class="text-nowrap" data-bs-toggle="dropdown" role="button">{{#if lang}}Ο Λογαριασμός μου{{else}}My account{{/if}}</a>
+                <a href="/account" class="text-nowrap me-4" data-bs-toggle="dropdown" role="button">{{#if lang}}Ο
+                    Λογαριασμός
+                    μου{{else}}My account{{/if}}</a>
                 <div class="dropdown-menu _header_dropdown">
-                    <a href="/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile Settings{{/if}}</a>
+                    <a href="/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile
+                        Settings{{/if}}</a>
                     <a href="/history" class="dropdown-item">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</a>
                     <div class="dropdown-divider"></div>
                     <a href="/logout" class="dropdown-item">{{#if lang}}Αποσύνδεση{{else}}Logout{{/if}}</a>
@@ -71,12 +75,40 @@
             {{else}}
             <a href="/parking_station/sign_in"><span class="text-nowrap">{{#if lang}}Σύνδεση{{else}}Sign
                     in{{/if}}</span></a>
-            /
-            <a href="/parking_station/sign_up"><span class="text-nowrap">{{#if lang}}Εγγραφή{{else}}Sign
-                    up{{/if}}</span></a>
-            {{/if}}
+            <span class="text-nowrap me-4">
+                /
+                <a href="/parking_station/sign_up"><span class="text-nowrap">{{#if lang}}Εγγραφή{{else}}Sign
+                        up{{/if}}</span></a>
+                {{/if}}
+            </span>
             {{/if}}
         </span>
+        {{#if login}}
+        <div class="dropdown d-inline">
+            <a href="" id="notif" class="text-nowrap" data-bs-toggle="dropdown" role="button"><i class="fa fa-bell"></i>{{#if unread_notification_number}}<span id="notif_num" class="text-danger">({{unread_notification_number}})</span>{{/if}}</a>
+            <div class="dropdown-menu _header_dropdown">
+                {{#each notifications}}
+                <p id="{{this.id}}" class="dropdown-item _btn_notf {{#unless this.viewed}}bg-info{{/unless}}">{{this.message}}</p>
+                <p>{{this.date_created}}</p>
+                <div class="dropdown-divider"></div>
+                {{/each}}
+                <p class="btn btn-dark" id="notif1">Mark all as read</p>
+            </div>
+        </div>
+        {{!-- <div id="myModalNotf" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Notification</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="message"></p>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+        {{/if}}
         <span class="text-nowrap mx-4">
             <a href="/language"><i class="fa fa-globe"></i>
                 {{!-- <img src="/images/h-lang_icon.png" alt=""> --}}
@@ -86,3 +118,10 @@
         </span>
     </div>
 </header>
+
+<script>
+    document.getElementById("notif1").addEventListener("click", function () {
+        document.getElementById("notif").innerHTML = '<i class="fa fa-bell"></i>';
+        window.location.assign("/rd_notif");
+    });
+</script>

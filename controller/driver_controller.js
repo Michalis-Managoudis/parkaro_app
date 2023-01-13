@@ -3,36 +3,73 @@
 const dataModel = require('../models/mysql_data_model.js');
 
 function get_driver_home_page(req, res) {
-    // dataModel.read_("parking_station", "name, work_hours, price_list, location", "parking_type = 0", function (rows) {
-    dataModel.read2_("parking_type = 0", function (data) {
-        data = JSON.parse(JSON.stringify(data));
-        for (let row of data) {
-            row.location = row.location.split("/").map(parseFloat);
-            //get price for each parking
-            let prc = 0;
-            if (req.session._dts) {
-                if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, req.session._dts.start, req.session._dts.end);
+    if (req.session.sid === undefined) {
+        dataModel.read2_("parking_type = 0", function (data2) {
+            data2 = JSON.parse(JSON.stringify(data2));
+            for (let row of data2) {
+                row.location = row.location.split("/").map(parseFloat);
+                //get price for each parking
+                let prc = 0;
+                if (req.session._dts) {
+                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, req.session._dts.start, req.session._dts.end);
+                }
+                row.price = prc;
+                row.rating = parseFloat(row.rating).toFixed(1);
             }
-            row.price = prc;
-            row.rating = parseFloat(row.rating).toFixed(1);
-        }
-        res.render('driver/home', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            dates: req.session._dts,
-            parking_station_locations: JSON.stringify(data)
+            res.render('driver/home', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                dates: req.session._dts,
+                parking_station_locations: JSON.stringify(data2)
+            });
         });
-    });
+    }
+    else {
+        dataModel.read2_("parking_type = 0", function (data2) {
+            data2 = JSON.parse(JSON.stringify(data2));
+            for (let row of data2) {
+                row.location = row.location.split("/").map(parseFloat);
+                //get price for each parking
+                let prc = 0;
+                if (req.session._dts) {
+                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, req.session._dts.start, req.session._dts.end);
+                }
+                row.price = prc;
+                row.rating = parseFloat(row.rating).toFixed(1);
+            }
+            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+                data = JSON.parse(JSON.stringify(data));
+                let c = 0;
+                for (let el of data) if (!el.viewed) c++;
+                res.render('driver/home', {
+                    "is_driver": true,
+                    "login": (req.session.sid !== undefined),
+                    'lang': req.session.lang,
+                    dates: req.session._dts,
+                    parking_station_locations: JSON.stringify(data2),
+                    notifications: data,
+                    unread_notification_number: c
+                });
+            });
+        });
+    }
 };
 function get_driver_city_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 0", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        res.render('driver/city', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            parking_station_locations: JSON.stringify(rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/city', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                parking_station_locations: JSON.stringify(rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 
@@ -40,22 +77,36 @@ function get_driver_city_page(req, res) {
 function get_driver_airport_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 1", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        res.render('driver/airport', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            parking_station_locations: JSON.stringify(rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/airport', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                parking_station_locations: JSON.stringify(rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 };
 function get_driver_port_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 2", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        res.render('driver/port', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            parking_station_locations: JSON.stringify(rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/port', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                parking_station_locations: JSON.stringify(rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 };
@@ -80,12 +131,19 @@ function search_driver_home_page(req, res) {
                 valid_rows.push(row);
             }
         }
-        res.render('driver/home', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            dates: req.session._dts,
-            parking_station_locations: JSON.stringify(valid_rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/home', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                dates: req.session._dts,
+                parking_station_locations: JSON.stringify(valid_rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 };
@@ -102,12 +160,19 @@ function search_driver_airport_page(req, res) {
                 valid_rows.push(row);
             }
         }
-        res.render('driver/home', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            dates: req.session._dts,
-            parking_station_locations: JSON.stringify(valid_rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/home', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                dates: req.session._dts,
+                parking_station_locations: JSON.stringify(valid_rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 };
@@ -124,29 +189,55 @@ function search_driver_port_page(req, res) {
                 valid_rows.push(row);
             }
         }
-        res.render('driver/home', {
-            "is_driver": true,
-            "login": (req.session.sid !== undefined),
-            'lang': req.session.lang,
-            dates: req.session._dts,
-            parking_station_locations: JSON.stringify(valid_rows)
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            res.render('driver/home', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                dates: req.session._dts,
+                parking_station_locations: JSON.stringify(valid_rows),
+                notifications: data,
+                unread_notification_number: c
+            });
         });
     });
 };
 
+function read_driver_notifications(req, res) {
+    if (req.session.sid === undefined) {
+        console.log("To read notifications you must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        dataModel.read_all_user_notifications(`d${req.session.sid}`, function (data) {
+            res.redirect('back');
+        });
+    }
+};
+
 function get_driver_info_page(req, res) {
     // console.log(req.session.lang);
-    res.render('driver/info', {
-        "is_driver": true,
-        "login": (req.session.sid !== undefined),
-        'lang': req.session.lang
+    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        data = JSON.parse(JSON.stringify(data));
+        let c = 0;
+        for (let el of data) if (!el.viewed) c++;
+        res.render('driver/info', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            notifications: data,
+            unread_notification_number: c
+        });
     });
 };
 
 function get_driver_book_page(req, res) {
     if (req.session.sid === undefined) {
         console.log("To add a reservation you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         //const ps_id = req.params.ps_id;
@@ -174,17 +265,24 @@ function get_driver_book_page(req, res) {
                             for (let field of ["lots", "tax_office", "company_name", "tin", "email", "price_list"]) delete ps[field];
                             ps = JSON.stringify(ps);
                             let srv = JSON.stringify(dataModel.schema_parking_station_boolean);
-                            res.render('driver/book', {
-                                driver: data,
-                                driver_car: cars,
-                                parking_station: ps,
-                                price: prc,
-                                dates: req.session._dts,
-                                services: srv,
-                                "is_driver": true,
-                                "found": req.session._ready_to_add_reservation,
-                                "login": (req.session.sid !== undefined),
-                                'lang': req.session.lang
+                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+                                data = JSON.parse(JSON.stringify(data));
+                                let c = 0;
+                                for (let el of data) if (!el.viewed) c++;
+                                res.render('driver/book', {
+                                    driver: data,
+                                    driver_car: cars,
+                                    parking_station: ps,
+                                    price: prc,
+                                    dates: req.session._dts,
+                                    services: srv,
+                                    "is_driver": true,
+                                    "found": req.session._ready_to_add_reservation,
+                                    "login": (req.session.sid !== undefined),
+                                    'lang': req.session.lang,
+                                    notifications: data,
+                                    unread_notification_number: c
+                                });
                             });
                         })
                     }
@@ -197,7 +295,7 @@ function get_driver_book_page(req, res) {
 function add_driver_review(req, res) {
     if (req.session.sid === undefined) {
         console.log("To add a review you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         const res_id = req.body._id;
@@ -213,7 +311,7 @@ function add_driver_review(req, res) {
 function delete_driver_review(req, res) {
     if (req.session.sid === undefined) {
         console.log("To delete a review you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         dataModel.delete_("review", req.body._id, function () {
@@ -226,7 +324,7 @@ function delete_driver_review(req, res) {
 function add_driver_reservation(req, res) {
     if (req.session.sid === undefined) {
         console.log("To add a reservation you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         const ps_id = req.session.ps_id;
@@ -287,10 +385,14 @@ function delete_driver_reservation(req, res) {
                 data = JSON.parse(JSON.stringify(data));
                 let today = new Date();
                 if (today.getTime() < data.r_start) { // check if reservation is future
-                    dataModel.delete_("reservation", req.body._id, function () {
-                        dataModel.update_points(req.session.sid, -parseInt(req.body._price / 10), function () {
-                            console.log("Reservation deleted succesfully");
-                            res.redirect('/history');
+                    dataModel.read_parking_station_from_reservation(req.body._id, function (data2) {
+                        dataModel.delete_("reservation", req.body._id, function () {
+                            dataModel.update_points(req.session.sid, -parseInt(req.body._price / 10), function () {
+                                dataModel.add_notification(`"d${data2}"`, Date.parse(today), `"Reservation with id ${req.body._id} deleted from driver"`, function (data3) {
+                                    console.log("Reservation deleted succesfully");
+                                    res.redirect('/history');
+                                });
+                            });
                         });
                     });
                 }
@@ -302,7 +404,7 @@ function delete_driver_reservation(req, res) {
 function delete_driver_car(req, res) {
     if (req.session.sid === undefined) {
         console.log("To delete a car you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         dataModel.get_("car", req.body._id, function (data) { // check if car exists
@@ -318,7 +420,7 @@ function delete_driver_car(req, res) {
 function update_driver_car(req, res) {
     if (req.session.sid === undefined) {
         console.log("To update a car you must sign in first");
-        res.redirect('/sign_in')
+        res.redirect('/sign_in');
     }
     else {
         dataModel.get_("car", req.body._id, function (data) { // check if car exists
@@ -337,7 +439,7 @@ function update_driver_car(req, res) {
 // function update_driver_reservation(req, res) {
 //     if (req.session.sid === undefined) {
 //         console.log("To delete a reservation you must sign in first");
-//         res.redirect('/sign_in')
+//         res.redirect('/sign_in');
 //     }
 //     else {
 //         dataModel.get_("reservation", req.body._id, function (data) { // check if reservation exists
@@ -411,22 +513,36 @@ function get_driver_history_page(req, res) {
                             for (let el2 of dt_2) { rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description }; }
                             rvs = JSON.stringify(rvs);
                             //dt = JSON.stringify(dt);
-                            res.render('driver/history', {
-                                records: dt,
-                                reviews: rvs,
-                                "is_driver": true,
-                                "login": (req.session.sid !== undefined),
-                                'lang': req.session.lang
+                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+                                data = JSON.parse(JSON.stringify(data));
+                                let c = 0;
+                                for (let el of data) if (!el.viewed) c++;
+                                res.render('driver/history', {
+                                    records: dt,
+                                    reviews: rvs,
+                                    "is_driver": true,
+                                    "login": (req.session.sid !== undefined),
+                                    'lang': req.session.lang,
+                                    notifications: data,
+                                    unread_notification_number: c
+                                });
                             });
 
                         });
                     }
                     else { // if driver hasn't a reservation history
-                        res.render('driver/history', {
-                            records: dt,
-                            "is_driver": true,
-                            "login": (req.session.sid !== undefined),
-                            'lang': req.session.lang
+                        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+                            data = JSON.parse(JSON.stringify(data));
+                            let c = 0;
+                            for (let el of data) if (!el.viewed) c++;
+                            res.render('driver/history', {
+                                records: dt,
+                                "is_driver": true,
+                                "login": (req.session.sid !== undefined),
+                                'lang': req.session.lang,
+                                notifications: data,
+                                unread_notification_number: c
+                            });
                         });
                     }
                 })
@@ -531,6 +647,7 @@ module.exports = {
     search_driver_airport_page,
     search_driver_port_page,
     get_driver_port_page,
+    read_driver_notifications,
     get_driver_book_page,
     add_driver_review,
     delete_driver_review,

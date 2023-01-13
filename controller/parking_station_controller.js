@@ -24,14 +24,21 @@ function get_parking_station_home_page(req, res) {
                     dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) {
                         let dt2 = JSON.parse(JSON.stringify(data2));
                         let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
-                        res.render('parking_station/home', {
-                            records: dt,
-                            pl_per: per,
-                            form_data: false,
-                            empty_lots: false,
-                            "is_driver": false,
-                            "login": (req.session.sid !== undefined),
-                            'lang': req.session.lang
+                        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                            data = JSON.parse(JSON.stringify(data));
+                            let c = 0;
+                            for (let el of data) if (!el.viewed) c++;
+                            res.render('parking_station/home', {
+                                records: dt,
+                                pl_per: per,
+                                form_data: false,
+                                empty_lots: false,
+                                "is_driver": false,
+                                "login": (req.session.sid !== undefined),
+                                'lang': req.session.lang,
+                                notifications: data,
+                                unread_notification_number: c
+                            });
                         });
                     });
                 });
@@ -68,14 +75,21 @@ function search_parking_station_reservation_availability(req, res) {
                             if (check_work_hours(data0.work_hours, req.body.r_start, req.body.r_end)) {
                                 for (let el of dt3) e_lots.push(el.id);
                             }
-                            res.render('parking_station/home', {
-                                records: dt,
-                                pl_per: per,
-                                empty_lots: e_lots,
-                                form_data: JSON.stringify(f_dt),
-                                "is_driver": false,
-                                "login": (req.session.sid !== undefined),
-                                'lang': req.session.lang
+                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                                data = JSON.parse(JSON.stringify(data));
+                                let c = 0;
+                                for (let el of data) if (!el.viewed) c++;
+                                res.render('parking_station/home', {
+                                    records: dt,
+                                    pl_per: per,
+                                    empty_lots: e_lots,
+                                    form_data: JSON.stringify(f_dt),
+                                    "is_driver": false,
+                                    "login": (req.session.sid !== undefined),
+                                    'lang': req.session.lang,
+                                    notifications: data,
+                                    unread_notification_number: c
+                                });
                             });
                         });
                     });
@@ -217,16 +231,23 @@ function get_parking_station_my_parking_page(req, res) {
                                     sum = sum + el2.stars;
                                     count++;
                                 }
-                                const rat = (sum / count).toFixed(1) ;
+                                const rat = (sum / count).toFixed(1);
                                 rvs = JSON.stringify(rvs);
-                                res.render('parking_station/my_parking', {
-                                    records: dt,
-                                    income: incom,
-                                    rating: rat,
-                                    reviews: rvs,
-                                    "is_driver": false,
-                                    "login": (req.session.sid !== undefined),
-                                    'lang': req.session.lang
+                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                                    data = JSON.parse(JSON.stringify(data));
+                                    let c = 0;
+                                    for (let el of data) if (!el.viewed) c++;
+                                    res.render('parking_station/my_parking', {
+                                        records: dt,
+                                        income: incom,
+                                        rating: rat,
+                                        reviews: rvs,
+                                        "is_driver": false,
+                                        "login": (req.session.sid !== undefined),
+                                        'lang': req.session.lang,
+                                        notifications: data,
+                                        unread_notification_number: c
+                                    });
                                 });
                             });
                         });
@@ -246,15 +267,19 @@ function delete_parking_station_reservation(req, res) {
     else {
         dataModel.get_("reservation", req.body._id, function (data) { // check if reservation exists
             if (data) {
+                let today = new Date();
                 //data = JSON.parse(JSON.stringify(data));
-                dataModel.delete_("reservation", req.body._id, function () {
-                    dataModel.check2_("driver", `email = "${req.body.d_email}"`, function (data2) {
-                        const dt = JSON.parse(JSON.stringify(data2));
-                        dataModel.update_points(dt.id, -parseInt(req.body._price / 10), function () {
-                            console.log("Reservation deleted succesfully");
-                            res.redirect('back');
+                dataModel.read_parking_station_from_reservation(req.body._id, function (data3) {
+                    dataModel.delete_("reservation", req.body._id, function () {
+                        dataModel.check2_("driver", `email = "${req.body.d_email}"`, function (data2) {
+                            const dt = JSON.parse(JSON.stringify(data2));
+                            dataModel.update_points(dt.id, -parseInt(req.body._price / 10), function () {
+                                dataModel.add_notification(`"d${data3}"`, Date.parse(today), `"Reservation with id ${req.body._id} deleted from parking_station"`, function (data3) {
+                                    console.log("Reservation deleted succesfully");
+                                    res.redirect('back');
+                                });
+                            });
                         });
-
                     });
                 });
             }
@@ -270,6 +295,7 @@ function update_parking_station_reservation(req, res) {
     else {
         dataModel.get_("reservation", req.body._id, function (data) { // check if reservation exists
             if (data) {
+                let today = new Date();
                 const dt = JSON.parse(JSON.stringify(data));
                 const prc = parseInt((req.body.price - dt.price) / 10);
                 let rr = { "id": req.body._id, "price": req.body.price };
@@ -277,6 +303,12 @@ function update_parking_station_reservation(req, res) {
                     dataModel.check2_("driver", `email = "${req.body.d_email}"`, function (data2) {
                         const dt2 = JSON.parse(JSON.stringify(data2));
                         dataModel.update_points(dt2.id, prc, function () {
+                            dataModel.read_parking_station_from_reservation(req.body._id, function (data3) {
+                                dataModel.add_notification(`"d${data3}"`, Date.parse(today), `"Reservation with id ${req.body._id} updated from parking_station"`, function (data3) {
+                                    console.log("Reservation deleted succesfully");
+                                    res.redirect('back');
+                                });
+                            });
                             console.log("Reservation updated succesfully");
                             //res.redirect('/parking_station/my_parking');
                             res.redirect('back');
@@ -293,10 +325,17 @@ function update_parking_station_reservation(req, res) {
 };
 
 function get_parking_station_info_page(req, res) {
-    res.render('parking_station/info', {
-        "is_driver": false,
-        "login": (req.session.sid !== undefined),
-        'lang': req.session.lang
+    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+        data = JSON.parse(JSON.stringify(data));
+        let c = 0;
+        for (let el of data) if (!el.viewed) c++;
+        res.render('parking_station/info', {
+            "is_driver": false,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            notifications: data,
+            unread_notification_number: c
+        });
     });
 };
 

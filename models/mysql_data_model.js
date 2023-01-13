@@ -19,7 +19,8 @@ const schema = {
   "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["id", "parking_station_id"],
   "reservation": ["id", "car_id", "parking_lot_id", "r_start", "r_end", "price"],
-  "review": ["id", "parking_station_id", "stars", "description"]
+  "review": ["id", "parking_station_id", "stars", "description"],
+  "notification": ["id", "user_id", "date_created", "viewed", "message"]
 };
 const schema_required = {
   "driver": ["email", "password", "name", "phone"],
@@ -27,7 +28,8 @@ const schema_required = {
   "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "photo", "work_hours", "price_list", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
-  "review": ["parking_station_id", "stars", "description"]
+  "review": ["parking_station_id", "stars", "description"],
+  "notification": ["user_id", "date_created", "message"]
 };
 const schema_show = { //? , "lang";;;;;;;
   "driver": ["email", "name", "phone", "photo", "points"],
@@ -36,7 +38,8 @@ const schema_show = { //? , "lang";;;;;;;
   "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
-  "review": ["parking_station_id", "stars", "description"]
+  "review": ["parking_station_id", "stars", "description"],
+  "notification": ["date_created", "viewed", "message"]
 };
 const schema_editable = {
   "driver": ["email", "password", "name", "phone", "lang", "photo"],
@@ -45,7 +48,8 @@ const schema_editable = {
   "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   //"reservation": ["car_id", "r_start", "r_end", "price"],
   "reservation": ["price"],
-  "review": ["stars", "description"]
+  "review": ["stars", "description"],
+  "notification": ["message"]
 };
 const schema_unique = {
   "driver": ["email", "phone"],
@@ -68,15 +72,8 @@ function read_(table, fld, cond, cb) {
 
 function create_(table, vls, cb) {
   const fields = schema_required[table].join(", ");
-  //!let values = mysql.escape(vls);
-  //console.log(sql);
-  let values = "'" + vls.join("', '") + "'";
-  // console.log(values);
-  let sql = `INSERT INTO ${table} (${fields}) VALUES (${values})`;
-  // console.log(sql);
-  // values = mysql.escape(values);
-  // sql = `INSERT INTO ${table} (${fields}) VALUES (${values})`;
-  // console.log(sql);
+  const values = "'" + vls.join("', '") + "'";
+  const sql = `INSERT INTO ${table} (${fields}) VALUES (${values})`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
@@ -254,6 +251,31 @@ function get_parking_evaluation(id, cb) {
   });
 };
 
+function read_all_user_notifications(id, cb){
+  const sql = `UPDATE notification SET viewed = 1 WHERE user_id = '${id}';`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
+function read_parking_station_from_reservation(id, cb){
+  const sql = `SELECT parking_station_id FROM (reservation r LEFT JOIN parking_lot pl ON r.parking_lot_id = pl.id) WHERE r.id = ${id};`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0].parking_station_id);
+  });
+};
+
+function add_notification(u_id, dt, msg, cb){
+  const fields = schema_required.notification.join(", ");
+  const sql = `INSERT INTO notification (${fields}) VALUES (${u_id}, ${dt}, ${msg})`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+};
+
 function find_parking_space(id, cb) {
 
 };
@@ -283,5 +305,8 @@ module.exports = {
   //add_new_reservation,
   get2_,
   check2_,
-  get_parking_evaluation
+  get_parking_evaluation,
+  read_all_user_notifications,
+  add_notification,
+  read_parking_station_from_reservation
 }

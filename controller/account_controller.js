@@ -23,12 +23,19 @@ function get_driver_account_page(req, res) {
         dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
             if (data) {
                 dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars1) {
-                    res.render("driver/account", {
-                        cars: cars1,
-                        driver: data,
-                        'is_driver': true,
-                        'login': true,
-                        'lang': req.session.lang
+                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+                        data = JSON.parse(JSON.stringify(data));
+                        let c = 0;
+                        for (let el of data) if (!el.viewed) c++;
+                        res.render("driver/account", {
+                            cars: cars1,
+                            driver: data,
+                            'is_driver': true,
+                            'login': true,
+                            'lang': req.session.lang,
+                            notifications: data,
+                            unread_notification_number: c
+                        });
                     });
                 });
             }
@@ -44,12 +51,19 @@ function get_parking_station_account_page(req, res) {
     else {
         dataModel.get_("parking_station", req.session.sid, function (data) { // check if email exists
             if (data) {
-                res.render("parking_station/account", {
-                    ps_data: JSON.stringify(data),
-                    //ps_data: data,
-                    'is_driver': false,
-                    'login': true,
-                    'lang': req.session.lang
+                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                    data = JSON.parse(JSON.stringify(data));
+                    let c = 0;
+                    for (let el of data) if (!el.viewed) c++;
+                    res.render("parking_station/account", {
+                        ps_data: JSON.stringify(data),
+                        //ps_data: data,
+                        'is_driver': false,
+                        'login': true,
+                        'lang': req.session.lang,
+                        notifications: data,
+                        unread_notification_number: c
+                    });
                 });
             }
         });
@@ -70,7 +84,7 @@ function update_driver_data(req, res) {
         if (!mail_regex.test(driver.email)) fields_check = false;
         if (!password_regex.test(driver.password)) fields_check = false;
         if (!phone_regex.test(driver.phone)) fields_check = false;
-        if (!(driver.password===req.body.password2)) fields_check = false;
+        if (!(driver.password === req.body.password2)) fields_check = false;
         //? if (!driver.name) fields_check = false;
         if (fields_check) {
             // check if driver already exists (email and phone)
@@ -114,15 +128,15 @@ function update_parking_station_data(req, res) {
         for (let field of dataModel.schema_editable["parking_station"]) {
             if (field == "work_hours") {
                 parking_station.work_hours = "";
-                for (let i = 1 ; i <= 7 ; i++) {
-                    parking_station.work_hours = parking_station.work_hours + req.body["work_hours"+i] + "-" + req.body["work_hours"+i+"b"];
+                for (let i = 1; i <= 7; i++) {
+                    parking_station.work_hours = parking_station.work_hours + req.body["work_hours" + i] + "-" + req.body["work_hours" + i + "b"];
                     if (i !== 7) parking_station.work_hours = parking_station.work_hours + ",";
                 }
             }
             else if (field == "price_list") {
                 parking_station.price_list = "h";
-                for (let i = 1 ; i <= 12 ; i++) {
-                    parking_station.price_list = parking_station.price_list + req.body["price_list"+i];
+                for (let i = 1; i <= 12; i++) {
+                    parking_station.price_list = parking_station.price_list + req.body["price_list" + i];
                     if (i === 4) parking_station.price_list = parking_station.price_list + "d";
                     else if (i === 8) parking_station.price_list = parking_station.price_list + "m";
                     else if (i !== 12) parking_station.price_list = parking_station.price_list + ",";
@@ -142,7 +156,7 @@ function update_parking_station_data(req, res) {
         if (!password_regex.test(parking_station.password)) fields_check = false;
         if (!tin_regex.test(parking_station.tin)) fields_check = false;
         if (!phone_regex.test(parking_station.phone)) fields_check = false;
-        if (!(parking_station.parking_type === 0 || parking_station.parking_type === 1 ||parking_station.parking_type === 2)) fields_check = false;
+        if (!(parking_station.parking_type === 0 || parking_station.parking_type === 1 || parking_station.parking_type === 2)) fields_check = false;
         if (!(parking_station.lots >= 0)) fields_check = false;
         if (!(parking_station.s_height > 0)) fields_check = false;
         if (!(parking_station.s_length > 0)) fields_check = false;
@@ -161,7 +175,7 @@ function update_parking_station_data(req, res) {
                             dataModel.get2_("parking_station", "lots", parking_station.id, function (data) {
                                 let diff = parking_station.lots - data.lots;
                                 if (diff >= 0) {
-                                    for (let i = 0 ; i < diff ; i++) {
+                                    for (let i = 0; i < diff; i++) {
                                         dataModel.create_("parking_lot", [parking_station.id]);
                                     }
                                     dataModel.update_("parking_station", parking_station, function () {
