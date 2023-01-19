@@ -32,13 +32,17 @@
         <input type="tel" id="_f_phone" name="phone" placeholder="69********" pattern="[0-9]{10}" required>
 
         <label>Γλώσσα:</label>
-            <input type="radio" id="a" name="lang" value="0" {{#if lang}} {{else}}checked{{/if}}>
-            <label for="a">English</label>
-            <input type="radio" id="b" name="lang" value="1" {{#if lang}}checked{{else}}{{/if}}>
-            <label for="b">Ελληνικά</label>
+        <input type="radio" id="a" name="lang" value="0" {{#if lang}} {{else}}checked{{/if}}>
+        <label for="a">English</label>
+        <input type="radio" id="b" name="lang" value="1" {{#if lang}}checked{{else}}{{/if}}>
+        <label for="b">Ελληνικά</label>
     </fieldset>
     <fieldset>
         <legend>Parking</legend>
+        <img id="img_" style="height: 100px;" src="" />
+        <button type="button" id="myBtn3" class="btn btn-lg btn-success ms-5">New Image</button>
+        <button type="button" id="myBtn4" class="btn btn-lg btn-danger ms-5">Delete Image</button> <br>
+
         <label for="_f_lots">Διαθέσιμες θέσεις parking:</label>
         <input type="number" id="_f_lots" name="lots" placeholder="" min="0" pattern="[0-9]+" required>
 
@@ -60,63 +64,68 @@
 
         <fieldset>
             <legend>Ωράριο Λειτουργίας:</legend>
-            <label for="_f_work_hours1">Δευτέρα:</label>
-            <input type="time" id="_f_work_hours1" name="work_hours1" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours1b" name="work_hours1b" placeholder="" required>
-            <label for="_f_work_hours2">Τρίτη:</label>
-            <input type="time" id="_f_work_hours2" name="work_hours2" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours2b" name="work_hours2b" placeholder="" required>
-            <label for="_f_work_hours3">Τετάρτη:</label>
-            <input type="time" id="_f_work_hours3" name="work_hours3" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours3b" name="work_hours3b" placeholder="" required>
-            <label for="_f_work_hours4">Πέμπτη:</label>
-            <input type="time" id="_f_work_hours4" name="work_hours4" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours4b" name="work_hours4b" placeholder="" required>
-            <label for="_f_work_hours5">Παρασκευή:</label>
-            <input type="time" id="_f_work_hours5" name="work_hours5" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours5b" name="work_hours5b" placeholder="" required>
-            <label for="_f_work_hours6">Σάββατο:</label>
-            <input type="time" id="_f_work_hours6" name="work_hours6" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours6b" name="work_hours6b" placeholder="" required>
-            <label for="_f_work_hours7">Κυριακή:</label>
-            <input type="time" id="_f_work_hours7" name="work_hours7" placeholder="" required>&nbsp;-
-            <input type="time" id="_f_work_hours7b" name="work_hours7b" placeholder="" required>
+            <label for="24/7_">Ανοιχτά όλο το 24ωρο καθημερινά</label>
+            <input type="checkbox" id="24/7_" name="work_hours_0" value="1">
+            <br>
+            <span id="work_hours_">
+                <label for="_f_work_hours1">Δευτέρα:</label>
+                <input type="time" id="_f_work_hours1" name="work_hours1" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours1b" name="work_hours1b" placeholder="" required>
+                <label for="_f_work_hours2">Τρίτη:</label>
+                <input type="time" id="_f_work_hours2" name="work_hours2" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours2b" name="work_hours2b" placeholder="" required>
+                <label for="_f_work_hours3">Τετάρτη:</label>
+                <input type="time" id="_f_work_hours3" name="work_hours3" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours3b" name="work_hours3b" placeholder="" required>
+                <label for="_f_work_hours4">Πέμπτη:</label>
+                <input type="time" id="_f_work_hours4" name="work_hours4" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours4b" name="work_hours4b" placeholder="" required>
+                <label for="_f_work_hours5">Παρασκευή:</label>
+                <input type="time" id="_f_work_hours5" name="work_hours5" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours5b" name="work_hours5b" placeholder="" required>
+                <label for="_f_work_hours6">Σάββατο:</label>
+                <input type="time" id="_f_work_hours6" name="work_hours6" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours6b" name="work_hours6b" placeholder="" required>
+                <label for="_f_work_hours7">Κυριακή:</label>
+                <input type="time" id="_f_work_hours7" name="work_hours7" placeholder="" required>&nbsp;-
+                <input type="time" id="_f_work_hours7b" name="work_hours7b" placeholder="" required>
+            </span>
         </fieldset>
         <fieldset>
             <legend>Τιμοκατάλογος:</legend>
+
+            <label for="_f_price_list1">1 ώρα:</label>
+            <input type="text" id="_f_price_list1" name="price_list1" placeholder="" required>
+            <label for="_f_price_list2">2 ώρες:</label>
+            <input type="text" id="_f_price_list2" name="price_list2" placeholder="" required>
+            <label for="_f_price_list3">3 ώρες:</label>
+            <input type="text" id="_f_price_list3" name="price_list3" placeholder="" required>
+            <label for="_f_price_list4">Επιπλέον χρέωση ανά ώρα μετά τις 3 ώρες:</label>
+            <input type="text" id="_f_price_list4" name="price_list4" placeholder="" required>
+            <br>
+
+            <label for="_f_price_list5">1 μέρα:</label>
+            <input type="text" id="_f_price_list5" name="price_list5" placeholder="" required>
+            <label for="_f_price_list6">2 μέρες:</label>
+            <input type="text" id="_f_price_list6" name="price_list6" placeholder="" required>
+            <label for="_f_price_list7">3 μέρες:</label>
+            <input type="text" id="_f_price_list7" name="price_list7" placeholder="" required>
+            <label for="_f_price_list8">Επιπλέον χρέωση ανά μέρα μετά τις 3 μέρες:</label>
+            <input type="text" id="_f_price_list8" name="price_list8" placeholder="" required>
+            <br>
+
+            <label for="_f_price_list9">1 μήνας:</label>
+            <input type="text" id="_f_price_list9" name="price_list9" placeholder="" required>
+            <label for="_f_price_list10">2 μήνες:</label>
+            <input type="text" id="_f_price_list10" name="price_list10" placeholder="" required>
+            <label for="_f_price_list11">3 μήνες:</label>
+            <input type="text" id="_f_price_list11" name="price_list11" placeholder="" required>
+            <label for="_f_price_list12">Επιπλέον χρέωση ανά μήνα μετά τους 3 μήνες:</label>
+            <input type="text" id="_f_price_list12" name="price_list12" placeholder="" required>
+
+            <label for="_f_discount">Έκπτωση(%):</label>
+            <input type="number" id="_f_discount" name="discount" min="0" max="100" step="1" placeholder="">
         </fieldset>
-        <label for="_f_price_list1">1 ώρα:</label>
-        <input type="text" id="_f_price_list1" name="price_list1" placeholder="" required>
-        <label for="_f_price_list2">2 ώρες:</label>
-        <input type="text" id="_f_price_list2" name="price_list2" placeholder="" required>
-        <label for="_f_price_list3">3 ώρες:</label>
-        <input type="text" id="_f_price_list3" name="price_list3" placeholder="" required>
-        <label for="_f_price_list4">Επιπλέον χρέωση ανά ώρα μετά τις 3 ώρες:</label>
-        <input type="text" id="_f_price_list4" name="price_list4" placeholder="" required>
-        <br>
-
-        <label for="_f_price_list5">1 μέρα:</label>
-        <input type="text" id="_f_price_list5" name="price_list5" placeholder="" required>
-        <label for="_f_price_list6">2 μέρες:</label>
-        <input type="text" id="_f_price_list6" name="price_list6" placeholder="" required>
-        <label for="_f_price_list7">3 μέρες:</label>
-        <input type="text" id="_f_price_list7" name="price_list7" placeholder="" required>
-        <label for="_f_price_list8">Επιπλέον χρέωση ανά μέρα μετά τις 3 μέρες:</label>
-        <input type="text" id="_f_price_list8" name="price_list8" placeholder="" required>
-        <br>
-
-        <label for="_f_price_list9">1 μήνας:</label>
-        <input type="text" id="_f_price_list9" name="price_list9" placeholder="" required>
-        <label for="_f_price_list10">2 μήνες:</label>
-        <input type="text" id="_f_price_list10" name="price_list10" placeholder="" required>
-        <label for="_f_price_list11">3 μήνες:</label>
-        <input type="text" id="_f_price_list11" name="price_list11" placeholder="" required>
-        <label for="_f_price_list12">Επιπλέον χρέωση ανά μήνα μετά τους 3 μήνες:</label>
-        <input type="text" id="_f_price_list12" name="price_list12" placeholder="" required>
-
-        <label for="_f_discount">Έκπτωση(%):</label>
-        <input type="number" id="_f_discount" name="discount" min="0" max="100" step="1" placeholder="">
-
         <label for="_f_info">Επιπλέον πληροφορίες:</label>
         <input type="text" id="_f_info" name="info" placeholder="" required>
     </fieldset>
@@ -162,30 +171,7 @@
 
     <div class="d-flex justify-content-between p-5">
         <a class="btn btn-secondary btn-lg" href="/parking_station/logout" role="button">Log out</a>
-
-        <div class="">
-            <button type="button" id="myBtn" class="btn btn-lg btn-danger">Delete Account</button>
-            <div id="myModalDelete" class="modal fade" tabindex="-1">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Confirmation</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-lg btn-secondary"
-                                data-bs-dismiss="modal">Cancel</button>
-                            <a class="btn btn-lg btn-danger" href="/parking_station/account/delete" role="button">Delete Account
-                                permanently</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <button type="button" id="myBtn" class="btn btn-lg btn-danger">Delete Account</button>
         <div class="">
             <button type="button" id="myBtn2" class="btn btn-lg btn-success">Save</button>
             <div id="myModalSave" class="modal fade" tabindex="-1">
@@ -210,54 +196,157 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 </form>
+<div class="">
+    <div id="myModalDelete" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/parking_station/account/delete" id="del_acc">
+                        <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
+                        <label for="pass_con" class="_modal-text">Confirm password:</label>
+                        <input id="pass_con" type="password" name="password3" placeholder="********"
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-lg btn-danger" form="del_acc" type="submit">Delete
+                        Account permanently</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="">
+    <div id="myModalAddImg" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add / update parking station image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add_image_" method="post" action="/parking_station/upload_image"
+                        enctype="multipart/form-data">
+                        <label>Upload profile picture</label>
+                        <input type="file" name="image_file" required />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    {{!-- <a class="btn btn-lg btn-success " href="account" role="button">Save</a> --}}
+                    <input type="submit" form="add_image_" class="btn btn-lg btn-success" value="Upload">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="">
+    <div id="myModalDeleteImg" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="_modal-text">Are you sure you want to delete permanently your profile image?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a class="btn btn-lg btn-danger" href="/parking_station/delete_image" role="button">Delete Image</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // get data from backend
-    const parking_station = {{{ps_data}}};
-    console.log(parking_station);
+    const parking_station = {{{ ps_data }}};
     // autocomplete inputs with loaded data
     const fields = Object.keys(parking_station);
+    // image section
+    const img = document.getElementById('img_');
+    img.addEventListener('error', function handleError() {
+        document.getElementById('myBtn4').style.display = 'none';
+        img.style.display = 'none';
+    });
+    img.src = "/user_images/p" + parking_station.id + ".jpeg";
 
+    document.getElementById("24/7_").addEventListener("change", function () {
+        if (this.checked) {
+            for (let i = 1; i <= 7; i++) {
+                document.getElementById("_f_work_hours" + i).required = false;
+                document.getElementById("_f_work_hours" + i + "b").required = false;
+            }
+            document.getElementById("work_hours_").hidden = true;
+        }
+        else {
+            for (let i = 1; i <= 7; i++) {
+                document.getElementById("_f_work_hours" + i).required = true;
+                document.getElementById("_f_work_hours" + i + "b").required = true;
+            }
+            document.getElementById("work_hours_").hidden = false;
+        }
+    });
+    // load saved values
     for (let field of fields) {
         //if (field === "parking_type") {
         //    document.getElementById("_f_"+field).value = parking_station[field];
         //}
         //else 
         if (field === "work_hours") {
-            let hrs = parking_station[field].split(",");
-            let i = 1;
-            for (let d_hr of hrs) {
-                document.getElementById("_f_" + field + i).value = d_hr.split("-")[0];
-                document.getElementById("_f_" + field + i + "b").value = d_hr.split("-")[1];
-                i++;
+            if (parking_station[field] === "24/7") {
+                document.getElementById("24/7_").checked = true;
+                document.getElementById("work_hours_").hidden = true;
             }
+            else {
+                //document.getElementById("work_hours_").hidden = false;
+                let hrs = parking_station[field].split(",");
+                let i = 1;
+                for (let d_hr of hrs) {
+                    document.getElementById("_f_" + field + i).value = d_hr.split("-")[0];
+                    document.getElementById("_f_" + field + i + "b").value = d_hr.split("-")[1];
+                    i++;
+                }
+            }
+
         }
         else if (field === "price_list") {
             let h = parking_station[field].split("d")[0].slice(1).split(",");
             let d = parking_station[field].split("d")[1].split("m")[0].split(",");
             let m = parking_station[field].split("m")[1].split(",");
-            for (let i = 1 ; i <= 12 ; i++) {
+            for (let i = 1; i <= 12; i++) {
                 if (i <= 4) {
-                    document.getElementById("_f_" + field + i).value = h[i-1];
+                    document.getElementById("_f_" + field + i).value = h[i - 1];
                 }
                 else if (i <= 8) {
-                    document.getElementById("_f_" + field + i).value = d[i-5];
+                    document.getElementById("_f_" + field + i).value = d[i - 5];
                 }
                 else {
-                    document.getElementById("_f_" + field + i).value = m[i-9];
+                    document.getElementById("_f_" + field + i).value = m[i - 9];
                 }
             }
         }
-        else if (document.getElementById("_f_"+field)) {
-            document.getElementById("_f_"+field).value = parking_station[field];
-            if (field === "lots") document.getElementById("_f_"+field).min = parking_station[field];
+        else if (document.getElementById("_f_" + field)) {
+            document.getElementById("_f_" + field).value = parking_station[field];
+            if (field === "lots") document.getElementById("_f_" + field).min = parking_station[field];
         }
         else {
-            if (document.querySelector("input[name="+field+"]") && parking_station[field] === 1) document.querySelector("input[name="+field+"]").checked=true;
+            if (document.querySelector("input[name=" + field + "]") && parking_station[field] === 1) document.querySelector("input[name=" + field + "]").checked = true;
         }
     }
+
+
 
     // modals
     document.addEventListener("DOMContentLoaded", function () {
@@ -271,11 +360,21 @@
             var myModalSave = new bootstrap.Modal(document.getElementById("myModalSave"));
             myModalSave.show();
         });
+        var btn3 = document.getElementById("myBtn3");
+        btn3.addEventListener("click", function () {
+            var myModalAddImg = new bootstrap.Modal(document.getElementById("myModalAddImg"));
+            myModalAddImg.show();
+        });
+        var btn4 = document.getElementById("myBtn4");
+        btn4.addEventListener("click", function () {
+            var myModalDelImg = new bootstrap.Modal(document.getElementById("myModalDeleteImg"));
+            myModalDelImg.show();
+        });
     });
     // send value if checkbox unchecked
     document.getElementById("_form4").addEventListener('submit', () => {
-        for (let i = 1 ; i <= 7 ; i++) {
-            if (document.getElementById("_f_"+i).checked) document.getElementById("_f_"+i+"h").disabled = true;
+        for (let i = 1; i <= 7; i++) {
+            if (document.getElementById("_f_" + i).checked) document.getElementById("_f_" + i + "h").disabled = true;
         }
     });
 </script>

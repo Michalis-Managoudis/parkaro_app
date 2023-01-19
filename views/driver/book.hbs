@@ -28,10 +28,10 @@
                         autofocus />
                     <label for="input_date2">Λήξη Χρέωσης (Αναχώρηση): </label>
                     <input type="datetime-local" id="input_date2" name="e_date" value="{{dates.end}}" required />
-                    <div class="d-block">
+                    {{!-- <div class="d-block">
                         <input type="checkbox" name="wash" id="ws">
                         <label for="ws">Wash</label>
-                    </div>
+                    </div> --}}
                 </fieldset>
                 <hr>
                 <fieldset>
@@ -69,9 +69,10 @@
                 </div>
             </form>
             <div class="col-5" id="p_info">
+                <img id="_img_" style="height: 100px;" src="" />
                 <p id="info_name"></p>
                 <p id="info_address" class="p_info_el"></p>
-                <a id="info_location" href="https://www.google.com/maps/dir/?api=1&origin=&destination=" 
+                <a id="info_location" href="https://www.google.com/maps/dir/?api=1&origin=&destination="
                     target="_blank"><i class="fa fa-map-marker"></i> Click here to navigate</a>
                 <p id="info_phone" class="p_info_el mt-3"></p>
                 {{!-- <p id="info_photo" class="p_info_el"></p> --}}
@@ -122,16 +123,23 @@
         // parking info
         let tp = "";
         switch (ps.parking_type) {
-            case 0: 
+            case 0:
                 tp = "Πόλη";
-            break;
-            case 1: 
+                break;
+            case 1:
                 tp = "Αεροδρόμιο";
-            break;
-            case 2: 
+                break;
+            case 2:
                 tp = "Λιμάνι";
-            break;
+                break;
         }
+        // image section
+        const img = document.getElementById('_img_');
+        img.addEventListener('error', function handleError() {
+            img.style.display = 'none';
+        });
+        img.src = "/user_images/p"+ps.id+".jpeg";
+
         document.getElementById("info_name").innerText = ps.name + ` (${tp})`;
         document.getElementById("info_location").href = document.getElementById("info_location").href + ps.location;
         document.getElementById("info_work_hours").innerText = ps.work_hours.split(",").join(" // ");

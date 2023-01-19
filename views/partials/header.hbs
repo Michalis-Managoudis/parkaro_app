@@ -24,7 +24,7 @@
 
     </div>
     <div>
-        {{#if is_driver}}{{#if login}}<span class="mx-4">Points: <i class="fa fa-diamond"></i></span>{{/if}}{{/if}}
+        {{#if is_driver}}{{#if login}}<span class="mx-4">Points: {{points}}<i class="fa fa-diamond"></i></span>{{/if}}{{/if}}
         <span class="text-nowrap">
             {{#if is_driver}}
             <i class="fa fa-user"></i>
@@ -85,11 +85,14 @@
         </span>
         {{#if login}}
         <div class="dropdown d-inline">
-            <a href="" id="notif" class="text-nowrap" data-bs-toggle="dropdown" role="button"><i class="fa fa-bell"></i>{{#if unread_notification_number}}<span id="notif_num" class="text-danger">({{unread_notification_number}})</span>{{/if}}</a>
+            <a href="" id="notif" class="text-nowrap" data-bs-toggle="dropdown" role="button"><i
+                    class="fa fa-bell"></i>{{#if unread_notification_number}}<span id="notif_num"
+                    class="text-danger">({{unread_notification_number}})</span>{{/if}}</a>
             <div class="dropdown-menu _header_dropdown">
                 {{#each notifications}}
-                <p id="{{this.id}}" class="dropdown-item _btn_notf {{#unless this.viewed}}bg-info{{/unless}}">{{this.message}}</p>
-                <p>{{this.date_created}}</p>
+                <p id="{{this.id}}" class="dropdown-item _btn_notf {{#unless this.viewed}}bg-info{{/unless}}">
+                    {{this.message}}<small><i> (<span class="format_dates">{{this.date_created}}</span>)</i></small></p>
+                
                 <div class="dropdown-divider"></div>
                 {{/each}}
                 <p class="btn btn-dark" id="notif1">Mark all as read</p>
@@ -120,8 +123,26 @@
 </header>
 
 <script>
+    var dat = document.querySelectorAll(".format_dates");
+    var dats = [...dat];
+    dats.forEach(datt => {
+        datt.innerHTML = date_to_string(parseInt(datt.innerHTML));
+    });
+
     document.getElementById("notif1").addEventListener("click", function () {
         document.getElementById("notif").innerHTML = '<i class="fa fa-bell"></i>';
-        window.location.assign("/rd_notif");
+        {{#if is_driver}}window.location.assign("/rd_notif");{{/if}}
+        {{#unless is_driver}}window.location.assign("/parking_station/rd_notif");{{/unless}}
     });
+
+    function date_to_string(num) {
+        let dtm_h = new Date(num);
+        let dt_h = dtm_h.toLocaleDateString().split("/");
+        if (dt_h[0] < 10) { dt_h[0] = '0' + dt_h[0]; }
+        if (dt_h[1] < 10) { dt_h[1] = '0' + dt_h[1]; }
+        let dt = dt_h[1] + "/" + dt_h[0] + "/" + dt_h[2];
+        let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
+        let dtm = dt + " " + tm;
+        return dtm;
+    }
 </script>

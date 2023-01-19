@@ -24,7 +24,15 @@
 
 
 {{#if records}}
-<h3 class="text-center">Reservations</h3>
+<div class="d-flex justify-content-between mx-5 my-2">
+    <h3 class="text-center">Reservations</h3>
+    <div class="text-nowrap">
+        <label for="_start">Από:</label>
+        <input type="datetime-local" id="_start" name="r_start" class="dates_">
+        <label for="_end">Έως: </label>
+        <input type="datetime-local" id="_end" name="r_end" class="dates_">
+    </div>
+</div>
 <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
     <table class="table table-bordered m-0" id="res_table">
         <thead style="position: sticky; top: 0" class="bg-dark text-white">
@@ -70,9 +78,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Αστέρια: <span id="strs"></span>/5 <i class="fa fa-star-o"></i></p>
-                    <p>Γράψτε μία κριτική</p>
-                    <p id="descrpt"></p>
+                    {{!-- <p>Αστέρια: <span id="strs"></span>/5 <i class="fa fa-star-o"></i></p> --}}
+                    <p>Αστέρια: <span id="strs"></span>/5 <span id="strs_2"></span></p>
+                    <p class="mb-0">Κριτική: </p>
+                    <i><small id="descrpt"></small></i>
                 </div>
             </div>
         </div>
@@ -135,13 +144,23 @@
     dats.forEach(datt => {
         datt.innerHTML = date_to_string(parseInt(datt.innerHTML));
     });
+
     let inc = {{{ income }}};
     for (let field of Object.keys(inc)) if (inc[field]) document.getElementById("incm_" + field).textContent = inc[field] + " €";
+
     const rat = {{{ rating }}};
-    for (let i = 1 ; i < rat ; i++) {
-        document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star"></i>';
+    if (Number.isNaN(rat)) document.getElementById("rating").innerHTML = 'No reviews';
+    else {
+        for (let i = 1; i <= rat; i++) {
+            document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star"></i>';
+        }
+        if (!Number.isInteger(rat)) document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star-half-empty">';
+        document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + `(${rat} / 5)`;
     }
-    document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + `<i class="fa fa-star-half-empty"> (${rat} / 5)`;
+
+
+
+
 
     document.addEventListener("DOMContentLoaded", function () {
         highlight_future_reservations();
@@ -150,7 +169,50 @@
         review_buttons();
         edit_buttons();
         delete_buttons();
+
+        filter_reservations();
     });
+
+    function filter_reservations() {
+        let _dt1 = document.getElementById("_start");
+        let _dt2 = document.getElementById("_end");
+        var dat2 = document.querySelectorAll(".dates_");
+        var dats2 = [...dat2];
+        dats2.forEach(datt2 => {
+            datt2.addEventListener("change", function () {
+                // show all
+                var dat3 = document.querySelectorAll("._resv");
+                var dats3 = [...dat3];
+                dats3.forEach(datt3 => {
+                    datt3.hidden = false;
+                });
+                _dt1.max = _dt2.value;
+                _dt2.min = _dt1.value;
+                //show only filtered
+                let tbl = document.getElementById("res_table");
+                if (tbl) {
+                    let tday = new Date();
+                    let h_dt = "";
+                    let rd = "";
+                    let h_dt2 = "";
+                    let rd2 = "";
+                    for (let i = 1; i < tbl.rows.length; i++) {
+                        rd = tbl.rows[i].cells[2].textContent;
+                        rd = rd.split(" ");
+                        rd[0] = rd[0].split("/");
+                        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
+                        rd2 = tbl.rows[i].cells[3].textContent;
+                        rd2 = rd2.split(" ");
+                        rd2[0] = rd2[0].split("/");
+                        h_dt2 = rd2[0][2] + "-" + rd2[0][1] + "-" + rd2[0][0] + "T" + rd2[1] + ":00"
+                        if (Date.parse(_dt1.value) > Date.parse(h_dt2) || Date.parse(_dt2.value) < Date.parse(h_dt)) {
+                            tbl.rows[i].hidden = true;
+                        }
+                    }
+                }
+            });
+        });
+    }
 
     function highlight_future_reservations() { // highlight future reservations
         let tbl = document.getElementById("res_table");
@@ -180,7 +242,7 @@
             }
         }
     }
-    
+
     function review_buttons() {
         let bn = document.querySelectorAll("._btn_rev");
         if (bn.length) {
@@ -191,13 +253,16 @@
                 idd = btn.id.split("-")[1];
                 btn.addEventListener("click", function () {
                     myModal.show();
+                    document.getElementById("strs_2").innerHTML = "";
+                    document.getElementById("strs").innerHTML = "";
+                    document.getElementById("descrpt").innerHTML = "";
                     if (rev[idd]) {
+
+                        for (let i = 1; i <= rev[idd].stars; i++) {
+                            document.getElementById("strs_2").innerHTML = document.getElementById("strs_2").innerHTML + '<i class="fa fa-star"></i>';
+                        }
                         document.getElementById("strs").innerHTML = rev[idd].stars;
                         document.getElementById("descrpt").innerHTML = rev[idd].description;
-                    }
-                    else {
-                        document.getElementById("strs").innerHTML = "";
-                        document.getElementById("descrpt").innerHTML = "";
                     }
                 });
                 disable_review_future_reservations(idd);
@@ -214,7 +279,7 @@
         rd[0] = rd[0].split("/");
         h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
         if (tday.getTime() < Date.parse(h_dt)) document.getElementById("myBtn-" + _id).disabled = true;
-        //console.log(_id);
+        if (!rev[_id]) document.getElementById("myBtn-" + _id).disabled = true;
     }
 
     function edit_buttons() {

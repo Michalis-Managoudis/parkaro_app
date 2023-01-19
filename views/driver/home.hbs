@@ -15,21 +15,14 @@
 
     <div class="col-4">
         <form action="" method="post" id="_form2">
-            {{!-- <div class="d-flex">
-                <input type="search" id="form1" class="form-control" placeholder="Search" />
-                <button type="button" class="btn btn-primary">
-                    <i class="fa fa-search"></i>
-                </button>
-            </div> --}}
-            <div class="input-group">
+            {{!-- <div class="input-group">
                 <div class="form-outline">
                     <input type="search" id="form1" class="form-control" placeholder="Search" />
-                    {{!-- <label class="form-label" for="form1">Search</label> --}}
                 </div>
                 <button type="button" class="btn btn-primary">
                     <i class="fa fa-search"></i>
                 </button>
-            </div>
+            </div> --}}
             {{!-- <br> --}}
             <div id="_search">
                 <label for="search_date1">Άφιξη:</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -59,10 +52,15 @@
     <label for="outdoors-v11">outdoors</label>
 </div> --}}
 
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
 <script>
     //const axios = require('axios');
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA';
     const map = new mapboxgl.Map({
-        accessToken: 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA',
+        //accessToken: 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA',
         container: 'map',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v11',
@@ -70,6 +68,14 @@
         center: [23.727539, 37.983810],
         zoom: 11.15
     });
+
+    // Add the control to the map.
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        })
+    );
 
     const data = {{{ parking_station_locations }}};
     //console.log(data);
@@ -83,21 +89,23 @@
     map.on('load', () => {
         let stars = "";
         let prc = "";
+        let disc = "";
         for (let i = 0; i < Object.keys(data).length; i++) {
             stars = "";
             if (data[i].rating === "NaN") {
                 stars = '<i class="fa fa-star-o"></i>';
                 data[i].rating = 0;
             }
-            for (let j = 1 ; j <= data[i].rating ; j++) stars = stars + '<i class="fa fa-star"></i>';
+            for (let j = 1; j <= data[i].rating; j++) stars = stars + '<i class="fa fa-star"></i>';
             if (!Number.isInteger(data[i].rating)) stars = stars + '<i class="fa fa-star-half-empty"></i>';
             if (data[i].price) prc = '<p class="m-0"> Price: ' + data[i].price + ' €</p>';
+            if (data[i].discount) disc = '<p class="m-0 bg-warning">' + data[i].discount + '%</p>';
             marker_data.data.features[i] = {
                 'type': 'Feature',
                 'properties': {
                     'id': data[i].id,
                     'description':
-                        '<strong>' + data[i].name + '</strong> <span>'+ stars + '('+ data[i].rating +'/5)' +'</span> <br> <div class="d-flex justify-content-between">' + prc + ' <a href="/book/' + data[i].id + '" id="' + data[i].id + '" class="m-h-ps_marker bg-info">BOOK NOW</a></div>',
+                        '<strong>' + data[i].name + '</strong> <span>' + stars + '(' + data[i].rating + '/5)' + '</span> <br> <div class="d-flex justify-content-between">' + disc + prc + ' <a href="/book/' + data[i].id + '" id="' + data[i].id + '" class="m-h-ps_marker bg-info">BOOK NOW</a></div>',
                     'icon': 'car-15'
                 },
                 'geometry': {

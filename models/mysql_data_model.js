@@ -138,7 +138,7 @@ function get2_(table, flds, id, cb) {
 };
 
 function read2_(cond, cb) {
-  let sql = `SELECT ps.id, ps.name, ps.work_hours, ps.price_list, ps.location, rv.rating FROM (SELECT id, name, work_hours, price_list, location FROM parking_station WHERE ${cond}) ps LEFT JOIN (SELECT parking_station_id, AVG(stars) AS rating FROM review GROUP BY parking_station_id) rv ON ps.id = rv.parking_station_id`;
+  let sql = `SELECT ps.id, ps.name, ps.work_hours, ps.price_list, ps.location, ps.discount, rv.rating FROM (SELECT id, name, work_hours, price_list, location, discount FROM parking_station WHERE ${cond}) ps LEFT JOIN (SELECT parking_station_id, AVG(stars) AS rating FROM review GROUP BY parking_station_id) rv ON ps.id = rv.parking_station_id`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
@@ -156,8 +156,8 @@ function check2_(table, cond, cb) {
 
 function load_reservation_history(md, id, cb) {
   let sql = ``;
-  if (md === "driver") { sql = `SELECT rc.id, rc.r_start, rc.r_end, rc.price, rc.plate, p.name, p.phone, p.address, p.id1, p.location FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.driver_id FROM (reservation r JOIN car c ON r.car_id=c.id) WHERE c.driver_id=${id}) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address, ps.location FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id)) p ON rc.parking_lot_id=p.id2 ORDER BY rc.r_end DESC, rc.r_start DESC`; }
-  else if (md === "parking_station") { sql = ``; }
+  if (md === "driver") { sql = `SELECT rc.id, rc.parking_lot_id, rc.r_start, rc.r_end, rc.price, rc.plate, p.name, p.phone, p.address, p.id1, p.location FROM (SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, c.plate, c.driver_id FROM (reservation r JOIN car c ON r.car_id=c.id) WHERE c.driver_id=${id}) rc JOIN (SELECT pl.id AS id2, ps.id AS id1, ps.name, ps.phone, ps.address, ps.location FROM (parking_lot pl JOIN parking_station ps ON pl.parking_station_id=ps.id)) p ON rc.parking_lot_id=p.id2 ORDER BY rc.r_end DESC, rc.r_start DESC`; }
+  // else if (md === "parking_station") { sql = ``; }
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
@@ -276,10 +276,6 @@ function add_notification(u_id, dt, msg, cb){
   });
 };
 
-function find_parking_space(id, cb) {
-
-};
-
 module.exports = {
   schema,
   schema_required,
@@ -302,7 +298,6 @@ module.exports = {
   find_free_parking_lots_of_parking_station,
   find_free_parking_lots_of_parking_station2,
   calculate_income,
-  //add_new_reservation,
   get2_,
   check2_,
   get_parking_evaluation,

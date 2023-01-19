@@ -1,6 +1,18 @@
 'use strict';
 // const dataModel = require('../models/sqlite_data_model.js');
 const dataModel = require('../models/mysql_data_model.js');
+const fs = require('fs');
+
+// const multer = require('multer');
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, './user_photos');
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.originalname);
+//     }
+// });
+// var upload = multer({ storage: storage });
 
 // regex patterns
 const mail_regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
@@ -8,7 +20,7 @@ const password_regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 const phone_regex = /[0-9]{10}/;
 
 function get_parking_station_home_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("To see home page you must sign in first");
         res.redirect('/parking_station/sign_in');
     }
@@ -19,62 +31,18 @@ function get_parking_station_home_page(req, res) {
                 n_dt = n_dt.getTime();
                 dataModel.load_parking_station_current_reservations(req.session.sid, n_dt, function (data) {
                     const dt = JSON.parse(JSON.stringify(data));
-                    let cl = 0;
-                    for (let el of dt) if (el.r_start < n_dt) cl++;
-                    dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) {
-                        let dt2 = JSON.parse(JSON.stringify(data2));
-                        let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
-                        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
-                            data = JSON.parse(JSON.stringify(data));
-                            let c = 0;
-                            for (let el of data) if (!el.viewed) c++;
-                            res.render('parking_station/home', {
-                                records: dt,
-                                pl_per: per,
-                                form_data: false,
-                                empty_lots: false,
-                                "is_driver": false,
-                                "login": (req.session.sid !== undefined),
-                                'lang': req.session.lang,
-                                notifications: data,
-                                unread_notification_number: c
-                            });
-                        });
-                    });
-                });
-
-            }
-        });
-    }
-};
-
-function search_parking_station_reservation_availability(req, res) {
-    if (req.session.sid === undefined) {
-        console.log("To see home page you must sign in first");
-        res.redirect('/parking_station/sign_in');
-    }
-    else {
-        dataModel.get_("parking_station", req.session.sid, function (data0) { // check if id exists
-            if (data0) {
-                let n_dt = new Date();
-                n_dt = n_dt.getTime();
-                dataModel.load_parking_station_current_reservations(req.session.sid, n_dt, function (data) {
-                    const dt = JSON.parse(JSON.stringify(data));
-                    let cl = 0;
-                    for (let el of dt) if (el.r_start < n_dt) cl++;
-                    dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) { // get number of all parking lots
-                        let dt2 = JSON.parse(JSON.stringify(data2));
-                        let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
-                        dataModel.find_free_parking_lots_of_parking_station(req.session.sid, Date.parse(req.body.r_start), Date.parse(req.body.r_end), function (data3) {
-                            const dt3 = JSON.parse(JSON.stringify(data3));
-                            let e_lots = [];
-                            let f_dt = {};
-                            let flds = ["email", "name", "phone", "plate", "model", "color", "r_start", "r_end", "price"];
-                            req.body.price = final_price_calculation(data0.price_list, req.body.r_start, req.body.r_end);
-                            for (let field of flds) f_dt[field] = req.body[field];
-                            if (check_work_hours(data0.work_hours, req.body.r_start, req.body.r_end)) {
-                                for (let el of dt3) e_lots.push(el.id);
-                            }
+                    dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                        const dt1 = JSON.parse(JSON.stringify(data1));
+                        let ids = [];
+                        let cl = 0;
+                        for (let ell of dt1) ids.push(ell.id);
+                        for (let el of dt) {
+                            el.parking_lot_id = ids.indexOf(el.parking_lot_id) + 1;
+                            if (el.r_start < n_dt) cl++;
+                        }
+                        dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) {
+                            let dt2 = JSON.parse(JSON.stringify(data2));
+                            let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
                             dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
                                 data = JSON.parse(JSON.stringify(data));
                                 let c = 0;
@@ -82,8 +50,8 @@ function search_parking_station_reservation_availability(req, res) {
                                 res.render('parking_station/home', {
                                     records: dt,
                                     pl_per: per,
-                                    empty_lots: e_lots,
-                                    form_data: JSON.stringify(f_dt),
+                                    form_data: false,
+                                    empty_lots: false,
                                     "is_driver": false,
                                     "login": (req.session.sid !== undefined),
                                     'lang': req.session.lang,
@@ -94,14 +62,72 @@ function search_parking_station_reservation_availability(req, res) {
                         });
                     });
                 });
+            }
+        });
+    }
+};
 
+function search_parking_station_reservation_availability(req, res) {
+    if (req.session.sid === undefined || req.session.is_driver) {
+        console.log("To see home page you must sign in first");
+        res.redirect('/parking_station/sign_in');
+    }
+    else {
+        dataModel.get_("parking_station", req.session.sid, function (data0) { // check if id exists
+            if (data0) {
+                let n_dt = new Date();
+                n_dt = n_dt.getTime();
+                dataModel.load_parking_station_current_reservations(req.session.sid, n_dt, function (data) {
+                    const dt = JSON.parse(JSON.stringify(data));
+                    dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                        const dt1 = JSON.parse(JSON.stringify(data1));
+                        let ids = [];
+                        for (let ell of dt1) ids.push(ell.id);
+                        for (let el of dt) el.parking_lot_id = ids.indexOf(el.parking_lot_id) + 1;
+                        let cl = 0;
+                        for (let el of dt) if (el.r_start < n_dt) cl++;
+                        dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) { // get number of all parking lots
+                            let dt2 = JSON.parse(JSON.stringify(data2));
+                            let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
+                            dataModel.find_free_parking_lots_of_parking_station(req.session.sid, Date.parse(req.body.r_start), Date.parse(req.body.r_end), function (data3) {
+                                const dt3 = JSON.parse(JSON.stringify(data3));
+                                let e_lots = [];
+                                let f_dt = {};
+                                let flds = ["email", "name", "phone", "plate", "model", "color", "r_start", "r_end", "price"];
+                                req.body.price = final_price_calculation(data0.price_list, data0.discount, req.body.r_start, req.body.r_end);
+                                for (let field of flds) f_dt[field] = req.body[field];
+                                if (check_work_hours(data0.work_hours, req.body.r_start, req.body.r_end)) {
+                                    for (let el of dt3) {
+                                        e_lots.push(ids.indexOf(el.id) + 1);
+                                    }
+                                }
+                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data4) {
+                                    data4 = JSON.parse(JSON.stringify(data4));
+                                    let c = 0;
+                                    for (let el of data4) if (!el.viewed) c++;
+                                    res.render('parking_station/home', {
+                                        records: dt,
+                                        pl_per: per,
+                                        empty_lots: e_lots,
+                                        form_data: JSON.stringify(f_dt),
+                                        "is_driver": false,
+                                        "login": (req.session.sid !== undefined),
+                                        'lang': req.session.lang,
+                                        notifications: data4,
+                                        unread_notification_number: c
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
             }
         });
     }
 };
 
 function add_parking_station_reservation(req, res) {
-    if (req.session.sid !== undefined) {
+    if (req.session.sid !== undefined && !req.session.is_driver) {
         // add user
         let new_driver = {};
         for (let field of dataModel.schema_required["driver"]) {
@@ -139,20 +165,25 @@ function add_parking_station_reservation(req, res) {
                                             dataModel.create_("car", vls, function () {
                                                 dataModel.check2_("car", `plate = "${car.plate}"`, function (data5) {
                                                     console.log("New car added succesfully");
-                                                    let resv = {};
-                                                    for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
-                                                        if (field === "car_id") resv[field] = data5.id;
-                                                        else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
-                                                        else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
-                                                        else resv[field] = req.body[field];
-                                                    }
-                                                    const req_values = Object.values(resv);
-                                                    dataModel.create_("reservation", req_values, function () {
-                                                        dataModel.update_points(data3.id, parseInt(resv.price / 10), function () {
-                                                            console.log("Reservation booked");
-                                                            res.redirect('/parking_station/home'); //res.redirect("back");
+                                                    dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                                                        const dt1 = JSON.parse(JSON.stringify(data1));
+                                                        let ids = [];
+                                                        for (let ell of dt1) ids.push(ell.id);
+                                                        let resv = {};
+                                                        for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
+                                                            if (field === "car_id") resv[field] = data5.id;
+                                                            else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
+                                                            else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
+                                                            else if (field === "parking_lot_id") resv[field] = ids[(req.body[field] - 1)];
+                                                            else resv[field] = req.body[field];
+                                                        }
+                                                        const req_values = Object.values(resv);
+                                                        dataModel.create_("reservation", req_values, function () {
+                                                            dataModel.update_points(data3.id, parseInt(resv.price / 10), function () {
+                                                                console.log("Reservation booked");
+                                                                res.redirect('/parking_station/home'); //res.redirect("back");
+                                                            });
                                                         });
-
                                                     });
                                                 });
                                             });
@@ -190,77 +221,81 @@ function add_parking_station_reservation(req, res) {
 };
 
 function get_parking_station_my_parking_page(req, res) {
-    if (req.session.sid === undefined) {
-        console.log("To see home page you must sign in first");
+    if (req.session.sid === undefined || req.session.is_driver) {
+        console.log("To see my_parking page you must sign in first");
         res.redirect('/parking_station/sign_in');
     }
     else {
-        dataModel.get_("parking_station", req.session.sid, function (data) { // check if id exists
-            if (data) {
-                dataModel.load_parking_station_reservations(req.session.sid, function (data) {
-                    const dt = JSON.parse(JSON.stringify(data));
-                    let today = new Date();
-                    let tday = new Date();
-                    let tod = tday.toLocaleDateString().split("/"); //! not right format
-                    if (tod[0] < 10) { tod[0] = '0' + tod[0]; }
-                    if (tod[1] < 10) { tod[1] = '0' + tod[1]; }
-                    let tod2 = tod[2] + "-" + tod[1] + "-" + tod[0];
-                    let dt_st = Date.parse(tod2 + "T00:00:00");
-                    console.log(tod2 + "T00:00:00");
-                    let dt_en = Date.parse(today);
-                    dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data2) { // today income
-                        const dt2 = JSON.parse(JSON.stringify(data2));
-                        tday.setDate(tday.getMonth() - 1);
-                        let tod3 = tday.toLocaleDateString().split("/"); //! not right format
-                        if (tod3[0] < 10) { tod3[0] = '0' + tod3[0]; }
-                        if (tod3[1] < 10) { tod3[1] = '0' + tod3[1]; }
-                        let tod4 = tod3[2] + "-" + tod3[1] + "-" + tod3[0];
-                        let dt_st = Date.parse(tod4 + "T00:00:00");
+        dataModel.get_("parking_station", req.session.sid, function (data_) { // check if id exists
+            if (data_) {
+                dataModel.load_parking_station_reservations(req.session.sid, function (data0) {
+                    const dt0 = JSON.parse(JSON.stringify(data0));
+                    dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                        const dt1 = JSON.parse(JSON.stringify(data1));
+                        let ids = [];
+                        for (let ell of dt1) ids.push(ell.id);
+                        for (let el of dt0) el.parking_lot_id = ids.indexOf(el.parking_lot_id) + 1;
+                        let today = new Date();
+                        let tday = new Date();
+                        let tod = tday.toLocaleDateString().split("/"); //! not right format
+                        if (tod[0] < 10) { tod[0] = '0' + tod[0]; }
+                        if (tod[1] < 10) { tod[1] = '0' + tod[1]; }
+                        let tod2 = tod[2] + "-" + tod[1] + "-" + tod[0];
+                        let dt_st = Date.parse(tod2 + "T00:00:00");
                         let dt_en = Date.parse(today);
-                        dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data3) { // monthly income
-                            const dt3 = JSON.parse(JSON.stringify(data3));
-                            let incom = { "today": dt2[0].price, "monthly": dt3[0].price };
-                            incom = JSON.stringify(incom);
-                            dataModel.read_("review", "stars, description", `parking_station_id = ${req.session.sid}`, function (data4) {
-                                const dt_2 = JSON.parse(JSON.stringify(data4));
-                                let rvs = {};
-                                let sum = 0;
-                                let count = 0;
-                                for (let el2 of dt_2) {
-                                    rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description };
-                                    sum = sum + el2.stars;
-                                    count++;
-                                }
-                                const rat = (sum / count).toFixed(1);
-                                rvs = JSON.stringify(rvs);
-                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
-                                    data = JSON.parse(JSON.stringify(data));
-                                    let c = 0;
-                                    for (let el of data) if (!el.viewed) c++;
-                                    res.render('parking_station/my_parking', {
-                                        records: dt,
-                                        income: incom,
-                                        rating: rat,
-                                        reviews: rvs,
-                                        "is_driver": false,
-                                        "login": (req.session.sid !== undefined),
-                                        'lang': req.session.lang,
-                                        notifications: data,
-                                        unread_notification_number: c
+                        dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data2) { // today income
+                            const dt2 = JSON.parse(JSON.stringify(data2));
+                            tday.setDate(tday.getMonth() - 1);
+                            let tod3 = tday.toLocaleDateString().split("/"); //! not right format
+                            if (tod3[0] < 10) { tod3[0] = '0' + tod3[0]; }
+                            if (tod3[1] < 10) { tod3[1] = '0' + tod3[1]; }
+                            let tod4 = tod3[2] + "-" + tod3[1] + "-" + tod3[0];
+                            let dt_st = Date.parse(tod4 + "T00:00:00");
+                            let dt_en = Date.parse(today);
+                            dataModel.calculate_income(req.session.sid, dt_st, dt_en, function (data3) { // monthly income
+                                const dt3 = JSON.parse(JSON.stringify(data3));
+                                let incom = { "today": dt2[0].price, "monthly": dt3[0].price };
+                                incom = JSON.stringify(incom);
+                                dataModel.read_("review", "stars, description", `parking_station_id = ${req.session.sid}`, function (data4) {
+                                    const dt_2 = JSON.parse(JSON.stringify(data4));
+                                    let rvs = {};
+                                    let sum = 0;
+                                    let count = 0;
+                                    for (let el2 of dt_2) {
+                                        rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description };
+                                        sum = sum + el2.stars;
+                                        count++;
+                                    }
+                                    const rat = (sum / count).toFixed(1);
+                                    rvs = JSON.stringify(rvs);
+                                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                                        data = JSON.parse(JSON.stringify(data));
+                                        let c = 0;
+                                        for (let el of data) if (!el.viewed) c++;
+                                        res.render('parking_station/my_parking', {
+                                            records: dt0,
+                                            income: incom,
+                                            rating: rat,
+                                            reviews: rvs,
+                                            "is_driver": false,
+                                            "login": (req.session.sid !== undefined),
+                                            'lang': req.session.lang,
+                                            notifications: data,
+                                            unread_notification_number: c
+                                        });
                                     });
                                 });
                             });
                         });
                     });
                 });
-
             }
         });
     }
 };
 
 function delete_parking_station_reservation(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("To delete a reservation you must sign in first");
         res.redirect('/parking_station/sign_in');
     }
@@ -288,7 +323,7 @@ function delete_parking_station_reservation(req, res) {
 };
 
 function update_parking_station_reservation(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("To update a reservation you must sign in first");
         res.redirect('/parking_station/sign_in');
     }
@@ -339,6 +374,28 @@ function get_parking_station_info_page(req, res) {
     });
 };
 
+function read_parking_station_notifications(req, res) {
+    if (req.session.sid === undefined || req.session.is_driver) {
+        console.log("To read notifications you must sign in first");
+        res.redirect('/parking_station/sign_in');
+    }
+    else {
+        dataModel.read_all_user_notifications(`p${req.session.sid}`, function (data) {
+            res.redirect('back');
+        });
+    }
+};
+
+function delete_parking_station_image(req, res) {
+    fs.unlink("user_images/p" + req.session.sid + ".jpeg", (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("Delete Image successfully.");
+        res.redirect('back');
+    });
+};
+
 function final_price_calculation(price_list, dt1, dt2) {
     let h = price_list.split("d")[0].slice(1).split(",");
     let d = price_list.split("d")[1].split("m")[0].split(",");
@@ -367,24 +424,28 @@ function final_price_calculation(price_list, dt1, dt2) {
     }
     //price = price.toFixed(2);
     return price;
-}
+};
 
 function check_work_hours(work_hours, dt1, dt2) {
-    const hrs = work_hours.split(",");
-    dt1 = new Date(dt1);
-    dt2 = new Date(dt2);
-    let d1 = new Date(dt1).toLocaleTimeString();
-    let d2 = new Date(dt2).toLocaleTimeString();
-    d1 = convert_12h_to_24h(d1);
-    d2 = convert_12h_to_24h(d2);
+    if (work_hours === "24/7") return true;
+    else {
+        const hrs = work_hours.split(",");
+        dt1 = new Date(dt1);
+        dt2 = new Date(dt2);
+        let d1 = new Date(dt1).toLocaleTimeString();
+        let d2 = new Date(dt2).toLocaleTimeString();
+        d1 = convert_12h_to_24h(d1);
+        d2 = convert_12h_to_24h(d2);
 
-    if (d1 > hrs[dt1.getDay()].split("-")[0] && d1 < hrs[dt1.getDay()].split("-")[1]) { // if start date between parking station work hours of that day
-        if (d2 > hrs[dt2.getDay()].split("-")[0] && d2 < hrs[dt2.getDay()].split("-")[1]) { // if end date between parking station work hours of that day
-            return true;
+        if (d1 > hrs[dt1.getDay()].split("-")[0] && d1 < hrs[dt1.getDay()].split("-")[1]) { // if start date between parking station work hours of that day
+            if (d2 > hrs[dt2.getDay()].split("-")[0] && d2 < hrs[dt2.getDay()].split("-")[1]) { // if end date between parking station work hours of that day
+                return true;
+            }
         }
+        return false;
     }
-    return false;
-}
+
+};
 function convert_12h_to_24h(time12h) {
     const [time, modifier] = time12h.split(" ");
     let [hours, minutes] = time.split(":");
@@ -393,7 +454,7 @@ function convert_12h_to_24h(time12h) {
     if (hours < 10) { hours = '0' + hours; }
     if (minutes < 10) { minutes = '0' + parseInt(minutes); }
     return `${hours}:${minutes}`;
-}
+};
 
 module.exports = {
     get_parking_station_home_page,
@@ -402,5 +463,7 @@ module.exports = {
     get_parking_station_info_page,
     delete_parking_station_reservation,
     update_parking_station_reservation,
-    add_parking_station_reservation
+    add_parking_station_reservation,
+    read_parking_station_notifications,
+    delete_parking_station_image
 }

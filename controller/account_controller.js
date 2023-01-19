@@ -1,4 +1,5 @@
 'use strict';
+const { data } = require('jquery');
 //const dataModel = require('../models/sqlite_data_model.js');
 const dataModel = require('../models/mysql_data_model.js');
 
@@ -15,7 +16,7 @@ function change_language(req, res) {
 };
 
 function get_driver_account_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         console.log("To see account page you must sign in first");
         res.redirect('/sign_in');
     }
@@ -23,18 +24,21 @@ function get_driver_account_page(req, res) {
         dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
             if (data) {
                 dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars1) {
-                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
-                        data = JSON.parse(JSON.stringify(data));
+                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+                        datan = JSON.parse(JSON.stringify(datan));
                         let c = 0;
-                        for (let el of data) if (!el.viewed) c++;
-                        res.render("driver/account", {
-                            cars: cars1,
-                            driver: data,
-                            'is_driver': true,
-                            'login': true,
-                            'lang': req.session.lang,
-                            notifications: data,
-                            unread_notification_number: c
+                        for (let el of datan) if (!el.viewed) c++;
+                        dataModel.get2_("driver", "points", req.session.sid, function (datap) {
+                            res.render("driver/account", {
+                                cars: cars1,
+                                driver: data,
+                                'is_driver': true,
+                                'login': true,
+                                'lang': req.session.lang,
+                                notifications: datan,
+                                unread_notification_number: c,
+                                points: JSON.stringify(datap.points)
+                            });
                         });
                     });
                 });
@@ -44,24 +48,25 @@ function get_driver_account_page(req, res) {
 
 }
 function get_parking_station_account_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("To see account page you must sign in first");
         res.redirect('/parking_station/sign_in');
     }
     else {
         dataModel.get_("parking_station", req.session.sid, function (data) { // check if email exists
             if (data) {
-                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
-                    data = JSON.parse(JSON.stringify(data));
+                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (datan) {
+                    datan = JSON.parse(JSON.stringify(datan));
                     let c = 0;
-                    for (let el of data) if (!el.viewed) c++;
+                    for (let el of datan) if (!el.viewed) c++;
+                    data.id = req.session.sid;
                     res.render("parking_station/account", {
                         ps_data: JSON.stringify(data),
                         //ps_data: data,
                         'is_driver': false,
                         'login': true,
                         'lang': req.session.lang,
-                        notifications: data,
+                        notifications: datan,
                         unread_notification_number: c
                     });
                 });
@@ -72,7 +77,7 @@ function get_parking_station_account_page(req, res) {
 }
 
 function update_driver_data(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         console.log("important error!");
         res.redirect('/account');
     }
@@ -119,7 +124,7 @@ function update_driver_data(req, res) {
 
 }
 function update_parking_station_data(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("important error!");
         res.redirect('/parking_station/account');
     }
@@ -128,9 +133,12 @@ function update_parking_station_data(req, res) {
         for (let field of dataModel.schema_editable["parking_station"]) {
             if (field == "work_hours") {
                 parking_station.work_hours = "";
-                for (let i = 1; i <= 7; i++) {
-                    parking_station.work_hours = parking_station.work_hours + req.body["work_hours" + i] + "-" + req.body["work_hours" + i + "b"];
-                    if (i !== 7) parking_station.work_hours = parking_station.work_hours + ",";
+                if (req.body["work_hours_0"]) parking_station.work_hours = "24/7";
+                else {
+                    for (let i = 1; i <= 7; i++) {
+                        parking_station.work_hours = parking_station.work_hours + req.body["work_hours" + i] + "-" + req.body["work_hours" + i + "b"];
+                        if (i !== 7) parking_station.work_hours = parking_station.work_hours + ",";
+                    }
                 }
             }
             else if (field == "price_list") {
@@ -164,7 +172,14 @@ function update_parking_station_data(req, res) {
             parking_station[field] = parseInt(parking_station[field]);
             if (!(parking_station[field] === 0 || parking_station[field] === 1)) fields_check = false;
         }
+        if (!(parking_station.password === req.body.password2)) fields_check = false;
         //? if (!parking_station.name) fields_check = false;
+        // if (req.body != pass) fields_check = false;
+        // else {
+        //     console.log("Wrong password");
+        //     res.redirect('/parking_station/account');
+        // }
+
         if (fields_check) {
             // check if driver already exists (email and phone)
             dataModel.check_("parking_station", req.session.sid, "email", parking_station.email, function (bool1) {
@@ -208,31 +223,51 @@ function update_parking_station_data(req, res) {
 
 function delete_driver_account(req, res) {
     //! alert 
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         console.log("important error!");
         res.redirect('/home');
     }
     else {
-        dataModel.delete_("driver", req.session.sid, function () {
-            req.session.sid = undefined;
-            res.redirect('/home');
+        dataModel.get2_("driver", "email", req.session.sid, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            dataModel.auth_("driver", data.email, req.body.password3, function (data2) {
+                if (data2) {
+                    dataModel.delete_("driver", req.session.sid, function () {
+                        req.session.sid = undefined;
+                        res.redirect('/home');
+                    });
+                }
+                else {
+                    console.log("Wrong password!");
+                    res.redirect('/account');
+                }
+            });
         });
     }
-
 }
 function delete_parking_station_account(req, res) {
     //! alert 
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         console.log("important error!");
         res.redirect('/parking_station/home');
     }
     else {
-        dataModel.delete_("parking_station", req.session.sid, function () {
-            req.session.sid = undefined;
-            res.redirect('/parking_station/home');
+        dataModel.get2_("parking_station", "email", req.session.sid, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            dataModel.auth_("parking_station", data.email, req.body.password3, function (data2) {
+                if (data2) {
+                    dataModel.delete_("parking_station", req.session.sid, function () {
+                        req.session.sid = undefined;
+                        res.redirect('/parking_station/home');
+                    });
+                }
+                else {
+                    console.log("Wrong password!");
+                    res.redirect('/parking_station/account');
+                }
+            });
         });
     }
-
 }
 
 module.exports = {

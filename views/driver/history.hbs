@@ -5,6 +5,7 @@
         <thead style="position: sticky; top: 0" class="bg-dark text-white">
             <tr>
                 <th>ID</th>
+                <th>Lot</th>
                 <th>Date start</th>
                 <th>Date end</th>
                 <th>Price</th>
@@ -17,6 +18,7 @@
             {{#each records}}
             <tr class="_resv" id="{{this.id}}">
                 <td>{{this.id}}</td>
+                <td>{{this.parking_lot_id}}</td>
                 <td class="_t_replace">{{this.r_start}}</td>
                 <td class="_t_replace">{{this.r_end}}</td>
                 <td>{{this.price}} €</td>
@@ -175,7 +177,7 @@
             btn.addEventListener("click", function () {
                 myModal.show();
                 document.getElementById("resv_id").value = idd;
-                document.getElementById("resv_prc").value = document.getElementById(idd).cells[3].textContent.split(" ")[0];
+                document.getElementById("resv_prc").value = document.getElementById(idd).cells[4].textContent.split(" ")[0];
             });
         });
     }
@@ -199,7 +201,7 @@
     //                 document.getElementById("ff-date-" + i).value = h_dt;
     //             }
     //             document.getElementById("resv__id").value = idd;
-    //             document.getElementById("resv__ps_id").value = document.getElementById(idd).cells[5].id;
+    //             document.getElementById("resv__ps_id").value = document.getElementById(idd).cells[6].id;
     //             modal_dates();
     //         });
     //     });
@@ -214,6 +216,7 @@
             idd = btn.id.split("-")[1];
             btn.addEventListener("click", function () {
                 myModal.show();
+                document.querySelector("#myModalRev #desc").innerHTML = '';
                 if (rev[idd]) {
                     switch (rev[idd].stars) {
                         case 1:
@@ -247,7 +250,7 @@
                     document.getElementById("del_btn").hidden = true; // disable delete button
                 }
                 document.getElementById("rev_id").value = idd;
-                document.getElementById("ps_id").value = document.getElementById(idd).cells[5].id.split("-")[1];
+                document.getElementById("ps_id").value = document.getElementById(idd).cells[6].id.split("-")[1];
             });
             disable_review_future_reservations(idd);
         });
@@ -259,13 +262,13 @@
         let h_dt = "";
         let rd = "";
         for (let i = 1; i < tbl.rows.length; i++) {
-            rd = tbl.rows[i].cells[1].textContent;
+            rd = tbl.rows[i].cells[2].textContent;
             rd = rd.split(" ");
             rd[0] = rd[0].split("/");
             h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
             //console.log(h_dt);
             if (tday.getTime() < Date.parse(h_dt)) {
-                tbl.rows[i].cells[6].innerHTML = `<div><button type="button" id="myDelBtn-${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[6].innerHTML;
+                tbl.rows[i].cells[7].innerHTML = `<div><button type="button" id="myDelBtn-${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[7].innerHTML;
                 // +++ <div><button type="button" id="myEditBtn-${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
             }
         }
@@ -275,7 +278,7 @@
         let tday = new Date();
         let h_dt = "";
         let rd = "";
-        rd = document.getElementById(_id).cells[2].textContent;
+        rd = document.getElementById(_id).cells[3].textContent;
         rd = rd.split(" ");
         rd[0] = rd[0].split("/");
         h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
@@ -289,7 +292,7 @@
         let h_dt = "";
         let rd = "";
         for (let i = 1; i < tbl.rows.length; i++) {
-            rd = tbl.rows[i].cells[1].textContent;
+            rd = tbl.rows[i].cells[2].textContent;
             rd = rd.split(" ");
             rd[0] = rd[0].split("/");
             h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"

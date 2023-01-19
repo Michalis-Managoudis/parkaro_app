@@ -40,7 +40,7 @@ router.get('/language', account_controller.change_language);                    
 // account page
 router.get('/account', account_controller.get_driver_account_page);                           //? !!!!!!! ready
 router.post('/account', account_controller.update_driver_data); // update account             //? !!!!!!! ready
-router.get('/account/delete', account_controller.delete_driver_account); // delete account    //? !!!!!!! ready
+router.post('/account/delete', account_controller.delete_driver_account); // delete account    //? !!!!!!! ready
 
 router.get('/history', driver_controller.get_driver_history_page);
 router.post('/account/add_new_car', driver_controller.add_new_driver_car); 

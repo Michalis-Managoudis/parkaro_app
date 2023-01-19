@@ -12,7 +12,7 @@ const tin_regex = /[0-9]+/;
 // console.log(safe(tin_regex));
 
 function get_driver_sign_up_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         res.render('driver/sign_up', {
             'is_driver': true,
             'login': false
@@ -24,7 +24,7 @@ function get_driver_sign_up_page(req, res) {
     }
 };
 function get_parking_station_sign_up_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         res.render('parking_station/sign_up', {
             'is_driver': false,
             'login': false
@@ -37,7 +37,7 @@ function get_parking_station_sign_up_page(req, res) {
 };
 
 function add_new_driver(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         let new_driver = {};
         for (let field of dataModel.schema_required["driver"]) new_driver[field] = req.body[field]; // dynamically get driver keys and values
         // check fields agree with patterns
@@ -58,6 +58,7 @@ function add_new_driver(req, res) {
                                 dataModel.auth_("driver", new_driver.email, new_driver.password, function (row) {
                                     req.session.sid = row.id;
                                     req.session.lang = row.lang;
+                                    req.session.is_driver = true;
                                     console.log("driver added succesfully");
                                     res.redirect('/account'); // redirect new logged in driver to account page or home page
                                 })
@@ -88,7 +89,7 @@ function add_new_driver(req, res) {
     }
 };
 function add_new_parking_station(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         let new_parking_station = {};
         for (let field of dataModel.schema_required["parking_station"]) {
             if (field == "work_hours") {
@@ -141,6 +142,7 @@ function add_new_parking_station(req, res) {
                                 dataModel.auth_("parking_station", new_parking_station.email, new_parking_station.password, function (row) {
                                     req.session.sid = row.id;
                                     req.session.lang = row.lang;
+                                    req.session.is_driver = false;
                                     console.log("parking_station added succesfully");
                                     res.redirect('/parking_station/account'); // redirect new logged in parking_station to account page or home page
                                     for (let i = 0 ; i < new_parking_station.lots ; i++) {
@@ -176,7 +178,7 @@ function add_new_parking_station(req, res) {
 };
 
 function get_driver_sign_in_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         res.render('driver/sign_in', {
             'is_driver': true,
             'login': false
@@ -188,7 +190,7 @@ function get_driver_sign_in_page(req, res) {
     }
 };
 function get_parking_station_sign_in_page(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         res.render('parking_station/sign_in', {
             'is_driver': false,
             'login': false
@@ -201,7 +203,7 @@ function get_parking_station_sign_in_page(req, res) {
 };
 
 function login_driver(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         const driver = {
             "email": req.body.email,
             "password": req.body.password,
@@ -212,6 +214,7 @@ function login_driver(req, res) {
                 // start new session
                 req.session.sid = data.id;
                 req.session.lang = data.lang;
+                req.session.is_driver = true;
                 //! req.session.lang = 0;
                 console.log("succesfully logged in");
                 res.redirect('/account'); // redirect to home page
@@ -229,7 +232,7 @@ function login_driver(req, res) {
 
 };
 function login_parking_station(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         const parking_station = {
             "email": req.body.email,
             "password": req.body.password,
@@ -240,6 +243,7 @@ function login_parking_station(req, res) {
                 // start new session
                 req.session.sid = data.id;
                 req.session.lang = data.lang;
+                req.session.is_driver = false;
                 //! req.session.lang = 0;
                 console.log("succesfully logged in");
                 res.redirect('/parking_station/home'); // redirect to home page
@@ -258,7 +262,7 @@ function login_parking_station(req, res) {
 };
 
 function logout_driver(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
         res.redirect('/')
     }
     else {
@@ -267,7 +271,7 @@ function logout_driver(req, res) {
     }
 };
 function logout_parking_station(req, res) {
-    if (req.session.sid === undefined) {
+    if (req.session.sid === undefined || req.session.is_driver) {
         res.redirect('/parking_station')
     }
     else {

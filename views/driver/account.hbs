@@ -58,9 +58,10 @@
             {{#if cars}}
             {{#each cars}}
             <div class="d-flex justify-content-between">
-                <li>{{this.plate}}<span class="_car-info" id="info-{{this.id}}"> ({{this.model}} - {{this.color}})</span></li>
-                <button type="button" id="myBtnEdit/{{this.id}}" class="border-0 bg-light me-4 _btn_edt" title="{{this.plate}}"><i
-                        class="fa fa-pencil"></i></button>
+                <li>{{this.plate}}<span class="_car-info" id="info-{{this.id}}"> ({{this.model}} -
+                        {{this.color}})</span></li>
+                <button type="button" id="myBtnEdit/{{this.id}}" class="border-0 bg-light me-4 _btn_edt"
+                    title="{{this.plate}}"><i class="fa fa-pencil"></i></button>
                 <button type="button" id="myBtn/{{this.id}}" class="border-0 bg-light me-4 _btn_delt"><i
                         class="fa fa-times"></i></button>
             </div>
@@ -82,8 +83,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <input type="submit" form="myDelForm" id="" class="btn btn-lg btn-danger"
-                            value="Delete Car">
+                        <input type="submit" form="myDelForm" id="" class="btn btn-lg btn-danger" value="Delete Car">
                     </div>
                 </div>
             </div>
@@ -165,13 +165,18 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
+                            <form method="post" action="/account/delete" id="del_acc2">
+                                <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
+                                <label for="pass_con" class="_modal-text">Confirm password:</label>
+                                <input id="pass_con" type="password" name="password3" placeholder="********"
+                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                            </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-lg btn-secondary"
                                 data-bs-dismiss="modal">Cancel</button>
-                            <a class="btn btn-lg btn-danger" href="/account/delete" role="button">Delete Account
-                                permanently</a>
+                            <button class="btn btn-lg btn-danger" form="del_acc2" type="submit">Delete
+                                Account permanently</button>
                         </div>
                     </div>
                 </div>
@@ -215,9 +220,9 @@
                 btn.addEventListener("click", function () {
                     myModal.show();
                     document.getElementById("car_id-").value = idd;
-                    info = document.getElementById("info-"+idd).textContent.split(" - ");
+                    info = document.getElementById("info-" + idd).textContent.split(" - ");
                     document.getElementById("modl").value = info[0].slice(2);
-                    document.getElementById("colr").value = info[1].slice(0,-1);
+                    document.getElementById("colr").value = info[1].slice(0, -1);
                     document.getElementById("h_car_id").textContent = btn.title;
                 });
             });
