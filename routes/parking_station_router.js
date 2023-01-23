@@ -43,6 +43,7 @@ router.get('/language', account_controller.change_language);                    
 // account page
 router.get('/account', account_controller.get_parking_station_account_page);                            //? !!!!!!! ready
 router.post('/account', account_controller.update_parking_station_data);                                //? !!!!!!! ready
+router.post('/account_pass', account_controller.update_parking_station_password);   
 router.post('/account/delete', account_controller.delete_parking_station_account); // delete account     //? !!!!!!! ready
 // upload image
 router.post('/upload_image', upload.single('image_file'), function (req, res) { res.redirect('/parking_station/account'); }); //? !!!!!!! ready

@@ -7,7 +7,7 @@ const mail_regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 const password_regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 const phone_regex = /[0-9]{10}/;
 const tin_regex = /[0-9]+/;
- 
+
 // const safe = require('safe-regex');
 // console.log(safe(tin_regex));
 
@@ -45,7 +45,7 @@ function add_new_driver(req, res) {
         if (!mail_regex.test(new_driver.email)) fields_check = false;
         if (!password_regex.test(new_driver.password)) fields_check = false;
         if (!phone_regex.test(new_driver.phone)) fields_check = false;
-        if (!(new_driver.password===req.body.password2)) fields_check = false;
+        if (!(new_driver.password === req.body.password2)) fields_check = false;
         if (fields_check) {
             // check if driver already exists (email and phone)
             dataModel.read_("driver", "email", `email = "${new_driver.email}"`, function (data) { // check if email exists
@@ -94,15 +94,18 @@ function add_new_parking_station(req, res) {
         for (let field of dataModel.schema_required["parking_station"]) {
             if (field == "work_hours") {
                 new_parking_station.work_hours = "";
-                for (let i = 1 ; i <= 7 ; i++) {
-                    new_parking_station.work_hours = new_parking_station.work_hours + req.body["work_hours"+i] + "-" + req.body["work_hours"+i+"b"];
-                    if (i !== 7) new_parking_station.work_hours = new_parking_station.work_hours + ",";
+                if (req.body["work_hours_0"]) new_parking_station.work_hours = "24/7";
+                else {
+                    for (let i = 1; i <= 7; i++) {
+                        new_parking_station.work_hours = new_parking_station.work_hours + req.body["work_hours" + i] + "-" + req.body["work_hours" + i + "b"];
+                        if (i !== 7) new_parking_station.work_hours = new_parking_station.work_hours + ",";
+                    }
                 }
             }
             else if (field == "price_list") {
                 new_parking_station.price_list = "h";
-                for (let i = 1 ; i <= 12 ; i++) {
-                    new_parking_station.price_list = new_parking_station.price_list + req.body["price_list"+i];
+                for (let i = 1; i <= 12; i++) {
+                    new_parking_station.price_list = new_parking_station.price_list + req.body["price_list" + i];
                     if (i === 4) new_parking_station.price_list = new_parking_station.price_list + "d";
                     else if (i === 8) new_parking_station.price_list = new_parking_station.price_list + "m";
                     else if (i !== 12) new_parking_station.price_list = new_parking_station.price_list + ",";
@@ -122,7 +125,7 @@ function add_new_parking_station(req, res) {
         if (!password_regex.test(new_parking_station.password)) fields_check = false;
         if (!tin_regex.test(new_parking_station.tin)) fields_check = false;
         if (!phone_regex.test(new_parking_station.phone)) fields_check = false;
-        if (!(new_parking_station.parking_type === 0 || new_parking_station.parking_type === 1 ||new_parking_station.parking_type === 2)) fields_check = false;
+        if (!(new_parking_station.parking_type === 0 || new_parking_station.parking_type === 1 || new_parking_station.parking_type === 2)) fields_check = false;
         if (!(new_parking_station.lots >= 0)) fields_check = false;
         if (!(new_parking_station.s_height > 0)) fields_check = false;
         if (!(new_parking_station.s_length > 0)) fields_check = false;
@@ -145,7 +148,7 @@ function add_new_parking_station(req, res) {
                                     req.session.is_driver = false;
                                     console.log("parking_station added succesfully");
                                     res.redirect('/parking_station/account'); // redirect new logged in parking_station to account page or home page
-                                    for (let i = 0 ; i < new_parking_station.lots ; i++) {
+                                    for (let i = 0; i < new_parking_station.lots; i++) {
                                         dataModel.create_("parking_lot", [row.id]);
                                     }
                                 })

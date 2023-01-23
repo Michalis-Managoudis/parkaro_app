@@ -3,17 +3,6 @@
 const dataModel = require('../models/mysql_data_model.js');
 const fs = require('fs');
 
-// const multer = require('multer');
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, './user_photos');
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.originalname);
-//     }
-// });
-// var upload = multer({ storage: storage });
-
 // regex patterns
 const mail_regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 const password_regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -43,20 +32,28 @@ function get_parking_station_home_page(req, res) {
                         dataModel.get2_("parking_station", "lots", req.session.sid, function (data2) {
                             let dt2 = JSON.parse(JSON.stringify(data2));
                             let per = parseInt(100 * parseFloat(cl) / parseFloat(dt2.lots));
-                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
-                                data = JSON.parse(JSON.stringify(data));
-                                let c = 0;
-                                for (let el of data) if (!el.viewed) c++;
-                                res.render('parking_station/home', {
-                                    records: dt,
-                                    pl_per: per,
-                                    form_data: false,
-                                    empty_lots: false,
-                                    "is_driver": false,
-                                    "login": (req.session.sid !== undefined),
-                                    'lang': req.session.lang,
-                                    notifications: data,
-                                    unread_notification_number: c
+                            dataModel.read_("driver", "email, name, phone", `parking_station_id LIKE '%${req.session.sid}%'`, function (data5) {
+                                data5 = JSON.parse(JSON.stringify(data5));
+                                dataModel.read_("car", "driver_id, plate, model, color", `driver_id IN (SELECT id FROM driver WHERE parking_station_id LIKE '%${req.session.sid}%')`, function (data6) {
+                                    data6 = JSON.parse(JSON.stringify(data6));
+                                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data) {
+                                        data = JSON.parse(JSON.stringify(data));
+                                        let c = 0;
+                                        for (let el of data) if (!el.viewed) c++;
+                                        res.render('parking_station/home', {
+                                            records: dt,
+                                            pl_per: per,
+                                            form_data: false,
+                                            empty_lots: false,
+                                            "is_driver": false,
+                                            "login": (req.session.sid !== undefined),
+                                            'lang': req.session.lang,
+                                            notifications: data,
+                                            unread_notification_number: c,
+                                            drivers: data5,
+                                            cars: data6
+                                        });
+                                    });
                                 });
                             });
                         });
@@ -93,7 +90,7 @@ function search_parking_station_reservation_availability(req, res) {
                                 const dt3 = JSON.parse(JSON.stringify(data3));
                                 let e_lots = [];
                                 let f_dt = {};
-                                let flds = ["email", "name", "phone", "plate", "model", "color", "r_start", "r_end", "price"];
+                                let flds = ["driver", "email", "name", "phone", "car", "plate", "model", "color", "r_start", "r_end", "price"];
                                 req.body.price = final_price_calculation(data0.price_list, data0.discount, req.body.r_start, req.body.r_end);
                                 for (let field of flds) f_dt[field] = req.body[field];
                                 if (check_work_hours(data0.work_hours, req.body.r_start, req.body.r_end)) {
@@ -101,20 +98,31 @@ function search_parking_station_reservation_availability(req, res) {
                                         e_lots.push(ids.indexOf(el.id) + 1);
                                     }
                                 }
-                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data4) {
-                                    data4 = JSON.parse(JSON.stringify(data4));
-                                    let c = 0;
-                                    for (let el of data4) if (!el.viewed) c++;
-                                    res.render('parking_station/home', {
-                                        records: dt,
-                                        pl_per: per,
-                                        empty_lots: e_lots,
-                                        form_data: JSON.stringify(f_dt),
-                                        "is_driver": false,
-                                        "login": (req.session.sid !== undefined),
-                                        'lang': req.session.lang,
-                                        notifications: data4,
-                                        unread_notification_number: c
+                                dataModel.read_("driver", "email, name, phone", `parking_station_id LIKE '%${req.session.sid}%'`, function (data5) {
+                                    data5 = JSON.parse(JSON.stringify(data5));
+                                    let dr_id = "";
+                                    if (req.body.driver === "new") dr_id = 0;
+                                    else dr_id = req.body.driver;
+                                    dataModel.read_("car", "driver_id, plate, model, color", `driver_id IN (SELECT id FROM driver WHERE parking_station_id LIKE '%${req.session.sid}%')`, function (data6) {
+                                        data6 = JSON.parse(JSON.stringify(data6));
+                                        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (data4) {
+                                            data4 = JSON.parse(JSON.stringify(data4));
+                                            let c = 0;
+                                            for (let el of data4) if (!el.viewed) c++;
+                                            res.render('parking_station/home', {
+                                                records: dt,
+                                                pl_per: per,
+                                                empty_lots: e_lots,
+                                                form_data: JSON.stringify(f_dt),
+                                                "is_driver": false,
+                                                "login": (req.session.sid !== undefined),
+                                                'lang': req.session.lang,
+                                                notifications: data4,
+                                                unread_notification_number: c,
+                                                drivers: data5,
+                                                cars: data6
+                                            });
+                                        });
                                     });
                                 });
                             });
@@ -128,50 +136,105 @@ function search_parking_station_reservation_availability(req, res) {
 
 function add_parking_station_reservation(req, res) {
     if (req.session.sid !== undefined && !req.session.is_driver) {
-        // add user
-        let new_driver = {};
-        for (let field of dataModel.schema_required["driver"]) {
-            if (field === "password") {
-                new_driver[field] = "dummy";
+        if (req.body.driver === "new" || !req.body.driver) { // if new driver
+            // add user
+            let new_driver = {};
+            for (let field of dataModel.schema_required["driver"]) {
+                if (field === "password") {
+                    new_driver[field] = "dummy";
+                }
+                else new_driver[field] = req.body[field]; // dynamically get driver keys and values
             }
-            else new_driver[field] = req.body[field]; // dynamically get driver keys and values
-        }
-        // check fields agree with patterns
-        let fields_check = true;
-        if (!mail_regex.test(new_driver.email)) fields_check = false;
-        if (!phone_regex.test(new_driver.phone)) fields_check = false;
+            // check fields agree with patterns
+            let fields_check = true;
+            if (!mail_regex.test(new_driver.email)) fields_check = false;
+            if (!phone_regex.test(new_driver.phone)) fields_check = false;
 
-        // add reservation
-        if (fields_check) {
-            // check if driver already exists (email and phone)
-            dataModel.check2_("driver", `email = "${new_driver.email}"`, function (data) {  // check if email exists
-                if (!data) { // if email not found in database
-                    dataModel.check2_("driver", `phone = "${new_driver.phone}"`, function (data2) { // check if phone exists
-                        if (!data2) { // phone not found in database
-                            // insert new_driver to database
-                            const required_values = Object.values(new_driver); // put required values in an array
-                            dataModel.create_("driver", required_values, function () {
-                                dataModel.check2_("driver", `email = "${new_driver.email}"`, function (data3) {
-                                    console.log("New driver added succesfully");
-                                    let car = {};
-                                    for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
-                                        if (field === "driver_id") car[field] = data3.id;
-                                        else car[field] = req.body[field];
-                                    }
-                                    dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
-                                        if (!data4) {
-                                            // add car
-                                            const vls = Object.values(car);
-                                            dataModel.create_("car", vls, function () {
-                                                dataModel.check2_("car", `plate = "${car.plate}"`, function (data5) {
-                                                    console.log("New car added succesfully");
+            // add reservation
+            if (fields_check) {
+                // check if driver already exists (email and phone)
+                dataModel.check2_("driver", `email = "${new_driver.email}"`, function (data) {  // check if email exists
+                    if (!data) { // if email not found in database
+                        dataModel.check2_("driver", `phone = "${new_driver.phone}"`, function (data2) { // check if phone exists
+                            if (!data2) { // phone not found in database
+                                // insert new_driver to database
+                                const required_values = Object.values(new_driver); // put required values in an array
+
+                                dataModel.create_("driver", required_values, function () {
+                                    dataModel.check2_("driver", `email = "${new_driver.email}"`, function (data3) {
+                                        dataModel.update_ps_driver(data3.id, req.session.sid, function () {
+                                            console.log("New driver added succesfully");
+                                            let car = {};
+                                            for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
+                                                if (field === "driver_id") car[field] = data3.id;
+                                                else car[field] = req.body[field];
+                                            }
+                                            dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
+                                                if (!data4) {
+                                                    // add car
+                                                    const vls = Object.values(car);
+                                                    dataModel.create_("car", vls, function () {
+                                                        dataModel.check2_("car", `plate = "${car.plate}"`, function (data5) {
+                                                            console.log("New car added succesfully");
+                                                            dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                                                                const dt1 = JSON.parse(JSON.stringify(data1));
+                                                                let ids = [];
+                                                                for (let ell of dt1) ids.push(ell.id);
+                                                                let resv = {};
+                                                                for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
+                                                                    if (field === "car_id") resv[field] = data5.id;
+                                                                    else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
+                                                                    else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
+                                                                    else if (field === "parking_lot_id") resv[field] = ids[(req.body[field] - 1)];
+                                                                    else resv[field] = req.body[field];
+                                                                }
+                                                                const req_values = Object.values(resv);
+                                                                dataModel.create_("reservation", req_values, function () {
+                                                                    dataModel.update_points(data3.id, parseInt(resv.price / 10), function () {
+                                                                        console.log("Reservation booked");
+                                                                        res.redirect('/parking_station/home'); //res.redirect("back");
+                                                                    });
+                                                                });
+                                                            });
+                                                        });
+                                                    });
+                                                }
+                                                else {
+                                                    console.log("Car is already in database");
+                                                    res.redirect('/parking_station/home'); //res.redirect("back");
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                });
+                            }
+                            else { // phone found in database
+                                console.log("Phone already exist");
+                                res.redirect('/parking_station/home'); //res.redirect("back");
+                            }
+                        });
+                    }
+                    else {
+                        dataModel.check2_("driver", `phone = "${new_driver.phone}"`, function (datap) { // check if phone exists
+                            if (datap) { // email and phone exists
+                                dataModel.check2_("driver", `email = "${new_driver.email}" AND parking_station_id != 'null'`, function (datadr) { // check if driver (new_driver.email) has parking_station_id 
+                                    if (datadr) { // if yes then add this parking_station_id
+                                        dataModel.get2_("driver", "parking_station_id", datadr.id, function (datadr2) { // read driver's parking_station_id
+                                            datadr2 = JSON.parse(JSON.stringify(datadr2));
+                                            // update its value (check if already include this parking station id)
+                                            let ps_ids = datadr2.parking_station_id.split(",");
+                                            if (!ps_ids.includes(`'${req.session.sid}'`)) datadr2.parking_station_id += `,${req.session.sid}`;
+                                            dataModel.update_ps_driver(datadr.id, datadr2.parking_station_id, function () {
+                                                // add new reservation
+                                                dataModel.check2_("car", `plate = "${req.body.plate}"`, function (datacr) {
                                                     dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
                                                         const dt1 = JSON.parse(JSON.stringify(data1));
                                                         let ids = [];
                                                         for (let ell of dt1) ids.push(ell.id);
                                                         let resv = {};
                                                         for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
-                                                            if (field === "car_id") resv[field] = data5.id;
+                                                            if (field === "car_id") resv[field] = datacr.id;
                                                             else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
                                                             else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
                                                             else if (field === "parking_lot_id") resv[field] = ids[(req.body[field] - 1)];
@@ -179,7 +242,7 @@ function add_parking_station_reservation(req, res) {
                                                         }
                                                         const req_values = Object.values(resv);
                                                         dataModel.create_("reservation", req_values, function () {
-                                                            dataModel.update_points(data3.id, parseInt(resv.price / 10), function () {
+                                                            dataModel.update_points(data.id, parseInt(resv.price / 10), function () {
                                                                 console.log("Reservation booked");
                                                                 res.redirect('/parking_station/home'); //res.redirect("back");
                                                             });
@@ -187,31 +250,92 @@ function add_parking_station_reservation(req, res) {
                                                     });
                                                 });
                                             });
-                                        }
-                                        else {
-                                            console.log("Car is already in database");
+                                        });
+                                    }
+                                    else { // if no abort mission
+                                        console.log("Driver is an online driver, can't make a reservation");
+                                        res.redirect('/parking_station/home'); //res.redirect("back");
+                                    }
+                                });
+                            }
+                            else {
+                                console.log("Email already exist");
+                                res.redirect('/parking_station/home'); //res.redirect("back");
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                console.log("Fields check failed");
+                res.redirect('/parking_station/home'); //res.redirect("back");
+            }
+        }
+        else { // if parking station driver
+            if (req.body.car === "new") { // if parking station driver and new car
+                let car = {};
+                for (let field of dataModel.schema_required["car"]) { // dynamically get car keys and values
+                    if (field === "driver_id") car[field] = req.body.driver;
+                    else car[field] = req.body[field];
+                }
+                dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
+                    if (!data4) {
+                        // add car
+                        const vls = Object.values(car);
+                        dataModel.create_("car", vls, function () {
+                            dataModel.check2_("car", `plate = "${car.plate}"`, function (data5) {
+                                console.log("New car added succesfully");
+                                dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                                    const dt1 = JSON.parse(JSON.stringify(data1));
+                                    let ids = [];
+                                    for (let ell of dt1) ids.push(ell.id);
+                                    let resv = {};
+                                    for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
+                                        if (field === "car_id") resv[field] = data5.id;
+                                        else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
+                                        else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
+                                        else if (field === "parking_lot_id") resv[field] = ids[(req.body[field] - 1)];
+                                        else resv[field] = req.body[field];
+                                    }
+                                    const req_values = Object.values(resv);
+                                    dataModel.create_("reservation", req_values, function () {
+                                        dataModel.update_points(req.body.driver, parseInt(resv.price / 10), function () {
+                                            console.log("Reservation booked");
                                             res.redirect('/parking_station/home'); //res.redirect("back");
-                                        }
+                                        });
                                     });
                                 });
-
                             });
-                        }
-                        else { // phone found in database
-                            console.log("Phone already exist");
+                        });
+                    }
+                    else {
+                        console.log("Car is already in database");
+                        res.redirect('/parking_station/home'); //res.redirect("back");
+                    }
+                });
+            }
+            else { // if parking station driver and car
+                dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                    const dt1 = JSON.parse(JSON.stringify(data1));
+                    let ids = [];
+                    for (let ell of dt1) ids.push(ell.id);
+                    let resv = {};
+                    for (let field of dataModel.schema_required["reservation"]) { // dynamically get car keys and values
+                        if (field === "car_id") resv[field] = req.body.car;
+                        else if (field === "r_start") resv[field] = Date.parse(req.body.r_start);
+                        else if (field === "r_end") resv[field] = Date.parse(req.body.r_end);
+                        else if (field === "parking_lot_id") resv[field] = ids[(req.body[field] - 1)];
+                        else resv[field] = req.body[field];
+                    }
+                    const req_values = Object.values(resv);
+                    dataModel.create_("reservation", req_values, function () {
+                        dataModel.update_points(req.body.driver, parseInt(resv.price / 10), function () {
+                            console.log("Reservation booked");
                             res.redirect('/parking_station/home'); //res.redirect("back");
-                        }
+                        });
                     });
-                }
-                else {
-                    console.log("Email already exist");
-                    res.redirect('/parking_station/home'); //res.redirect("back");
-                }
-            });
-        }
-        else {
-            console.log("Fields check failed");
-            res.redirect('/parking_station/home'); //res.redirect("back");
+                });
+            }
         }
     }
     else {
@@ -396,7 +520,7 @@ function delete_parking_station_image(req, res) {
     });
 };
 
-function final_price_calculation(price_list, dt1, dt2) {
+function final_price_calculation(price_list, disc, dt1, dt2) {
     let h = price_list.split("d")[0].slice(1).split(",");
     let d = price_list.split("d")[1].split("m")[0].split(",");
     let m = price_list.split("m")[1].split(",");
@@ -422,9 +546,10 @@ function final_price_calculation(price_list, dt1, dt2) {
         if (dif <= 3) price = m[dif - 1];
         else price = m[2] + (dif - 3) * m[3];
     }
+    price = price * (100 - parseInt(disc)) / 100;
     //price = price.toFixed(2);
     return price;
-};
+}
 
 function check_work_hours(work_hours, dt1, dt2) {
     if (work_hours === "24/7") return true;

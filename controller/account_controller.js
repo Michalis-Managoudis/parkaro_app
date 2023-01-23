@@ -87,9 +87,7 @@ function update_driver_data(req, res) {
         // check fields agree with patterns
         let fields_check = true;
         if (!mail_regex.test(driver.email)) fields_check = false;
-        if (!password_regex.test(driver.password)) fields_check = false;
         if (!phone_regex.test(driver.phone)) fields_check = false;
-        if (!(driver.password === req.body.password2)) fields_check = false;
         //? if (!driver.name) fields_check = false;
         if (fields_check) {
             // check if driver already exists (email and phone)
@@ -98,11 +96,22 @@ function update_driver_data(req, res) {
                     dataModel.check_("driver", req.session.sid, "phone", driver.phone, function (bool2) {
                         if (bool2) {
                             driver.id = req.session.sid;
-                            dataModel.update_("driver", driver, function () {
-                                console.log("Data has been updated succesfully");
-                                res.redirect("/account");
-                            });
 
+                            dataModel.get2_("driver", "email", req.session.sid, function (data) {
+                                data = JSON.parse(JSON.stringify(data));
+                                dataModel.auth_("driver", data.email, req.body.password, function (data2) {
+                                    if (data2) {
+                                        dataModel.update_("driver", driver, function () {
+                                            console.log("Data has been updated succesfully");
+                                            res.redirect("/account");
+                                        });
+                                    }
+                                    else {
+                                        console.log("Wrong password!");
+                                        res.redirect('/account');
+                                    }
+                                });
+                            });
                         }
                         else {
                             console.log("Phone already exists");
@@ -122,6 +131,39 @@ function update_driver_data(req, res) {
         }
     }
 
+}
+function update_driver_password(req, res) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
+        console.log("important error!");
+        res.redirect('/account');
+    }
+    else {
+        // check fields agree with patterns
+        let fields_check = true;
+        if (!password_regex.test(req.body.password)) fields_check = false;
+        if (!(req.body.password2 === req.body.password3)) fields_check = false;
+        if (fields_check) {
+            dataModel.get2_("driver", "email", req.session.sid, function (data) {
+                data = JSON.parse(JSON.stringify(data));
+                dataModel.auth_("driver", data.email, req.body.password, function (data2) {
+                    if (data2) {
+                        dataModel.change_pass("driver", req.session.sid, req.body.password2, function () {
+                            console.log("Password has been updated succesfully");
+                            res.redirect("/account");
+                        });
+                    }
+                    else {
+                        console.log("Wrong password!");
+                        res.redirect('/account');
+                    }
+                });
+            });
+        }
+        else {
+            console.log("New password check failed");
+            res.redirect('/account');
+        }
+    }
 }
 function update_parking_station_data(req, res) {
     if (req.session.sid === undefined || req.session.is_driver) {
@@ -161,7 +203,6 @@ function update_parking_station_data(req, res) {
         // check fields agree with patterns
         let fields_check = true;
         if (!mail_regex.test(parking_station.email)) fields_check = false;
-        if (!password_regex.test(parking_station.password)) fields_check = false;
         if (!tin_regex.test(parking_station.tin)) fields_check = false;
         if (!phone_regex.test(parking_station.phone)) fields_check = false;
         if (!(parking_station.parking_type === 0 || parking_station.parking_type === 1 || parking_station.parking_type === 2)) fields_check = false;
@@ -172,13 +213,7 @@ function update_parking_station_data(req, res) {
             parking_station[field] = parseInt(parking_station[field]);
             if (!(parking_station[field] === 0 || parking_station[field] === 1)) fields_check = false;
         }
-        if (!(parking_station.password === req.body.password2)) fields_check = false;
         //? if (!parking_station.name) fields_check = false;
-        // if (req.body != pass) fields_check = false;
-        // else {
-        //     console.log("Wrong password");
-        //     res.redirect('/parking_station/account');
-        // }
 
         if (fields_check) {
             // check if driver already exists (email and phone)
@@ -187,15 +222,23 @@ function update_parking_station_data(req, res) {
                     dataModel.check_("parking_station", req.session.sid, "tin", parking_station.tin, function (bool2) {
                         if (bool2) {
                             parking_station.id = req.session.sid;
-                            dataModel.get2_("parking_station", "lots", parking_station.id, function (data) {
+                            dataModel.get2_("parking_station", "email, lots", parking_station.id, function (data) {
                                 let diff = parking_station.lots - data.lots;
                                 if (diff >= 0) {
                                     for (let i = 0; i < diff; i++) {
                                         dataModel.create_("parking_lot", [parking_station.id]);
                                     }
-                                    dataModel.update_("parking_station", parking_station, function () {
-                                        console.log("Data has been updated succesfully");
-                                        res.redirect("/parking_station/account");
+                                    dataModel.auth_("driver", data.email, req.body.password, function (data2) {
+                                        if (data2) {
+                                            dataModel.update_("parking_station", parking_station, function () {
+                                                console.log("Data has been updated succesfully");
+                                                res.redirect("/parking_station/account");
+                                            });
+                                        }
+                                        else {
+                                            console.log("Wrong password!");
+                                            res.redirect("/parking_station/account");
+                                        }
                                     });
                                 }
                                 else if (diff < 0) {
@@ -219,6 +262,39 @@ function update_parking_station_data(req, res) {
         };
     }
 
+}
+function update_parking_station_password(req, res) {
+    if (req.session.sid === undefined || req.session.is_driver) {
+        console.log("important error!");
+        res.redirect('/parking_station/account');
+    }
+    else {
+        // check fields agree with patterns
+        let fields_check = true;
+        if (!password_regex.test(req.body.password)) fields_check = false;
+        if (!(req.body.password2 === req.body.password3)) fields_check = false;
+        if (fields_check) {
+            dataModel.get2_("parking_station", "email", req.session.sid, function (data) {
+                data = JSON.parse(JSON.stringify(data));
+                dataModel.auth_("parking_station", data.email, req.body.password, function (data2) {
+                    if (data2) {
+                        dataModel.change_pass("parking_station", req.session.sid, req.body.password2, function () {
+                            console.log("Password has been updated succesfully");
+                            res.redirect('/parking_station/account');
+                        });
+                    }
+                    else {
+                        console.log("Wrong password!");
+                        res.redirect('/parking_station/account');
+                    }
+                });
+            });
+        }
+        else {
+            console.log("New password check failed");
+            res.redirect('/parking_station/account');
+        }
+    }
 }
 
 function delete_driver_account(req, res) {
@@ -275,7 +351,9 @@ module.exports = {
     get_driver_account_page,
     get_parking_station_account_page,
     update_driver_data,
+    update_driver_password,
     update_parking_station_data,
+    update_parking_station_password,
     delete_driver_account,
     delete_parking_station_account
 }

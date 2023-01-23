@@ -12,10 +12,6 @@
         <input type="email" id="_f_email" name="email" placeholder="someone@example.com" autofocus
             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
 
-        <label for="_f_password">Κωδικός πρόσβασης:</label>
-        <input type="password" id="_f_password" name="password" placeholder="********"
-            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-
         <label for="_f_tin">ΑΦΜ:</label>
         <input type="number" id="_f_tin" name="tin" placeholder="" pattern="[0-9]+" required>
 
@@ -45,9 +41,11 @@
 
         <label for="_f_lots">Διαθέσιμες θέσεις parking:</label>
         <input type="number" id="_f_lots" name="lots" placeholder="" min="0" pattern="[0-9]+" required>
-
-        <label for="_f_location">Τοποθεσία:</label>
-        <input type="text" id="_f_location" name="location" placeholder="" required>
+        <div class="">
+            <label for="_f_location">Τοποθεσία:</label>
+            <input type="text" id="_f_location" name="location" placeholder="" readonly hidden required>
+            <div id="map" style="height: 200px; width: 200px;"></div>
+        </div>
 
         <label for="_f_name">Ονομα:</label>
         <input type="text" id="_f_name" name="name" placeholder="" required>
@@ -172,98 +170,117 @@
     <div class="d-flex justify-content-between p-5">
         <a class="btn btn-secondary btn-lg" href="/parking_station/logout" role="button">Log out</a>
         <button type="button" id="myBtn" class="btn btn-lg btn-danger">Delete Account</button>
-        <div class="">
+        <div>
+            <button type="button" id="myBtn5" class="btn btn-lg btn-secondary me-5">Change password</button>
             <button type="button" id="myBtn2" class="btn btn-lg btn-success">Save</button>
-            <div id="myModalSave" class="modal fade" tabindex="-1">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Save changes</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p class="_modal-text">Confirm password</p>
-                            <input type="password" name="password2" placeholder="********"
-                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-lg btn-secondary"
-                                data-bs-dismiss="modal">Cancel</button>
-                            {{!-- <a class="btn btn-lg btn-success " href="account" role="button">Save</a> --}}
-                            <input type="submit" class="btn btn-lg btn-success" value="Save">
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
-
     </div>
 </form>
-<div class="">
-    <div id="myModalDelete" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="/parking_station/account/delete" id="del_acc">
-                        <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
-                        <label for="pass_con" class="_modal-text">Confirm password:</label>
-                        <input id="pass_con" type="password" name="password3" placeholder="********"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-lg btn-danger" form="del_acc" type="submit">Delete
-                        Account permanently</button>
-                </div>
+<div id="myModalDelete" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/parking_station/account/delete" id="del_acc">
+                    <p class="_modal-text">Are you sure you want to delete permanently your account?</p>
+                    <label for="pass_con" class="_modal-text">Confirm password:</label>
+                    <input id="pass_con" type="password" name="password3" placeholder="********"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-lg btn-danger" form="del_acc" type="submit">Delete
+                    Account permanently</button>
             </div>
         </div>
     </div>
 </div>
-<div class="">
-    <div id="myModalAddImg" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add / update parking station image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="add_image_" method="post" action="/parking_station/upload_image"
-                        enctype="multipart/form-data">
-                        <label>Upload profile picture</label>
-                        <input type="file" name="image_file" required />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    {{!-- <a class="btn btn-lg btn-success " href="account" role="button">Save</a> --}}
-                    <input type="submit" form="add_image_" class="btn btn-lg btn-success" value="Upload">
-                </div>
+<div id="myModalAddImg" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add / update parking station image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add_image_" method="post" action="/parking_station/upload_image"
+                    enctype="multipart/form-data">
+                    <label>Upload profile picture</label>
+                    <input type="file" name="image_file" required />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                {{!-- <a class="btn btn-lg btn-success " href="account" role="button">Save</a> --}}
+                <input type="submit" form="add_image_" class="btn btn-lg btn-success" value="Upload">
             </div>
         </div>
     </div>
 </div>
-<div class="">
-    <div id="myModalDeleteImg" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="_modal-text">Are you sure you want to delete permanently your profile image?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a class="btn btn-lg btn-danger" href="/parking_station/delete_image" role="button">Delete Image</a>
-                </div>
+<div id="myModalDeleteImg" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="_modal-text">Are you sure you want to delete permanently your profile image?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a class="btn btn-lg btn-danger" href="/parking_station/delete_image" role="button">Delete Image</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModalSave" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save changes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="_modal-text">Confirm password</p>
+                <input type="password" name="password" placeholder="********"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                {{!-- <a class="btn btn-lg btn-success " href="account" role="button">Save</a> --}}
+                <input type="submit" class="btn btn-lg btn-success" form="_form4" value="Save">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModalEditPass" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/parking_station/account_pass" method="post" id="ch_pass">
+                    <p class="_modal-text">Old password</p>
+                    <input type="password" name="password" placeholder="********"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                    <p class="_modal-text">New password</p>
+                    <input type="password" name="password2" placeholder="********"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                    <p class="_modal-text">Confirm new password</p>
+                    <input type="password" name="password3" placeholder="********"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <input type="submit" form="ch_pass" class="btn btn-lg btn-success" value="Save">
             </div>
         </div>
     </div>
@@ -370,11 +387,38 @@
             var myModalDelImg = new bootstrap.Modal(document.getElementById("myModalDeleteImg"));
             myModalDelImg.show();
         });
+        var btn5 = document.getElementById("myBtn5");
+        btn5.addEventListener("click", function () {
+            var myModalEditPass = new bootstrap.Modal(document.getElementById("myModalEditPass"));
+            myModalEditPass.show();
+        });
     });
     // send value if checkbox unchecked
     document.getElementById("_form4").addEventListener('submit', () => {
         for (let i = 1; i <= 7; i++) {
             if (document.getElementById("_f_" + i).checked) document.getElementById("_f_" + i + "h").disabled = true;
         }
+    });
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [parking_station.location.split("/")[0], parking_station.location.split("/")[1]],
+        zoom: 13
+    });
+
+    let marker = "";
+    map.on('style.load', function () {
+        marker = new mapboxgl.Marker({ draggable: true }).setLngLat([parking_station.location.split("/")[0], parking_station.location.split("/")[1]]).addTo(map);
+        marker.on('dragend', function () {
+            const lngLat = marker.getLngLat();
+            document.getElementById("_f_location").value = lngLat.lng + "/" + lngLat.lat;
+        });
+        map.on('click', function (e) {
+            const lngLat = e.lngLat;
+            document.getElementById("_f_location").value = lngLat.lng + "/" + lngLat.lat;
+            marker.setLngLat(lngLat);
+        });
     });
 </script>

@@ -36,9 +36,11 @@
         <legend>Parking</legend>
         <label for="m-f-lots">Διαθέσιμες θέσεις parking:</label>
         <input type="number" id="m-f-lots" name="lots" placeholder="" min="0" pattern="[0-9]+" required>
-
-        <label for="m-f-loc">Τοποθεσία:</label>
-        <input type="text" id="m-f-loc" name="location" placeholder="" required>
+        <div class="m-1">
+            <label for="m-f-loc">Τοποθεσία:</label>
+            <input type="text" id="m-f-loc" name="location" placeholder="" value="23.72756045767275/37.98437516117204" required hidden readonly>
+            <div id="map" style="height: 200px; width: 200px;"></div>
+        </div>
 
         <label for="m-f-name">Ονομα:</label>
         <input type="text" id="m-f-name" name="name" placeholder="" required>
@@ -55,27 +57,32 @@
 
         <fieldset>
             <legend>Ωράριο Λειτουργίας:</legend>
-            <label for="m-f-work_hours1">Δευτέρα:</label>
-            <input type="time" id="m-f-work_hours1" name="work_hours1" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours1b" name="work_hours1b" placeholder="" required>
-            <label for="m-f-work_hours2">Τρίτη:</label>
-            <input type="time" id="m-f-work_hours2" name="work_hours2" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours2b" name="work_hours2b" placeholder="" required>
-            <label for="m-f-work_hours3">Τετάρτη:</label>
-            <input type="time" id="m-f-work_hours3" name="work_hours3" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours3b" name="work_hours3b" placeholder="" required>
-            <label for="m-f-work_hours4">Πέμπτη:</label>
-            <input type="time" id="m-f-work_hours4" name="work_hours4" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours4b" name="work_hours4b" placeholder="" required>
-            <label for="m-f-work_hours5">Παρασκευή:</label>
-            <input type="time" id="m-f-work_hours5" name="work_hours5" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours5b" name="work_hours5b" placeholder="" required>
-            <label for="m-f-work_hours6">Σάββατο:</label>
-            <input type="time" id="m-f-work_hours6" name="work_hours6" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours6b" name="work_hours6b" placeholder="" required>
-            <label for="m-f-work_hours7">Κυριακή:</label>
-            <input type="time" id="m-f-work_hours7" name="work_hours7" placeholder="" required>&nbsp;-
-            <input type="time" id="m-f-work_hours7b" name="work_hours7b" placeholder="" required>
+            <label for="24/7_">Ανοιχτά όλο το 24ωρο καθημερινά</label>
+            <input type="checkbox" id="24/7_" name="work_hours_0" value="1">
+            <br>
+            <span id="work_hours_">
+                <label for="m-f-work_hours1">Δευτέρα:</label>
+                <input type="time" id="m-f-work_hours1" name="work_hours1" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours1b" name="work_hours1b" placeholder="" required>
+                <label for="m-f-work_hours2">Τρίτη:</label>
+                <input type="time" id="m-f-work_hours2" name="work_hours2" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours2b" name="work_hours2b" placeholder="" required>
+                <label for="m-f-work_hours3">Τετάρτη:</label>
+                <input type="time" id="m-f-work_hours3" name="work_hours3" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours3b" name="work_hours3b" placeholder="" required>
+                <label for="m-f-work_hours4">Πέμπτη:</label>
+                <input type="time" id="m-f-work_hours4" name="work_hours4" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours4b" name="work_hours4b" placeholder="" required>
+                <label for="m-f-work_hours5">Παρασκευή:</label>
+                <input type="time" id="m-f-work_hours5" name="work_hours5" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours5b" name="work_hours5b" placeholder="" required>
+                <label for="m-f-work_hours6">Σάββατο:</label>
+                <input type="time" id="m-f-work_hours6" name="work_hours6" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours6b" name="work_hours6b" placeholder="" required>
+                <label for="m-f-work_hours7">Κυριακή:</label>
+                <input type="time" id="m-f-work_hours7" name="work_hours7" placeholder="" required>&nbsp;-
+                <input type="time" id="m-f-work_hours7b" name="work_hours7b" placeholder="" required>
+            </span>
         </fieldset>
         <fieldset>
             <legend>Τιμοκατάλογος:</legend>
@@ -161,9 +168,47 @@
 
 
 <script>
+    document.getElementById("24/7_").addEventListener("change", function () {
+        if (this.checked) {
+            for (let i = 1; i <= 7; i++) {
+                document.getElementById("m-f-work_hours" + i).required = false;
+                document.getElementById("m-f-work_hours" + i + "b").required = false;
+            }
+            document.getElementById("work_hours_").hidden = true;
+        }
+        else {
+            for (let i = 1; i <= 7; i++) {
+                document.getElementById("m-f-work_hours" + i).required = true;
+                document.getElementById("m-f-work_hours" + i + "b").required = true;
+            }
+            document.getElementById("work_hours_").hidden = false;
+        }
+    });
+
     document.getElementById("_form3").addEventListener('submit', () => {
         for (let i = 1; i <= 7; i++) {
             if (document.getElementById("m-f-" + i).checked) document.getElementById("m-f-" + i + "h").disabled = true;
         }
     });
+    // map for location
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWlob3NtaWtlIiwiYSI6ImNsNG8xcTJndjAwdDEza2xoMjRjZnhlcnoifQ.14_-vR9YsWexqJngngO1HA';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [23.72756045767275, 37.98437516117204],
+        zoom: 14
+    });
+    let marker = "";
+    map.on('style.load', function () {
+        marker = new mapboxgl.Marker({ draggable: true }).setLngLat([23.72756045767275, 37.98437516117204]).addTo(map);
+        marker.on('dragend', function () {
+            const lngLat = marker.getLngLat();
+            document.getElementById("m-f-loc").value = lngLat.lng + "/" + lngLat.lat;
+        });
+        map.on('click', function (e) {
+            const lngLat = e.lngLat;
+            document.getElementById("m-f-loc").value = lngLat.lng + "/" + lngLat.lat;
+            marker.setLngLat(lngLat);
+        });
+    });    
 </script>

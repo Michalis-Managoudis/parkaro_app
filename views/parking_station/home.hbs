@@ -22,33 +22,60 @@
                 </div>
                 <div class="modal-body">
                     <form action="/parking_station/home" method="post" id="_form2">
+                        {{#if drivers}}
                         <div class="text-nowrap">
-                            <label for="ff-email" class="label">Email</label>
-                            <input id="ff-email" type="email" name="email" class="input"
-                                placeholder="someone@example.com" autofocus
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                            <label for="ps_driver">Driver:</label>
+                            <select name="driver" id="ps_driver">
+                                <option value="new">New</option>
+                                {{#each drivers}}
+                                <option value="{{this.id}}">{{this.name}} <small>({{this.email}},{{this.phone}})</small></option>
+                                {{/each}}
+                            </select>
                         </div>
-                        <div class="text-nowrap">
-                            <label for="ff-name" class="label">Full Name</label>
-                            <input id="ff-name" type="text" name="name" class="input" placeholder="Enter your full name"
-                                required>
+                        {{/if}}
+                        <div id="dr_">
+                            <div class="text-nowrap">
+                                <label for="ff-email" class="label">Email</label>
+                                <input id="ff-email" type="email" name="email" class="input"
+                                    placeholder="someone@example.com" autofocus
+                                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                            </div>
+                            <div class="text-nowrap">
+                                <label for="ff-name" class="label">Full Name</label>
+                                <input id="ff-name" type="text" name="name" class="input"
+                                    placeholder="Enter your full name" required>
+                            </div>
+                            <div class="text-nowrap">
+                                <label for="ff-phone" class="label">Phone</label>
+                                <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********"
+                                    pattern="[0-9]{10}" required>
+                            </div>
                         </div>
-                        <div class="text-nowrap">
-                            <label for="ff-phone" class="label">Phone</label>
-                            <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********"
-                                pattern="[0-9]{10}" required>
+                        {{#if cars}}
+                        <div class="text-nowrap" id="ps_car_">
+                            <label for="ps_car">Car:</label>
+                            <select name="car" id="ps_car">
+                                <option value="new">New</option>
+                                {{#each cars}}
+                                <option value="{{this.id}}" title="{{this.driver_id}}" class="to_hide">{{this.plate}}<small> ({{this.model}}-{{this.color}})</small>
+                                </option>
+                                {{/each}}
+                            </select>
                         </div>
-                        <div class="text-nowrap">
-                            <label for="ff-plate">Plate</label>
-                            <input type="text" id="ff-plate" name="plate" placeholder="XXX0000" required>
-                        </div>
-                        <div class="text-nowrap">
-                            <label for="ff-model">Model</label>
-                            <input type="text" id="ff-model" name="model">
-                        </div>
-                        <div class="text-nowrap">
-                            <label for="ff-color">Color</label>
-                            <input type="text" id="ff-color" name="color">
+                        {{/if}}
+                        <div id="cr_">
+                            <div class="text-nowrap">
+                                <label for="ff-plate">Plate</label>
+                                <input type="text" id="ff-plate" name="plate" placeholder="XXX0000" required>
+                            </div>
+                            <div class="text-nowrap">
+                                <label for="ff-model">Model</label>
+                                <input type="text" id="ff-model" name="model">
+                            </div>
+                            <div class="text-nowrap">
+                                <label for="ff-color">Color</label>
+                                <input type="text" id="ff-color" name="color">
+                            </div>
                         </div>
                         <div class="text-nowrap">
                             <label for="ff-r_start">Έναρξη χρέωσης (Άφιξη):</label>
@@ -114,9 +141,7 @@
                 </td>
                 <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
                 </td>
-                <td class="d-flex">
-
-                </td>
+                <td class="d-flex"></td>
             </tr>
             {{/each}}
         </tbody>
@@ -191,9 +216,17 @@
             var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
             myModal.show();
             for (let field of Object.keys(f_dt)) {
+                if (field === "driver" || field === "car") continue;
                 document.getElementById("ff-" + field).value = f_dt[field];
             }
+            if(f_dt.driver) document.getElementById("ps_driver").value = f_dt.driver;
+            else document.getElementById("ps_driver").value = "new";
+            if(f_dt.car) document.getElementById("ps_car").value = f_dt.car;
+            else document.getElementById("ps_car").value = "new";
+            
+            
         }
+        driver_car_selection();
         var btn = document.getElementById("myBtn-nr");
         btn.addEventListener("click", function () {
             var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
@@ -293,7 +326,7 @@
             let h_dt = "";
             let rd = "";
             for (let i = 1; i < tbl.rows.length; i++) {
-                rd = tbl.rows[i].cells[3].textContent;
+                rd = tbl.rows[i].cells[2].textContent;
                 rd = rd.split(" ");
                 rd[0] = rd[0].split("/");
                 h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
@@ -334,5 +367,58 @@
         let tm = dtm_h.toTimeString().split(" ")[0].slice(0, 5);
         let dtm = dt + " " + tm;
         return dtm;
+    }
+
+    function driver_car_selection() {
+        {{#if drivers}}
+        let dr = document.getElementById("ps_driver");
+        if (dr.value === "new") {
+            document.getElementById("dr_").style.display = 'initial'; // show driver info
+            document.getElementById("ps_car").value = "new"; // set car selection to new
+            document.getElementById("ps_car_").style.display = 'none'; // hide car selection
+            document.getElementById("cr_").style.display = 'initial'; // show car info
+        }
+        else {
+            document.getElementById("dr_").style.display = 'none'; // hide driver info
+            document.getElementById("ps_car_").style.display = 'initial'; // show car selection
+            var crr = document.querySelectorAll(".to_hide");
+            var crs = [...crr];
+            crs.forEach(carr => {
+                if (carr.title === dr.value) carr.style.display = 'initial';
+                else carr.style.display = 'none';
+            });        
+        }
+        dr.addEventListener("change", function () {
+            if (dr.value === "new") {
+            document.getElementById("dr_").style.display = 'initial'; // show driver info
+            document.getElementById("ps_car").value = "new"; // set car selection to new
+            document.getElementById("ps_car_").style.display = 'none'; // hide car selection
+            document.getElementById("cr_").style.display = 'initial'; // show car info
+        }
+            else {
+                document.getElementById("dr_").style.display = 'none'; // hide driver info
+                document.getElementById("ps_car_").style.display = 'initial'; // show car selection
+                document.getElementById("ps_car").value = "new"; // set car selection to new
+                document.getElementById("cr_").style.display = 'initial'; // show car info
+                var crr = document.querySelectorAll(".to_hide");
+                var crs = [...crr];
+                crs.forEach(carr => {
+                    if (carr.title === dr.value) carr.style.display = 'initial';
+                    else carr.style.display = 'none';
+                });
+                
+            }
+        });
+        {{/if}}
+
+        {{#if cars}}
+        let cr = document.getElementById("ps_car");
+        if (cr.value === "new") document.getElementById("cr_").style.display = 'initial'; // show car info
+        else document.getElementById("cr_").style.display = 'none'; // hide car info
+        cr.addEventListener("change", function () {
+            if (cr.value === "new") document.getElementById("cr_").style.display = 'initial'; // show car info
+            else document.getElementById("cr_").style.display = 'none'; // hide car info
+        });
+        {{/if}}
     }
 </script>
