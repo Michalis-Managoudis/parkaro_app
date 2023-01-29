@@ -38,6 +38,7 @@ router.post('/add_reservation', parking_station_controller.add_parking_station_r
 router.get('/my_parking',parking_station_controller.get_parking_station_my_parking_page);
 router.post('/delete_reservation', parking_station_controller.delete_parking_station_reservation);
 router.post('/update_reservation', parking_station_controller.update_parking_station_reservation);
+router.post('/change_reservation_state', parking_station_controller.change_reservation_state);
 // change language page
 router.get('/language', account_controller.change_language);                                            //? !!!!!!! ready
 // account page
@@ -57,5 +58,8 @@ router.get('/logout', login_controller.logout_parking_station);                 
 // submit sign pages
 router.post('/sign_in', login_controller.login_parking_station);                                        //? !!!!!!! ready
 router.post('/sign_up', login_controller.add_new_parking_station);                                      //? !!!!!!! ready
+// local
+router.get('/local_post_data', parking_station_controller.get_local_parking_station_data);
+router.post('/local_post_data', parking_station_controller.post_local_parking_station_data);
 
 module.exports = router;

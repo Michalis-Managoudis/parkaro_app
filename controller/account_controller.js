@@ -24,7 +24,7 @@ function get_driver_account_page(req, res) {
         dataModel.get_("driver", req.session.sid, function (data) { // check if email exists
             if (data) {
                 dataModel.read_("car", "plate, model, color", `driver_id=${req.session.sid}`, function (cars1) {
-                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+                    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                         datan = JSON.parse(JSON.stringify(datan));
                         let c = 0;
                         for (let el of datan) if (!el.viewed) c++;
@@ -55,7 +55,7 @@ function get_parking_station_account_page(req, res) {
     else {
         dataModel.get_("parking_station", req.session.sid, function (data) { // check if email exists
             if (data) {
-                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}'`, function (datan) {
+                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'p${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                     datan = JSON.parse(JSON.stringify(datan));
                     let c = 0;
                     for (let el of datan) if (!el.viewed) c++;

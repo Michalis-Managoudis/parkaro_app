@@ -89,12 +89,14 @@
                     class="fa fa-bell"></i>{{#if unread_notification_number}}<span id="notif_num"
                     class="text-danger">({{unread_notification_number}})</span>{{/if}}</a>
             <div class="dropdown-menu _header_dropdown">
-                {{#each notifications}}
-                <p id="{{this.id}}" class="dropdown-item _btn_notf {{#unless this.viewed}}bg-info{{/unless}}">
-                    {{this.message}}<small><i> (<span class="format_dates">{{this.date_created}}</span>)</i></small></p>
-                
-                <div class="dropdown-divider"></div>
-                {{/each}}
+                <div class="my-custom-scrollbar">
+                    {{#each notifications}}
+                        <p id="{{this.id}}" class="dropdown-item _btn_notf {{#unless this.viewed}}bg-info{{/unless}}">
+                            {{this.message}}<small><i> (<span class="format_dates">{{this.date_created}}</span>)</i></small></p>
+                        
+                        <div class="dropdown-divider"></div>
+                    {{/each}}
+                </div>
                 <p class="btn btn-dark" id="notif1">Mark all as read</p>
             </div>
         </div>

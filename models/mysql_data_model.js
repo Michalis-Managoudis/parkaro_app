@@ -18,9 +18,10 @@ const schema = {
   "car": ["id", "driver_id", "plate", "model", "color", "photo"],
   "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["id", "parking_station_id"],
-  "reservation": ["id", "car_id", "parking_lot_id", "r_start", "r_end", "price"],
+  "reservation": ["id", "car_id", "parking_lot_id", "r_start", "r_end", "price", "state"],
   "review": ["id", "parking_station_id", "stars", "description"],
-  "notification": ["id", "user_id", "date_created", "viewed", "message"]
+  "notification": ["id", "user_id", "date_created", "viewed", "message"],
+  "sensor_data": ["id", "sensor_value"]
 };
 const schema_required = {
   "driver": ["email", "password", "name", "phone"],
@@ -29,7 +30,8 @@ const schema_required = {
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
-  "notification": ["user_id", "date_created", "message"]
+  "notification": ["user_id", "date_created", "message"],
+  "sensor_data": ["id", "sensor_value"]
 };
 const schema_show = { //? , "lang";;;;;;;
   "driver": ["email", "name", "phone", "points"],
@@ -39,7 +41,8 @@ const schema_show = { //? , "lang";;;;;;;
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
-  "notification": ["date_created", "viewed", "message"]
+  "notification": ["date_created", "viewed", "message"],
+  "sensor_data": ["sensor_value"]
 };
 const schema_editable = {
   "driver": ["email", "name", "phone", "lang"],
@@ -49,7 +52,8 @@ const schema_editable = {
   //"reservation": ["car_id", "r_start", "r_end", "price"],
   "reservation": ["price"],
   "review": ["stars", "description"],
-  "notification": ["message"]
+  "notification": ["message"],
+  "sensor_data": ["sensor_value"]
 };
 const schema_unique = {
   "driver": ["email", "phone"],
@@ -102,6 +106,16 @@ function change_pass(table, id, n_pass, cb) {
     if (cb) cb(JSON.parse(JSON.stringify(data))[0]);
   });
 };
+function update_state(id, st, dt, cb) {
+  let d = "";
+  if (st == 1) d = "r_start";
+  else if (st == 2) d = "r_end";
+  const sql = `UPDATE reservation SET state = ${st}, ${d} = ${dt} WHERE id = ${id}`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(data);
+  });
+}
 
 function delete_(table, id, cb) {
   const sql = `DELETE FROM ${table} WHERE id = ${id};`;
@@ -173,7 +187,7 @@ function load_reservation_history(md, id, cb) {
 };
 
 function load_parking_station_current_reservations(id, now, cb) {
-  let sql = `SELECT r.id, r.parking_lot_id, r.r_start, r.r_end, r.price, dc.email, dc.name, dc.phone, dc.plate, dc.model, dc.color FROM (SELECT * FROM reservation WHERE r_end > ${now} AND parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${id})) r JOIN (SELECT d.email, d.name, d.phone, c.plate, c.model, c.color, c.id FROM driver d JOIN car c ON d.id = c.driver_id) dc ON r.car_id = dc.id ORDER BY r.r_start, r.r_end;`;
+  let sql = `SELECT r.id, r.state, r.parking_lot_id, r.r_start, r.r_end, r.price, dc.email, dc.name, dc.phone, dc.plate, dc.model, dc.color FROM (SELECT * FROM reservation WHERE r_end > ${now} AND parking_lot_id IN (SELECT id FROM parking_lot WHERE parking_station_id = ${id})) r JOIN (SELECT d.email, d.name, d.phone, c.plate, c.model, c.color, c.id FROM driver d JOIN car c ON d.id = c.driver_id) dc ON r.car_id = dc.id ORDER BY r.r_start, r.r_end;`;
   conn.query(sql, function (err, data) {
     if (err) throw (err);
     if (cb) cb(data);
@@ -283,6 +297,14 @@ function read_parking_station_from_reservation(id, cb){
   });
 };
 
+function read_driver_from_reservation(id, cb){
+  const sql = `SELECT driver_id FROM (reservation r LEFT JOIN car c ON r.car_id = c.id) WHERE r.id = ${id};`;
+  conn.query(sql, function (err, data) {
+    if (err) throw (err);
+    if (cb) cb(JSON.parse(JSON.stringify(data))[0].driver_id);
+  });
+};
+
 function add_notification(u_id, dt, msg, cb){
   const fields = schema_required.notification.join(", ");
   const sql = `INSERT INTO notification (${fields}) VALUES (${u_id}, ${dt}, ${msg});`;
@@ -302,6 +324,7 @@ module.exports = {
   create_,
   update_,
   change_pass,
+  update_state,
   delete_,
   auth_,
   get_,
@@ -321,5 +344,6 @@ module.exports = {
   get_parking_evaluation,
   read_all_user_notifications,
   add_notification,
-  read_parking_station_from_reservation
+  read_parking_station_from_reservation,
+  read_driver_from_reservation
 }

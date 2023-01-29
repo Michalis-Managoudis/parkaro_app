@@ -39,7 +39,7 @@ function get_driver_home_page(req, res) {
                 row.price = prc;
                 row.rating = parseFloat(row.rating).toFixed(1);
             }
-            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
                 data = JSON.parse(JSON.stringify(data));
                 let c = 0;
                 for (let el of data) if (!el.viewed) c++;
@@ -62,7 +62,7 @@ function get_driver_home_page(req, res) {
 function get_driver_city_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 0", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
             data = JSON.parse(JSON.stringify(data));
             let c = 0;
             for (let el of data) if (!el.viewed) c++;
@@ -84,7 +84,7 @@ function get_driver_city_page(req, res) {
 function get_driver_airport_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 1", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
             data = JSON.parse(JSON.stringify(data));
             let c = 0;
             for (let el of data) if (!el.viewed) c++;
@@ -105,7 +105,7 @@ function get_driver_airport_page(req, res) {
 function get_driver_port_page(req, res) {
     dataModel.read_("parking_station", "location", "parking_type = 2", function (rows) {
         rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
             data = JSON.parse(JSON.stringify(data));
             let c = 0;
             for (let el of data) if (!el.viewed) c++;
@@ -149,7 +149,7 @@ function search_driver_home_page(req, res) {
                     valid_rows.push(row);
                 }
             }
-            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                 datan = JSON.parse(JSON.stringify(datan));
                 let c = 0;
                 for (let el of datan) if (!el.viewed) c++;
@@ -183,7 +183,7 @@ function search_driver_airport_page(req, res) {
                 valid_rows.push(row);
             }
         }
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
             data = JSON.parse(JSON.stringify(data));
             let c = 0;
             for (let el of data) if (!el.viewed) c++;
@@ -215,7 +215,7 @@ function search_driver_port_page(req, res) {
                 valid_rows.push(row);
             }
         }
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
             data = JSON.parse(JSON.stringify(data));
             let c = 0;
             for (let el of data) if (!el.viewed) c++;
@@ -249,7 +249,7 @@ function read_driver_notifications(req, res) {
 
 function get_driver_info_page(req, res) {
     // console.log(req.session.lang);
-    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (data) {
+    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
         data = JSON.parse(JSON.stringify(data));
         let c = 0;
         for (let el of data) if (!el.viewed) c++;
@@ -297,7 +297,7 @@ function get_driver_book_page(req, res) {
                             ps.id = req.session.ps_id;
                             ps = JSON.stringify(ps);
                             let srv = JSON.stringify(dataModel.schema_parking_station_boolean);
-                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                                 datan = JSON.parse(JSON.stringify(datan));
                                 let c = 0;
                                 for (let el of datan) if (!el.viewed) c++;
@@ -423,7 +423,7 @@ function delete_driver_reservation(req, res) {
                     dataModel.read_parking_station_from_reservation(req.body._id, function (data2) {
                         dataModel.delete_("reservation", req.body._id, function () {
                             dataModel.update_points(req.session.sid, -parseInt(req.body._price / 10), function () {
-                                dataModel.add_notification(`"d${data2}"`, Date.parse(today), `"Reservation with id ${req.body._id} deleted from driver"`, function (data3) {
+                                dataModel.add_notification(`"d${data2}"`, Date.parse(today), `"Reservation (${req.body._id}) deleted from driver"`, function (data3) {
                                     console.log("Reservation deleted succesfully");
                                     res.redirect('/history');
                                 });
@@ -551,7 +551,7 @@ function get_driver_history_page(req, res) {
                                 for (let el2 of dt_2) { rvs[el2.id.toString()] = { "stars": el2.stars, "description": el2.description }; }
                                 rvs = JSON.stringify(rvs);
                                 //dt = JSON.stringify(dt);
-                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+                                dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                                     datan = JSON.parse(JSON.stringify(datan));
                                     let c = 0;
                                     for (let el of datan) if (!el.viewed) c++;
@@ -572,7 +572,7 @@ function get_driver_history_page(req, res) {
                             });
                         }
                         else { // if driver hasn't a reservation history
-                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}'`, function (datan) {
+                            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
                                 datan = JSON.parse(JSON.stringify(datan));
                                 let c = 0;
                                 for (let el of datan) if (!el.viewed) c++;

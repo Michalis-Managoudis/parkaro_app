@@ -3,6 +3,7 @@
 {{else}}
 
 {{/if}}
+<meta http-equiv="refresh" content="60">
 <h3>Parking Lots (occupied):</h3>
 {{!-- <label for="file">Downloading progress:</label>
 <progress id="file" value="{{pl_per}}" max="100"> {{pl_per}}% </progress> --}}
@@ -22,8 +23,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="/parking_station/home" method="post" id="_form2">
-                        {{#if drivers}}
-                        <div class="text-nowrap">
+                        <div class="text-nowrap" id="ps_driver_">
                             <label for="ps_driver">Driver:</label>
                             <select name="driver" id="ps_driver">
                                 <option value="new">New</option>
@@ -32,7 +32,6 @@
                                 {{/each}}
                             </select>
                         </div>
-                        {{/if}}
                         <div id="dr_">
                             <div class="text-nowrap">
                                 <label for="ff-email" class="label">Email</label>
@@ -51,7 +50,6 @@
                                     pattern="[0-9]{10}" required>
                             </div>
                         </div>
-                        {{#if cars}}
                         <div class="text-nowrap" id="ps_car_">
                             <label for="ps_car">Car:</label>
                             <select name="car" id="ps_car">
@@ -62,7 +60,6 @@
                                 {{/each}}
                             </select>
                         </div>
-                        {{/if}}
                         <div id="cr_">
                             <div class="text-nowrap">
                                 <label for="ff-plate">Plate</label>
@@ -100,7 +97,6 @@
                             </select>
                             {{/if}}
                         </div>
-
                         <div class="d-flex justify-content-between mt-5">
                             <button type="button" class="btn btn-lg btn-secondary"
                                 data-bs-dismiss="modal">Cancel</button>
@@ -131,7 +127,7 @@
         </thead>
         <tbody>
             {{#each records}}
-            <tr class="_resv" id="{{this.id}}">
+            <tr class="_resv" id="{{this.id}}" title="{{this.state}}">
                 <td>{{this.id}}</td>
                 <td>{{this.parking_lot_id}}</td>
                 <td class="_t_replace">{{this.r_start}}</td>
@@ -159,7 +155,7 @@
                         <input type="email" id="resv_d_email-" hidden name="d_email" value="">
                         <div class="text-nowrap">
                             <label for="ff-price-">Price:</label>
-                            <input type="text" id="ff-price-" name="price" placeholder="" value=""> €
+                            <input type="text" id="ff-price-" name="price" value="" autofocus> €
                         </div>
                     </form>
                 </div>
@@ -192,15 +188,41 @@
             </div>
         </div>
     </div>
+    <div id="myModalEnterExit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vehicle exited</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/parking_station/change_reservation_state" method="post" id="myEnterExitForm-">
+                        <label for="ps_car">Car exited:</label>
+                        <select name="_id" id="ps_car_exited"></select>
+                        <input type="number" name="state" id="f_st_s" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" form="myEnterExitForm-" class="btn btn-lg btn-success" value="Apply">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {{else}}
 <p class="p-3 text-center">Oops none current reservation found</p>
 {{/if}}
+<form action="/parking_station/change_reservation_state" method="post" id="ch_st">
+    <input type="number" name="_id" id="f_st_id" hidden>
+    <input type="number" name="state" id="f_st_st" hidden>
+</form>
 
 
 <script>
     let per = {{{ pl_per }}};
     let f_dt = {{{ form_data }}};
+    const local_trigger = {{{local}}};
     var dat = document.querySelectorAll("._t_replace");
     var dats = [...dat];
     dats.forEach(datt => {
@@ -221,10 +243,18 @@
             }
             if(f_dt.driver) document.getElementById("ps_driver").value = f_dt.driver;
             else document.getElementById("ps_driver").value = "new";
+            if(!f_dt.driver) document.getElementById("ps_driver_").hidden = true;
             if(f_dt.car) document.getElementById("ps_car").value = f_dt.car;
             else document.getElementById("ps_car").value = "new";
-            
-            
+            if(!f_dt.car) document.getElementById("ps_car_").hidden = true;
+        }
+
+        if (local_trigger == 1) alert("A vehicle had just entered parking");
+        if (local_trigger == 2) alert("A vehicle had just exited parking");
+        if (local_trigger == 1 || local_trigger == 2) {
+            document.getElementById("f_st_s").value = local_trigger;
+            var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
+            myModal.show();
         }
         driver_car_selection();
         var btn = document.getElementById("myBtn-nr");
@@ -235,9 +265,11 @@
 
         highlight_future_reservations();
         enable_edit_delete_actions();
-
+        in_out_buttons();
         edit_buttons();
         delete_buttons();
+        show_reservations_able_to_enter_or_exit(local_trigger);
+
     });
 
     let _dt1 = document.getElementById("ff-r_start");
@@ -265,7 +297,8 @@
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
-        check_available();
+        console.log(_dt2.value);
+        //check_available();
     });
     _dt1.addEventListener('change', function () {
         _dt2.min = _dt1.value;
@@ -311,10 +344,79 @@
 
     function enable_edit_delete_actions() { // only on future reservations
         let tbl = document.getElementById("resv_table");
+        let st = "";
         if (tbl) {
-            for (let i = 1; i < tbl.rows.length; i++) {
-                tbl.rows[i].cells[7].innerHTML = `<div><button type="button" id="myEditBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
+            for (let i = 1; i < tbl.rows.length; i++) { // only for 1 hour before reservations
+                st = document.getElementById(tbl.rows[i].id).title;
+                tbl.rows[i].cells[7].innerHTML = `<div><button id="myInBtn-${tbl.rows[i].id}" title="${st}" class="btn btn-lg btn-success d-block mx-3 _btn_in" style="font-size: 18px;"><i class="fa fa-hourglass-start"></i></button></div>
+                <div><button id="myOutBtn-${tbl.rows[i].id}" class="btn btn-lg btn-danger d-block mx-3 _btn_out" style="font-size: 18px;"><i class="fa fa-hourglass-end"></i></button></div>
+                <div><button type="button" id="myEditBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_edit"style="font-size: 18px;"><i class="fa fa-pencil"></i></button></div>
                 <div><button type="button" id="myDelBtn--${tbl.rows[i].id}" class="btn btn-lg btn-dark d-block mx-3 _btn_del" style="font-size: 18px;"><i class="fa fa-trash-o"></i></button></div>` + tbl.rows[i].cells[7].innerHTML;
+            }
+        }
+    }
+
+    function in_out_buttons() {
+        let bn = document.querySelectorAll("._btn_in");
+        if (bn.length) {
+            let btns = [...bn];
+            let idd = "";
+            btns.forEach(function (btn, idd) {
+                idd = btn.id.split("-")[1];
+                btn.addEventListener("click", function () { // start button
+                    document.getElementById("f_st_id").value = idd;
+                    document.getElementById("f_st_st").value = 1;
+                    document.getElementById('ch_st').submit();
+                });
+                document.getElementById("myOutBtn-" + idd).addEventListener("click", function () { // end button
+                    document.getElementById("f_st_id").value = idd;
+                    document.getElementById("f_st_st").value = 2;
+                    document.getElementById('ch_st').submit();
+                });
+                disable_in_out_buttons(idd);
+            });
+        }
+    }
+
+    function disable_in_out_buttons(_id) {
+        let state = parseInt(document.getElementById("myInBtn-" + _id).title);
+        let tday = new Date();
+        let h_dt = "";
+        let rd = "";
+        rd = document.getElementById(_id).cells[2].textContent;
+        rd = rd.split(" ");
+        rd[0] = rd[0].split("/");
+        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
+        let h_dt2 = "";
+        let rd2 = "";
+        rd2 = document.getElementById(_id).cells[3].textContent;
+        rd2 = rd2.split(" ");
+        rd2[0] = rd2[0].split("/");
+        h_dt2 = rd2[0][2] + "-" + rd2[0][1] + "-" + rd2[0][0] + "T" + rd2[1] + ":00";
+        if (state == 1 || tday.getTime() > Date.parse(h_dt)) document.getElementById("myInBtn-" + _id).disabled = true;
+        if (state == 2 || (state == 0 && tday.getTime() < Date.parse(h_dt))) document.getElementById("myOutBtn-" + _id).disabled = true;
+    }
+
+    function show_reservations_able_to_enter_or_exit(md) {
+        let tbl = document.getElementById("resv_table");
+        if (tbl) {
+            let tday = new Date();
+            let h_dt = "";
+            let rd = "";
+            let bl;
+            for (let i = 1; i < tbl.rows.length; i++) {
+                rd = tbl.rows[i].cells[2].textContent;
+                rd = rd.split(" ");
+                rd[0] = rd[0].split("/");
+                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
+                if (md == 1) bl = tday.getTime() < Date.parse(h_dt);
+                else bl = tday.getTime() > Date.parse(h_dt);
+                if (bl) {
+                    const opt = document.createElement("option");
+                    opt.innerText = tbl.rows[i].cells[0].textContent + "/ " + tbl.rows[i].cells[1].textContent + "/ " + tbl.rows[i].cells[5].innerText + "/ " + tbl.rows[i].cells[6].innerText;
+                    opt.value = tbl.rows[i].cells[0].textContent;
+                    document.getElementById("ps_car_exited").appendChild(opt);
+                }
             }
         }
     }
@@ -329,8 +431,7 @@
                 rd = tbl.rows[i].cells[2].textContent;
                 rd = rd.split(" ");
                 rd[0] = rd[0].split("/");
-                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00"
-                //console.log(h_dt);
+                h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
                 if (tday.getTime() < Date.parse(h_dt)) {
                     tbl.rows[i].classList.add("bg-info");
                 }
