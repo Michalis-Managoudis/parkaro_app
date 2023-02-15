@@ -1,50 +1,40 @@
-{{#if lang}}
-
-{{else}}
-
-{{/if}}
-
 <div class="d-flex justify-content-around">
-    <div>
-        <h2>Today income:</h2>
-        <p id="incm_today">0 €</p>
+    <div class="p-3 mb-3 lbls">
+        <h2>{{#if lang}}Έσοδα ημέρας:{{else}}Today income:{{/if}}</h2>
+        <p id="incm_today" class="mb-0">0 €</p>
     </div>
-
-    <div>
-        <h2>Month income:</h2>
-        <p id="incm_monthly">0 €</p>
+    <div class="p-3 mb-3 lbls">
+        <h2>{{#if lang}}Έσοδα μήνα:{{else}}Month income:{{/if}}</h2>
+        <p id="incm_monthly" class="mb-0">0 €</p>
     </div>
-
-    <div>
-        <h2>Rating:</h2>
-        <p id="rating"></p>
+    <div class="p-3 mb-3 lbls">
+        <h2>{{#if lang}}Αξιολόγηση:{{else}}Rating:{{/if}}</h2>
+        <p id="rating" class="mb-0"></p>
     </div>
-
 </div>
-
 
 {{#if records}}
 <div class="d-flex justify-content-between mx-5 my-2">
-    <h3 class="text-center">Reservations</h3>
+    <h2 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h2>
     <div class="text-nowrap">
-        <label for="_start">Από:</label>
-        <input type="datetime-local" id="_start" name="r_start" class="dates_">
-        <label for="_end">Έως: </label>
-        <input type="datetime-local" id="_end" name="r_end" class="dates_">
+        <label for="_start">{{#if lang}}Από:{{else}}From:{{/if}}</label>
+        <input type="datetime-local" id="_start" name="r_start" class="dates_ bg-info">
+        <label for="_end">{{#if lang}}Έως:{{else}}Up to:{{/if}}</label>
+        <input type="datetime-local" id="_end" name="r_end" class="dates_ bg-info">
     </div>
 </div>
 <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
     <table class="table table-bordered m-0" id="res_table">
         <thead style="position: sticky; top: 0" class="bg-dark text-white">
             <tr>
-                <th>ID</th>
-                <th>Parking lot</th>
-                <th>Date start</th>
-                <th>Date end</th>
-                <th>Price</th>
-                <th>Driver</th>
-                <th>Plate</th>
-                <th>Actions</th>
+                <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
+                <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία έναρξης{{else}}Start date{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία λήξης{{else}}End date{{/if}}</th>
+                <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
+                <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
+                <th>{{#if lang}}Πινακίδα οχήματος{{else}}Car plate{{/if}}</th>
+                <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
             </tr>
         </thead>
         <tbody>
@@ -55,15 +45,11 @@
                 <td class="_t_replace">{{this.r_start}}</td>
                 <td class="_t_replace">{{this.r_end}}</td>
                 <td>{{this.price}} €</td>
-                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p>
-                </td>
-                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
-                </td>
+                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p></td>
+                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p></td>
                 <td class="d-flex">
                     <div>
-                        <button type="button" id="myBtn-{{this.id}}"
-                            class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;"><i
-                                class="fa fa-plus"></i> Review</button>
+                        <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;"><i class="fa fa-plus"></i> Review</button>
                     </div>
                 </td>
             </tr>
@@ -74,13 +60,12 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Review</h5>
+                    <h5 class="modal-title">{{#if lang}}Αξιολόγηση{{else}}Review{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    {{!-- <p>Αστέρια: <span id="strs"></span>/5 <i class="fa fa-star-o"></i></p> --}}
                     <p>Αστέρια: <span id="strs"></span>/5 <span id="strs_2"></span></p>
-                    <p class="mb-0">Κριτική: </p>
+                    <p class="mb-0">{{#if lang}}Σχόλια:{{else}}Comments: {{/if}}</p>
                     <i><small id="descrpt"></small></i>
                 </div>
             </div>
@@ -90,7 +75,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Reservation</h5>
+                    <h5 class="modal-title">{{#if lang}}Κράτηση{{else}}Reservation{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -98,14 +83,14 @@
                         <input type="number" id="resv__id-" hidden name="_id" value="">
                         <input type="email" id="resv_d_email-" hidden name="d_email" value="">
                         <div class="text-nowrap">
-                            <label for="ff-price">Price:</label>
-                            <input type="text" id="ff-price-" name="price" placeholder="" value=""> €
+                            <label for="ff-price">{{#if lang}}Τιμή:{{else}}Price:{{/if}}</label>
+                            <input type="text" id="ff-price-" name="price" value=""> €
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
-                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value="Update">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value={{#if lang}}"Ενημέρωση"{{else}}"Update"{{/if}}>
                 </div>
             </div>
         </div>
@@ -114,11 +99,11 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Confirmation</h5>
+                    <h5 class="modal-title">{{#if lang}}Επιβεβαίωση{{else}}Confirmation{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="_modal-text">Are you sure you want to delete this reservation?</p>
+                    <p class="_modal-text">{{#if lang}}Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κράτηση;{{else}}Are you sure you want to delete this reservation?{{/if}}</p>
                     <form action="/parking_station/delete_reservation" method="post" id="myDelForm-">
                         <input type="number" id="resv_id--" hidden name="_id" value="">
                         <input type="text" id="resv_prc-" hidden name="_price" value="">
@@ -126,15 +111,15 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value="Delete Reservation">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value={{#if lang}}"Διαγραφή Κράτησης"{{else}}"Delete Reservation"{{/if}}>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {{else}}
-<p class="p-3 text-center">Oops none reservation found</p>
+<p class="p-3 text-center">{{#if lang}}Ωχ δεν βρέθηκε καμία κράτηση{{else}}Oops none reservation found{{/if}}</p>
 {{/if}}
 
 <script>
@@ -149,7 +134,7 @@
     for (let field of Object.keys(inc)) if (inc[field]) document.getElementById("incm_" + field).textContent = inc[field] + " €";
 
     const rat = {{{ rating }}};
-    if (Number.isNaN(rat)) document.getElementById("rating").innerHTML = 'No reviews';
+    if (Number.isNaN(rat)) document.getElementById("rating").innerHTML = {{#if lang}}'Δεν υπάρχουν κριτικές'{{else}}'No reviews'{{/if}};
     else {
         for (let i = 1; i <= rat; i++) {
             document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star"></i>';

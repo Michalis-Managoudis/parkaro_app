@@ -1,32 +1,23 @@
-{{#if lang}}
-
-{{else}}
-
-{{/if}}
 <meta http-equiv="refresh" content="60">
-<h3>Parking Lots (occupied):</h3>
-{{!-- <label for="file">Downloading progress:</label>
-<progress id="file" value="{{pl_per}}" max="100"> {{pl_per}}% </progress> --}}
+<h3>{{#if lang}}Θέσεις parking (κατειλημμένες):{{else}}Parking Lots (occupied):{{/if}}</h3>
 <div class="d-flex mb-5">
     <div class="progress mb-3 w-50" style="height: 30px;">
-        <div id="_prog_bar" class="progress-bar progress-bar-animated progress-bar-striped bg-success"
-            role="progressbar" style="width: {{pl_per}}%; font-size: 25px;">{{pl_per}}%</div>
+        <div id="_prog_bar" class="progress-bar progress-bar-animated progress-bar-striped bg-success" role="progressbar" style="width: {{pl_per}}%; font-size: 25px;">{{pl_per}}%</div>
     </div>
-    <button type="button" id="myBtn-nr" class="btn btn-lg btn-danger d-block mx-auto _btn_modal"
-        style="font-size: 20px; width: 12%; height: 100%;">New Reservation</button>
+    <button type="button" id="myBtn-nr" class="btn btn-lg btn-danger d-block mx-auto _btn_modal" style="font-size: 20px; width: 12%; height: 100%;">{{#if lang}}Νέα κράτηση{{else}}New Reservation{{/if}}</button>
     <div id="myModal-nr" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Reservation</h5>
+                    <h5 class="modal-title">{{#if lang}}Προσθήκη νέας κράτησης{{else}}Add New Reservation{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form action="/parking_station/home" method="post" id="_form2">
                         <div class="text-nowrap" id="ps_driver_">
-                            <label for="ps_driver">Driver:</label>
+                            <label for="ps_driver">{{#if lang}}Οδηγός:{{else}}Driver:{{/if}}</label>
                             <select name="driver" id="ps_driver">
-                                <option value="new">New</option>
+                                <option value="new">{{#if lang}}Νέος{{else}}New{{/if}}</option>
                                 {{#each drivers}}
                                 <option value="{{this.id}}">{{this.name}} <small>({{this.email}},{{this.phone}})</small></option>
                                 {{/each}}
@@ -34,61 +25,56 @@
                         </div>
                         <div id="dr_">
                             <div class="text-nowrap">
-                                <label for="ff-email" class="label">Email</label>
-                                <input id="ff-email" type="email" name="email" class="input"
-                                    placeholder="someone@example.com" autofocus
-                                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                                <label for="ff-email" class="label">{{#if lang}}Email{{else}}Email{{/if}}</label>
+                                <input id="ff-email" type="email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                             </div>
                             <div class="text-nowrap">
-                                <label for="ff-name" class="label">Full Name</label>
-                                <input id="ff-name" type="text" name="name" class="input"
-                                    placeholder="Enter your full name" required>
+                                <label for="ff-name" class="label">{{#if lang}}Ονοματεπώνυμο{{else}}Full Name{{/if}}</label>
+                                <input id="ff-name" type="text" name="name" class="input" placeholder={{#if lang}}"Εισάγετε το ονοματεπώνυμό σας"{{else}}"Enter your full name"{{/if}} required>
                             </div>
                             <div class="text-nowrap">
-                                <label for="ff-phone" class="label">Phone</label>
-                                <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********"
-                                    pattern="[0-9]{10}" required>
+                                <label for="ff-phone" class="label">{{#if lang}}Τηλέφωνο{{else}}Phone{{/if}}</label>
+                                <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
                             </div>
                         </div>
                         <div class="text-nowrap" id="ps_car_">
-                            <label for="ps_car">Car:</label>
+                            <label for="ps_car">{{#if lang}}Όχημα:{{else}}Vehicle:{{/if}}</label>
                             <select name="car" id="ps_car">
-                                <option value="new">New</option>
+                                <option value="new">{{#if lang}}Νέο{{else}}New{{/if}}</option>
                                 {{#each cars}}
-                                <option value="{{this.id}}" title="{{this.driver_id}}" class="to_hide">{{this.plate}}<small> ({{this.model}}-{{this.color}})</small>
-                                </option>
+                                <option value="{{this.id}}" title="{{this.driver_id}}" class="to_hide">{{this.plate}}<small> ({{this.model}}-{{this.color}})</small></option>
                                 {{/each}}
                             </select>
                         </div>
                         <div id="cr_">
                             <div class="text-nowrap">
-                                <label for="ff-plate">Plate</label>
+                                <label for="ff-plate">{{#if lang}}Πινακίδα{{else}}Plate{{/if}}</label>
                                 <input type="text" id="ff-plate" name="plate" placeholder="XXX0000" required>
                             </div>
                             <div class="text-nowrap">
-                                <label for="ff-model">Model</label>
+                                <label for="ff-model">{{#if lang}}Μοντέλο{{else}}Model{{/if}}</label>
                                 <input type="text" id="ff-model" name="model">
                             </div>
                             <div class="text-nowrap">
-                                <label for="ff-color">Color</label>
+                                <label for="ff-color">{{#if lang}}Χρώμα{{else}}Color{{/if}}</label>
                                 <input type="text" id="ff-color" name="color">
                             </div>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-r_start">Έναρξη χρέωσης (Άφιξη):</label>
+                            <label for="ff-r_start">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
                             <input type="datetime-local" id="ff-r_start" name="r_start" required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-r_end">Λήξη Χρέωσης (Αναχώρηση): </label>
+                            <label for="ff-r_end">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}}</label>
                             <input type="datetime-local" id="ff-r_end" name="r_end" required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-price">Price: </label>
+                            <label for="ff-price">{{#if lang}}Τιμή: {{else}}Price: {{/if}}</label>
                             <input type="text" id="ff-price" name="price"> €
                         </div>
                         <div class="text-nowrap">
                             {{#if empty_lots}}
-                            <label for="plid">Lot:</label>
+                            <label for="plid">{{#if lang}}Θέση:{{else}}Lot:{{/if}}</label>
                             <select name="parking_lot_id" id="plid">
                                 {{!-- load available parking lots --}}
                                 {{#each empty_lots}}
@@ -98,10 +84,8 @@
                             {{/if}}
                         </div>
                         <div class="d-flex justify-content-between mt-5">
-                            <button type="button" class="btn btn-lg btn-secondary"
-                                data-bs-dismiss="modal">Cancel</button>
-                            <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success"
-                                value="Add" onclick="add_resv()">
+                            <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                            <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success" value={{#if lang}}"Προσθηκη"{{else}}"Add"{{/if}} onclick="add_resv()">
                         </div>
                     </form>
                 </div>
@@ -110,19 +94,19 @@
     </div>
 </div>
 {{#if records}}
-<h3 class="text-center">Reservations</h3>
+<h3 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h3>
 <div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
     <table class="table table-bordered m-0" id="resv_table">
         <thead style="position: sticky; top: 0" class="bg-dark text-white">
             <tr>
-                <th>ID</th>
-                <th>Parking lot</th>
-                <th>Date start</th>
-                <th>Date end</th>
-                <th>Price</th>
-                <th>Driver</th>
-                <th>Plate</th>
-                <th>Actions</th>
+                <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
+                <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία έναρξης{{else}}Start date{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία λήξης{{else}}End date{{/if}}</th>
+                <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
+                <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
+                <th>{{#if lang}}Πινακίδα οχήματος{{else}}Car plate{{/if}}</th>
+                <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
             </tr>
         </thead>
         <tbody>
@@ -133,10 +117,8 @@
                 <td class="_t_replace">{{this.r_start}}</td>
                 <td class="_t_replace">{{this.r_end}}</td>
                 <td>{{this.price}} €</td>
-                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p>
-                </td>
-                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p>
-                </td>
+                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p></td>
+                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p></td>
                 <td class="d-flex"></td>
             </tr>
             {{/each}}
@@ -146,7 +128,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Reservation</h5>
+                    <h5 class="modal-title">{{#if lang}}Κράτηση{{else}}Reservation{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -154,14 +136,14 @@
                         <input type="number" id="resv__id-" hidden name="_id" value="">
                         <input type="email" id="resv_d_email-" hidden name="d_email" value="">
                         <div class="text-nowrap">
-                            <label for="ff-price-">Price:</label>
+                            <label for="ff-price-">{{#if lang}}Τιμή:{{else}}Price:{{/if}}</label>
                             <input type="text" id="ff-price-" name="price" value="" autofocus> €
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
-                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value="Update">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value={{#if lang}}"Ενημέρωση"{{else}}"Update"{{/if}}>
                 </div>
             </div>
         </div>
@@ -174,7 +156,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="_modal-text">Are you sure you want to delete this reservation?</p>
+                    <p class="_modal-text">{{#if lang}}Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κράτηση;{{else}}Are you sure you want to delete this reservation?{{/if}}</p>
                     <form action="/parking_station/delete_reservation" method="post" id="myDelForm-">
                         <input type="number" id="resv_id--" hidden name="_id" value="">
                         <input type="text" id="resv_prc-" hidden name="_price" value="">
@@ -182,42 +164,41 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value="Delete Reservation">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="myModalEnterExit" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Vehicle exited</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/parking_station/change_reservation_state" method="post" id="myEnterExitForm-">
-                        <label for="ps_car">Car exited:</label>
-                        <select name="_id" id="ps_car_exited"></select>
-                        <input type="number" name="state" id="f_st_s" hidden>
-                    </form>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">Cancel</button>
-                    <input type="submit" form="myEnterExitForm-" class="btn btn-lg btn-success" value="Apply">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value={{#if lang}}"Διαγραφή Κράτησης"{{else}}"Delete Reservation"{{/if}}>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {{else}}
-<p class="p-3 text-center">Oops none current reservation found</p>
+<p class="p-3 text-center">{{#if lang}}Ωχ δεν βρέθηκε καμία ενεργή κράτηση{{else}}Oops none current reservation found{{/if}}</p>
 {{/if}}
+<div id="myModalEnterExit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{#if lang}}Όχημα εξήλθε{{else}}Vehicle exited{{/if}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/parking_station/change_reservation_state" method="post" id="myEnterExitForm-">
+                        <label for="ps_car">{{#if lang}}Όχημα που εξήλθε{{else}}Vehicle exited:{{/if}}</label>
+                        <select name="_id" id="ps_car_exited"></select>
+                        <input type="number" name="state" id="f_st_s" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myEnterExitForm-" class="btn btn-lg btn-success" value={{#if lang}}"Εφαρμογή"{{else}}"Apply"{{/if}}>
+                </div>
+            </div>
+        </div>
+    </div>
 <form action="/parking_station/change_reservation_state" method="post" id="ch_st">
     <input type="number" name="_id" id="f_st_id" hidden>
     <input type="number" name="state" id="f_st_st" hidden>
 </form>
-
 
 <script>
     let per = {{{ pl_per }}};
@@ -253,8 +234,33 @@
         if (local_trigger == 2) alert("A vehicle had just exited parking");
         if (local_trigger == 1 || local_trigger == 2) {
             document.getElementById("f_st_s").value = local_trigger;
-            var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
-            myModal.show();
+
+            let tbl = document.getElementById("resv_table");
+            let bl = false;
+            if (tbl) {
+                let tday = new Date();
+                let h_dt = "";
+                let rd = "";
+                for (let i = 1; i < tbl.rows.length; i++) {
+                    rd = tbl.rows[i].cells[2].textContent;
+                    rd = rd.split(" ");
+                    rd[0] = rd[0].split("/");
+                    h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
+                    if (local_trigger == 1 && tday.getTime() < Date.parse(h_dt)) {
+                        bl = true;
+                        break;
+                    }
+                }
+            }
+            if (bl) {
+                var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
+                myModal.show();
+            }
+            else {
+                var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
+                myModal.show();
+            }
+            
         }
         driver_car_selection();
         var btn = document.getElementById("myBtn-nr");

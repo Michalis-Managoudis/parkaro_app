@@ -1,24 +1,36 @@
-{{#if lang}}
-
-
-{{else}}
-<form action="" method="post">
-    <fieldset>
-        <legend>Sign in</legend>
-        <label for="m-f-email">Email:</label>
-        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" autofocus
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-
-        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
-        <input type="password" id="m-f-pswd" name="password" placeholder=""
-            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-
-        <input type="submit" value="Sign in">
-
-    </fieldset>
-
-</form>
-<p>Not an account?</p>
-<a href="/parking_station/sign_up">Create one here</a>
-
-{{/if}}
+<div class="row">
+    <div class="col text-white d-flex justify-content-center p-0">
+        <form action="" method="post" class="card">
+            <div class="login-box">
+                <div class="login-snip">
+                    <input id="tab-1" type="radio" name="tab" class="sign-in" checked>
+                    <label for="tab-1" class="tab">{{#if lang}}Συνδεση{{else}}Login{{/if}}</label>
+                    <label class="tab"><a href="/parking_station/sign_up">{{#if lang}}Εγγραφη{{else}}Sign Up{{/if}}</a></label>
+                    <div class="login-space">
+                        <div class="login-form">
+                            <div class="group">
+                                <label for="m-f-email" class="label">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                                <input type="email" id="m-f-email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                            </div>
+                            <div class="group">
+                                <label for="m-f-pswd" class="label">{{#if lang}}Κωδικός πρόσβασης:{{else}}Password{{/if}}</label>
+                                <input type="password" id="m-f-pswd" name="password" class="input" placeholder={{#if lang}}"Εισάγετε τον κωδικό σας"{{else}}"Enter your password"{{/if}} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                            </div>
+                            {{!-- <div class="group">
+                                <input id="check" type="checkbox" class="check" checked>
+                                <label for="check"><span class="icon"></span> Keep me Signed in</label>
+                            </div> --}}
+                            <div class="group">
+                                <input type="submit" class="button" value={{#if lang}}"Συνδεση"{{else}}"Sign In"{{/if}}>
+                            </div>
+                            <hr>
+                            <div class="foot">
+                                <a href="/parking_station/sign_up">{{#if lang}}Δεν έχετε λογαριασμό; Δημιουργήστε έναν εδώ{{else}}Not an account? Create one here{{/if}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

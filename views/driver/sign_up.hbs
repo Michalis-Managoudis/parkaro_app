@@ -1,112 +1,45 @@
-{{!-- {{#if lang}}
-<form action="" method="post">
-    <fieldset>
-        <legend>Create an account</legend>
-
-        <label for="m-f-name">Full Name</label>
-        <input type="text" id="m-f-name" name="name" placeholder="Firstname  Lastname" autofocus>
-
-        <label for="m-f-email">Email:</label>
-        <input type="text" id="m-f-email" name="email" placeholder="someone@example.com"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-
-        <label for="m-f-tel">Phone number</label>
-        <input type="tel" id="m-f-tel" name="phone" placeholder="69xxxxxxxx" pattern="[0-9]{3}-*[0-9]{3}-*[0-9]{4}"
-            required>
-
-        <label for="m-f-pswd">Password:</label>
-        <input type="password" id="m-f-pswd" name="password" placeholder=""
-            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-
-        <input type="submit" value="Sign up">
-
-    </fieldset>
-</form>
-<p>Already have an account?</p>
-<a href="">Sign in here</a>
-
-{{else}}
-<form action="" method="post">
-    <fieldset>
-        <legend>Create an account</legend>
-        <label for="m-f-email">Email:</label>
-        <input type="email" id="m-f-email" name="email" placeholder="someone@example.com" autofocus
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-
-        <label for="m-f-pswd">Κωδικός πρόσβασης:</label>
-        <input type="password" id="m-f-pswd" name="password" placeholder=""
-            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-
-        <label for="m-f-name">Ονοματεπώνυμο:</label>
-        <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" required>
-
-        <label for="m-f-phone">Τηλέφωνο:</label>
-        <input type="tel" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" required>
-
-        <input type="submit" value="Sign up">
-
-    </fieldset>
-
-</form>
-<p>Already have an account?</p>
-<a href="/sign_in">Sign in here</a>
-
-{{/if}} --}}
-
-
-
 <div class="row">
     <div class="col text-white d-flex justify-content-center p-0">
-        {{!-- <div class="card"> --}}
-            <form action="" method="post" class="card">
-                <div class="login-box">
-                    <div class="login-snip">
-                        {{!-- <input id="tab-1" type="radio" name="tab" class="sign-in"> --}}
-                        <label for="tab-1" class="tab"><a href="/sign_in">Login</a></label>
-                        <input id="tab-2" type="radio" name="tab" class="sign-up" checked>
-                        <label for="tab-2" class="tab">Sign Up</label>
-                        <div class="login-space">
-                            <div class="sign-up-form">
-                                <div class="group">
-                                    <label for="eml" class="label">Email</label>
-                                    <input id="eml" type="email" name="email" class="input"
-                                        placeholder="someone@example.com" autofocus
-                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-                                </div>
-                                <div class="group">
-                                    <label for="pass" class="label">Password</label>
-                                    <input id="pass" type="password" name="password" class="input" data-type="password"
-                                        placeholder="Create your password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                        required>
-                                </div>
-                                <div class="group">
-                                    <label for="pass2" class="label">Repeat Password</label>
-                                    <input id="pass2" type="password" name="password2" class="input"
-                                        data-type="password" placeholder="Repeat your password" required>
-                                </div>
-                                <div class="group">
-                                    <label for="nm" class="label">Full Name</label>
-                                    <input id="nm" type="text" name="name" class="input"
-                                        placeholder="Enter your full name" required>
-                                </div>
-                                <div class="group">
-                                    <label for="tl" class="label">Phone</label>
-                                    <input id="tl" type="tel" name="phone" class="input" placeholder="69********"
-                                        pattern="[0-9]{10}" required>
-                                </div>
-                                <div class="group">
-                                    <input type="submit" class="button" value="Sign Up">
-                                </div>
-                                <hr>
-                                <div class="foot">
-                                    <a href="/sign_in">Already Member?</a>
-                                </div>
+        <form action="" method="post" class="card">
+            <div class="login-box">
+                <div class="login-snip">
+                    {{!-- <input id="tab-1" type="radio" name="tab" class="sign-in"> --}}
+                    <label for="tab-1" class="tab"><a href="/sign_in">{{#if lang}}Συνδεση{{else}}Login{{/if}}</a></label>
+                    <input id="tab-2" type="radio" name="tab" class="sign-up" checked>
+                    <label for="tab-2" class="tab">{{#if lang}}Εγγραφη{{else}}Sign Up{{/if}}</label>
+                    <div class="login-space">
+                        <div class="sign-up-form">
+                            <div class="group">
+                                <label for="eml" class="label">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                                <input id="eml" type="email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                            </div>
+                            <div class="group">
+                                <label for="pass" class="label">{{#if lang}}Κωδικός πρόσβασης:{{else}}Password:{{/if}}</label>
+                                <input id="pass" type="password" name="password" class="input" data-type="password" placeholder={{#if lang}}"Εισάγετε τον κωδικό σας"{{else}}"Enter your password"{{/if}} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                            </div>
+                            <div class="group">
+                                <label for="pass2" class="label">{{#if lang}}Επιβεβαίωση κωδικού:{{else}}Confirm password:{{/if}}</label>
+                                <input id="pass2" type="password" name="password2" class="input" data-type="password" placeholder={{#if lang}}"Επαναλάβετε τον κωδικό σας"{{else}}"Repeat your password"{{/if}} required>
+                            </div>
+                            <div class="group">
+                                <label for="nm" class="label">{{#if lang}}Ονοματεπώνυμο:{{else}}Full Name:{{/if}}</label>
+                                <input id="nm" type="text" name="name" class="input" placeholder={{#if lang}}"Εισάγετε το ονοματεπώνυμό σας"{{else}}"Enter your full name"{{/if}} required>
+                            </div>
+                            <div class="group">
+                                <label for="tl" class="label">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
+                                <input id="tl" type="tel" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
+                            </div>
+                            <div class="group">
+                                <input type="submit" class="button" value={{#if lang}}"Εγγραφη"{{else}}"Sign Up"{{/if}}>
+                            </div>
+                            <hr>
+                            <div class="foot">
+                                <a href="/sign_in">{{#if lang}}Είστε ήδη μέλος; Συνδεθείτε{{else}}Already Member? Sign in{{/if}}</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-            {{!--
-        </div> --}}
+            </div>
+        </form>
     </div>
 </div>

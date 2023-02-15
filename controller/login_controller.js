@@ -15,7 +15,8 @@ function get_driver_sign_up_page(req, res) {
     if (req.session.sid === undefined || !req.session.is_driver) {
         res.render('driver/sign_up', {
             'is_driver': true,
-            'login': false
+            'login': false,
+            'lang': req.session.lang
         });
     }
     else {
@@ -27,7 +28,8 @@ function get_parking_station_sign_up_page(req, res) {
     if (req.session.sid === undefined || req.session.is_driver) {
         res.render('parking_station/sign_up', {
             'is_driver': false,
-            'login': false
+            'login': false,
+            'lang': req.session.lang
         });
     }
     else {
@@ -184,7 +186,8 @@ function get_driver_sign_in_page(req, res) {
     if (req.session.sid === undefined || !req.session.is_driver) {
         res.render('driver/sign_in', {
             'is_driver': true,
-            'login': false
+            'login': false,
+            'lang': req.session.lang
         });
     }
     else {
@@ -196,7 +199,8 @@ function get_parking_station_sign_in_page(req, res) {
     if (req.session.sid === undefined || req.session.is_driver) {
         res.render('parking_station/sign_in', {
             'is_driver': false,
-            'login': false
+            'login': false,
+            'lang': req.session.lang
         });
     }
     else {

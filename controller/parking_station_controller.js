@@ -54,9 +54,27 @@ function get_parking_station_home_page(req, res) {
                                         }
                                         dataModel.get_("sensor_data", req.session.sid, function (datas) {
                                             if (datas) {
-                                                let vl = datas.sensor_value;
-                                                let rr = { "id": req.session.sid, "sensor_value": 0 };
-                                                dataModel.update_("sensor_data", rr, function () {
+                                                if (datas.sensor_value) {
+                                                    let vl = datas.sensor_value;
+                                                    let rr = { "id": req.session.sid, "sensor_value": 0 };
+                                                    dataModel.update_("sensor_data", rr, function () {
+                                                        res.render('parking_station/home', {
+                                                            records: dt,
+                                                            pl_per: per,
+                                                            form_data: false,
+                                                            empty_lots: false,
+                                                            "is_driver": false,
+                                                            "login": (req.session.sid !== undefined),
+                                                            'lang': req.session.lang,
+                                                            notifications: data3,
+                                                            unread_notification_number: c,
+                                                            drivers: data5,
+                                                            cars: data6,
+                                                            local: vl
+                                                        });
+                                                    });
+                                                }
+                                                else {
                                                     res.render('parking_station/home', {
                                                         records: dt,
                                                         pl_per: per,
@@ -69,9 +87,9 @@ function get_parking_station_home_page(req, res) {
                                                         unread_notification_number: c,
                                                         drivers: data5,
                                                         cars: data6,
-                                                        local: vl
+                                                        local: lcl
                                                     });
-                                                });
+                                                }
                                             }
                                             else {
                                                 res.render('parking_station/home', {

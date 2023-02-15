@@ -10,63 +10,49 @@ const driver_controller = require('../controller/driver_controller');
 // const dataModel = require('../models/sqlite_data_model.js');
 // const db = require('../database/db');
 
-router.get('/', function (req, res) { res.redirect('/home'); });
+router.get('/', function (req, res) { res.redirect('/home'); });                                //? ready
 // home page
-router.get('/home', driver_controller.get_driver_home_page);
-router.post('/home', driver_controller.search_driver_home_page);
-router.get('/rd_notif', driver_controller.read_driver_notifications);
+router.get('/home', driver_controller.get_driver_home_page);                                    //? ready
+router.post('/home', driver_controller.search_driver_home_page);                                //? ready
+router.get('/rd_notif', driver_controller.read_driver_notifications);                           //? ready
 // console.log(req.protocol); console.log(req.route); console.log(req.secure);
 // parking pages
-router.get('/city', driver_controller.get_driver_city_page);
+router.get('/city', driver_controller.get_driver_city_page);                                    //? ready
 
-router.get('/airport', driver_controller.get_driver_airport_page);
-router.post('/airport', driver_controller.search_driver_airport_page);
+router.get('/airport', driver_controller.get_driver_airport_page);                              //? ready
+router.post('/airport', driver_controller.search_driver_airport_page);                          //? ready
 
-router.get('/port', driver_controller.get_driver_port_page);
-router.post('/port', driver_controller.search_driver_port_page);
+router.get('/port', driver_controller.get_driver_port_page);                                    //? ready
+router.post('/port', driver_controller.search_driver_port_page);                                //? ready
 
-router.get('/book/:ps_id', driver_controller.get_driver_book_page);
-router.post('/book', driver_controller.search_driver_reservation_availability);
-router.post('/book/add', driver_controller.add_driver_reservation);
-router.post('/delete_reservation', driver_controller.delete_driver_reservation);
-router.post('/delete_car', driver_controller.delete_driver_car);
-router.post('/update_car', driver_controller.update_driver_car);
+router.get('/book/:ps_id', driver_controller.get_driver_book_page);                             //? ready
+router.post('/book', driver_controller.search_driver_reservation_availability);                 //? ready
+router.post('/book/add', driver_controller.add_driver_reservation);                             //? ready
+router.post('/delete_reservation', driver_controller.delete_driver_reservation);                //? ready
+router.post('/delete_car', driver_controller.delete_driver_car);                                //? ready
+router.post('/update_car', driver_controller.update_driver_car);                                //? ready
 //! router.post('/update_reservation', driver_controller.update_driver_reservation);
-router.post('/add_review', driver_controller.add_driver_review);
-router.post('/delete_review', driver_controller.delete_driver_review);
+router.post('/add_review', driver_controller.add_driver_review);                                //? ready
+router.post('/delete_review', driver_controller.delete_driver_review);                          //? ready
 //! router.post('/history', driver_controller.search_driver_reservation_availability);
 // change language page
-router.get('/language', account_controller.change_language);                                    //? !!!!!!! ready
+router.get('/language', account_controller.change_language);                                    //? ready
 // account page
-router.get('/account', account_controller.get_driver_account_page);                           //? !!!!!!! ready
-router.post('/account', account_controller.update_driver_data); // update account             //? !!!!!!! ready
-router.post('/account_pass', account_controller.update_driver_password); // update account    //? !!!!!!! ready
-router.post('/account/delete', account_controller.delete_driver_account); // delete account   //? !!!!!!! ready
+router.get('/account', account_controller.get_driver_account_page);                             //? ready
+router.post('/account', account_controller.update_driver_data); // update account               //? ready
+router.post('/account_pass', account_controller.update_driver_password); // update account      //? ready
+router.post('/account/delete', account_controller.delete_driver_account); // delete account     //? ready
 
-router.get('/history', driver_controller.get_driver_history_page);
-router.post('/account/add_new_car', driver_controller.add_new_driver_car); 
+router.get('/history', driver_controller.get_driver_history_page);                              //? ready
+router.post('/account/add_new_car', driver_controller.add_new_driver_car);                      //? ready
 // info page
-router.get('/info', driver_controller.get_driver_info_page);                                    //? !!!!!!! ready
+router.get('/info', driver_controller.get_driver_info_page);                                    //? ready
 // load sign pages
-router.get('/sign_in', login_controller.get_driver_sign_in_page);                             //? !!!!!!! ready
-router.get('/sign_up', login_controller.get_driver_sign_up_page);                             //? !!!!!!! ready
-router.get('/logout', login_controller.logout_driver);                                        //? !!!!!!! ready
+router.get('/sign_in', login_controller.get_driver_sign_in_page);                               //? ready
+router.get('/sign_up', login_controller.get_driver_sign_up_page);                               //? ready
+router.get('/logout', login_controller.logout_driver);                                          //? ready
 // submit sign pages
-router.post('/sign_in', login_controller.login_driver);                                       //? !!!!!!! ready
-router.post('/sign_up', login_controller.add_new_driver);                                     //? !!!!!!! ready
+router.post('/sign_in', login_controller.login_driver);                                         //? ready
+router.post('/sign_up', login_controller.add_new_driver);                                       //? ready
 
 module.exports = router;
-
-// router.get('/', function (req, res) { res.redirect('/home'); });
-// router.get('/account', function (req, res) { res.render('driver/account'); });
-// router.get('/airport', function (req, res) { res.render('driver/airport'); });
-// router.get('/city', function (req, res) { dataModel.readTable("driver", function (data) {res.render('driver/city', {nameu: data["1"].email});})  });
-// router.get('/city', function (req, res) { res.render('driver/city', { nameu: dataModel.readTable("driver") }); });
-// dataModel.readData("driver", "email", "" , function (dataa) {console.log(dataa);})
-// router.get('/home', function (req, res) { res.render('driver/home'); });
-// router.get('/info', function (req, res) { res.render('driver/info'); });
-// router.get('/port', function (req, res) { res.render('driver/port'); });
-// router.get('/sign_in', function (req, res) { res.render('driver/sign_in'); });
-// router.get('/sign_up', function (req, res) { res.render('driver/sign_up'); });
-// router.post('/sign_in', function (req, res) { res.render('driver/sign_in'); });
-// router.post('/sign_up', function (req, res) { res.render('driver/sign_up'); });

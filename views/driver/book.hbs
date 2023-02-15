@@ -1,33 +1,26 @@
-{{#if lang}}
-
-
-{{else}}
-
-
-{{/if}}
-
-
 {{!--
 <script>
     //console.log("op");
     //let ps_id = sessionStorage.getItem("parking_station_target");
     //console.log(ps_id);
 </script> --}}
-
 <!-- Start Card -->
-<div class="card _book-card w-100">
+<div class="card _book-card w-100 border-0">
     <!-- Start Card Body -->
-    <div class="card-body">
+    <div id="book_card_" class="card-body">
         <div class="row">
             <!-- Start Form -->
             <form action="/book" id="_form" method="post" class="col-7 border-end border-secondary">
                 <fieldset>
-                    <p class="text-decoration-underline">Στοιχεία χρέωσης:</p>
-                    <label for="input_date1">Έναρξη χρέωσης (Άφιξη):</label>
-                    <input type="datetime-local" id="input_date1" name="s_date" value="{{dates.start}}" required
-                        autofocus />
-                    <label for="input_date2">Λήξη Χρέωσης (Αναχώρηση): </label>
-                    <input type="datetime-local" id="input_date2" name="e_date" value="{{dates.end}}" required />
+                    <p class="text-decoration-underline">{{#if lang}}Στοιχεία χρέωσης:{{else}}Reservation information:{{/if}}</p>
+                    <div class="my-3">
+                        <label for="input_date1">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
+                        <input type="datetime-local" class="book_input" id="input_date1" name="s_date" value="{{dates.start}}" required autofocus />
+                    </div>
+                    <div class="my-3">
+                        <label for="input_date2">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}} </label>
+                        <input type="datetime-local" class="book_input" id="input_date2" name="e_date" value="{{dates.end}}" required />
+                    </div>
                     {{!-- <div class="d-block">
                         <input type="checkbox" name="wash" id="ws">
                         <label for="ws">Wash</label>
@@ -35,23 +28,23 @@
                 </fieldset>
                 <hr>
                 <fieldset>
-                    <p class="text-decoration-underline">Στοιχεία Πελάτη:</p>
-                    <label for="m-f-email">Email:</label>
-                    <input type="email" id="m-f-email" name="email" placeholder="someone@example.com"
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}" {{/if}}
-                        required>
-
-                    <label for="m-f-name">Ονοματεπώνυμο:</label>
-                    <input type="text" id="m-f-name" name="name" placeholder="Firstname Lastname" {{#if
-                        login}}value="{{driver.name}}" {{/if}} required>
-
-                    <label for="m-f-phone">Τηλέφωνο:</label>
-                    <input type="tel" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" {{#if
-                        login}}value="{{driver.phone}}" {{/if}} required>
-
-                    <label for="_c">Όχημα</label>
+                    <p class="text-decoration-underline">{{#if lang}}Στοιχεία Πελάτη:{{else}}Customer information:{{/if}}</p>
+                    <div class="my-3">
+                        <label for="m-f-email">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                        <input type="email" class="book_input" id="m-f-email" name="email" placeholder="someone@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}"{{/if}} required>
+                    </div>
+                    <div class="my-3">
+                        <label for="m-f-name">{{#if lang}}Ονοματεπώνυμο:{{else}}Fullname:{{/if}}</label>
+                        <input type="text" class="book_input" id="m-f-name" name="name" placeholder={{#if lang}}"Ονοματεπώνυμο"{{else}}"Fullname"{{/if}} {{#if login}}value="{{driver.name}}" {{/if}} required>
+                    </div>
+                    <div class="my-3">
+                        <label for="m-f-phone">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
+                        <input type="tel" class="book_input" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" {{#if login}}value="{{driver.phone}}" {{/if}} required>
+                    </div>
+                    
+                    <label for="_c">{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</label>
                     {{#if driver_car}}
-                    <select name="car" id="_c">
+                    <select name="car" id="_c" class="book_input">
                         {{#each driver_car}}
                         <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} -
                                 {{this.color}})</span></option>
@@ -62,23 +55,22 @@
                     {{/if}}
                 </fieldset>
                 <div class="d-flex justify-content-end">
-                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success"
-                        value="Reserve" onclick="add_resv()">
-                    <p {{#if found}}hidden{{/if}} class="bg-warning my-2 px-2">There is no avaliable parking space try
-                        another parking station or another datetime</p>
+                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success mt-5 me-5" style="font-size: 1.3em;" value={{#if lang}}"Κράτηση"{{else}}"Reserve"{{/if}} onclick="add_resv()">
+                    <p {{#if found}}hidden{{/if}} class="bg-warning mt-5 px-1" style="font-size: 1.3em;">{{#if lang}}Δεν υπάρχει διαθέσιμη θέση στάθμευσης, δοκιμάστε ένα άλλο parking ή κάποια άλλη ημερομηνία{{else}}There is no avaliable parking space try another parking station or another datetime{{/if}}</p>
                 </div>
             </form>
-            <div class="col-5" id="p_info">
-                <img id="_img_" style="height: 100px;" src="" />
+            <div class="col-3" id="p_info">
                 <p id="info_name"></p>
-                <p id="info_address" class="p_info_el"></p>
-                <a id="info_location" href="https://www.google.com/maps/dir/?api=1&origin=&destination="
-                    target="_blank"><i class="fa fa-map-marker"></i> Click here to navigate</a>
                 <p id="info_phone" class="p_info_el mt-3"></p>
+                <img id="_img_" class="d-block" style="width: 250px; height: auto;" src="" />
+                <p id="info_address" class="p_info_el d-inline"></p>
+                <a id="info_location" class="d-inline ms-3" href="https://www.google.com/maps/dir/?api=1&origin=&destination=" target="_blank"><i class="fa fa-map-marker"></i> {{#if lang}}Οδηγίες Πλοήγησης{{else}}Νavigate{{/if}}</a>
                 {{!-- <p id="info_photo" class="p_info_el"></p> --}}
-                <p id="info_discount" class="bg-info w-25"></p>
-                <p id="info_work_hours"></p>
-                <p id="info_info" class="p_info_el"></p>
+                <p id="info_discount" class="bg-info"></p>
+            </div>
+            <div class="col-2" id="p_info2">
+                <ul id="info_work_hours"><i class="fa fa-clock-o"></i> {{#if lang}}Ωράριο Λειτουργίας:{{else}}Work hours:{{/if}} </ul>
+                <p id="info_info"></p>
             </div>
         </div>
     </div>
@@ -124,13 +116,13 @@
         let tp = "";
         switch (ps.parking_type) {
             case 0:
-                tp = "Πόλη";
+                tp = {{#if lang}}"Πόλη"{{else}}"City"{{/if}};
                 break;
             case 1:
-                tp = "Αεροδρόμιο";
+                tp = {{#if lang}}"Αεροδρόμιο"{{else}}"Airport"{{/if}};
                 break;
             case 2:
-                tp = "Λιμάνι";
+                tp = {{#if lang}}"Λιμάνι"{{else}}"Port"{{/if}};
                 break;
         }
         // image section
@@ -142,8 +134,20 @@
 
         document.getElementById("info_name").innerText = ps.name + ` (${tp})`;
         document.getElementById("info_location").href = document.getElementById("info_location").href + ps.location;
-        document.getElementById("info_work_hours").innerText = ps.work_hours.split(",").join(" // ");
-        if (ps.discount) document.getElementById("info_discount").innerText = ps.discount + "% έκπτωση";
+        let days_ = {{#if lang}}["Δευτέρα: ","Τρίτη: ", "Τετάρτη: ", "Πέμπτη: ", "Παρασκευή: ", "Σάββατο: ", "Κυριακή: "]{{else}}["Monday: ", "Tuesday: ", "Wednesday: ", "Thursday: ", "Friday: ", "Saturday: ", "Sunday: "]{{/if}};
+        if (ps.work_hours == "24/7") {
+            document.getElementById("info_work_hours").innerHTML += {{#if lang}}"<br>Ανοιχτά όλο το 24ωρο καθημερινά"{{else}}"<br>Open daily 24 hours a day"{{/if}};
+        }
+        else{
+            for (let i = 0 ; i < 7 ; i++) {
+                //days_res += days_[i] + ps.work_hours.split(",")[i];
+                const addd1 = document.createElement("li");
+                addd1.innerText = days_[i] + ps.work_hours.split(",")[i];
+                document.getElementById("info_work_hours").appendChild(addd1);
+            }
+        }
+        document.getElementById("info_info").innerHTML = '<i class="fa fa-info-circle"></i> ' + ps.info;
+        if (ps.discount) document.getElementById("info_discount").innerText = ps.discount + {{#if lang}}"% έκπτωση"{{else}}"% discount"{{/if}};
         let arr = document.querySelectorAll(".p_info_el");
         if (arr.length) {
             let els = [...arr];
@@ -157,7 +161,7 @@
         // services
         const addd0 = document.createElement("ul");
         addd0.id = "services";
-        addd0.innerText = "Υπηρεσίες:"
+        addd0.innerText = {{#if lang}}"Υπηρεσίες:"{{else}}"Services:"{{/if}};
         document.getElementById("p_info").appendChild(addd0);
         for (let field of servs) {
             if (ps[field]) {
@@ -168,8 +172,8 @@
         }
         // final price area
         const addd = document.createElement("p");
-        addd.className = "bg-danger mt-1 w-50";
-        addd.innerHTML = "Τελική τιμή: ";
+        addd.innerHTML = {{#if lang}}"Τελική τιμή: "{{else}}"Final Price: "{{/if}};
+        addd.id = "prc_";
         const addd2 = document.createElement("span");
         addd2.id = "f_price";
         if (prc) addd2.innerText = prc;

@@ -4,235 +4,27 @@ const { data } = require('jquery');
 const dataModel = require('../models/mysql_data_model.js');
 
 function get_driver_home_page(req, res) {
-    if (req.session.sid === undefined || !req.session.is_driver) {
-        dataModel.read2_("parking_type = 0", function (data2) {
-            data2 = JSON.parse(JSON.stringify(data2));
-            for (let row of data2) {
-                row.location = row.location.split("/").map(parseFloat);
-                //get price for each parking
-                let prc = 0;
-                if (req.session._dts) {
-                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
-                }
-                row.price = prc;
-                row.rating = parseFloat(row.rating).toFixed(1);
-            }
-            res.render('driver/home', {
-                "is_driver": true,
-                "login": (req.session.sid !== undefined),
-                'lang': req.session.lang,
-                dates: req.session._dts,
-                parking_station_locations: JSON.stringify(data2)
-            });
-        });
-    }
-    else {
-        dataModel.read2_("parking_type = 0", function (data2) {
-            data2 = JSON.parse(JSON.stringify(data2));
-            for (let row of data2) {
-                row.location = row.location.split("/").map(parseFloat);
-                //get price for each parking
-                let prc = 0;
-                if (req.session._dts) {
-                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
-                }
-                row.price = prc;
-                row.rating = parseFloat(row.rating).toFixed(1);
-            }
-            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-                data = JSON.parse(JSON.stringify(data));
-                let c = 0;
-                for (let el of data) if (!el.viewed) c++;
-                dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                    res.render('driver/home', {
-                        "is_driver": true,
-                        "login": (req.session.sid !== undefined),
-                        'lang': req.session.lang,
-                        dates: req.session._dts,
-                        parking_station_locations: JSON.stringify(data2),
-                        notifications: data,
-                        unread_notification_number: c,
-                        points: JSON.stringify(datap.points)
-                    });
-                });
-            });
-        });
-    }
+    get_parking_pages(req, res, 0);
 };
 function get_driver_city_page(req, res) {
-    dataModel.read_("parking_station", "location", "parking_type = 0", function (rows) {
-        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let c = 0;
-            for (let el of data) if (!el.viewed) c++;
-            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                res.render('driver/city', {
-                    "is_driver": true,
-                    "login": (req.session.sid !== undefined),
-                    'lang': req.session.lang,
-                    parking_station_locations: JSON.stringify(rows),
-                    notifications: data,
-                    unread_notification_number: c,
-                    points: JSON.stringify(datap.points)
-                });
-            });
-        });
-    });
+    get_parking_pages(req, res, 0);
 
 };
 function get_driver_airport_page(req, res) {
-    dataModel.read_("parking_station", "location", "parking_type = 1", function (rows) {
-        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let c = 0;
-            for (let el of data) if (!el.viewed) c++;
-            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                res.render('driver/airport', {
-                    "is_driver": true,
-                    "login": (req.session.sid !== undefined),
-                    'lang': req.session.lang,
-                    parking_station_locations: JSON.stringify(rows),
-                    notifications: data,
-                    unread_notification_number: c,
-                    points: JSON.stringify(datap.points)
-                });
-            });
-        });
-    });
+    get_parking_pages(req, res, 1);
 };
 function get_driver_port_page(req, res) {
-    dataModel.read_("parking_station", "location", "parking_type = 2", function (rows) {
-        rows.map(function (row) { row.location = row.location.split("/").map(parseFloat); });
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let c = 0;
-            for (let el of data) if (!el.viewed) c++;
-            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                res.render('driver/port', {
-                    "is_driver": true,
-                    "login": (req.session.sid !== undefined),
-                    'lang': req.session.lang,
-                    parking_station_locations: JSON.stringify(rows),
-                    notifications: data,
-                    unread_notification_number: c,
-                    points: JSON.stringify(datap.points)
-                });
-            });
-        });
-    });
+    get_parking_pages(req, res, 2);
 };
 
 function search_driver_home_page(req, res) {
-    if (req.session.sid === undefined || !req.session.is_driver) {
-        console.log("To search for parking you must sign in first");
-        res.redirect('/sign_in');
-    }
-    else {
-        req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
-        req.session._ready_to_add_reservation = true;
-        let cond = `parking_type = 0 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
-        dataModel.read2_(cond, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let valid_rows = [];
-            for (let row of data) {
-                row.location = row.location.split("/").map(parseFloat);
-                let prc = 0;
-                if (req.session._dts) {
-                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
-                }
-                row.price = prc;
-                row.rating = parseFloat(row.rating).toFixed(1);
-
-                if (check_work_hours(row.work_hours, req.session._dts.start, req.session._dts.end)) {
-                    valid_rows.push(row);
-                }
-            }
-            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
-                datan = JSON.parse(JSON.stringify(datan));
-                let c = 0;
-                for (let el of datan) if (!el.viewed) c++;
-                dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                    res.render('driver/home', {
-                        "is_driver": true,
-                        "login": (req.session.sid !== undefined),
-                        'lang': req.session.lang,
-                        dates: req.session._dts,
-                        parking_station_locations: JSON.stringify(valid_rows),
-                        notifications: datan,
-                        unread_notification_number: c,
-                        points: JSON.stringify(datap.points)
-                    });
-                });
-            });
-        });
-    }
-
+    search_parking_pages(req, res, 0);
 };
 function search_driver_airport_page(req, res) {
-    req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
-    req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 1 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
-    dataModel.read_("parking_station", "location", cond, function (rows) {
-        rows = JSON.parse(JSON.stringify(rows));
-        let valid_rows = [];
-        for (let row of rows) {
-            row.location = row.location.split("/").map(parseFloat);
-            if (check_work_hours(row.work_hours, req.session._dts.start, req.session._dts.end)) {
-                valid_rows.push(row);
-            }
-        }
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let c = 0;
-            for (let el of data) if (!el.viewed) c++;
-            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                res.render('driver/home', {
-                    "is_driver": true,
-                    "login": (req.session.sid !== undefined),
-                    'lang': req.session.lang,
-                    dates: req.session._dts,
-                    parking_station_locations: JSON.stringify(valid_rows),
-                    notifications: data,
-                    unread_notification_number: c,
-                    points: JSON.stringify(datap.points)
-                });
-            });
-        });
-    });
+    search_parking_pages(req, res, 1);
 };
 function search_driver_port_page(req, res) {
-    req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
-    req.session._ready_to_add_reservation = true;
-    let cond = `parking_type = 2 AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
-    dataModel.read_("parking_station", "location", cond, function (rows) {
-        rows = JSON.parse(JSON.stringify(rows));
-        let valid_rows = [];
-        for (let row of rows) {
-            row.location = row.location.split("/").map(parseFloat);
-            if (check_work_hours(row.work_hours, req.session._dts.start, req.session._dts.end)) {
-                valid_rows.push(row);
-            }
-        }
-        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-            data = JSON.parse(JSON.stringify(data));
-            let c = 0;
-            for (let el of data) if (!el.viewed) c++;
-            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-                res.render('driver/home', {
-                    "is_driver": true,
-                    "login": (req.session.sid !== undefined),
-                    'lang': req.session.lang,
-                    dates: req.session._dts,
-                    parking_station_locations: JSON.stringify(valid_rows),
-                    notifications: data,
-                    unread_notification_number: c,
-                    points: JSON.stringify(datap.points)
-                });
-            });
-        });
-    });
+    search_parking_pages(req, res, 2);
 };
 
 function read_driver_notifications(req, res) {
@@ -248,22 +40,35 @@ function read_driver_notifications(req, res) {
 };
 
 function get_driver_info_page(req, res) {
-    // console.log(req.session.lang);
-    dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
-        data = JSON.parse(JSON.stringify(data));
-        let c = 0;
-        for (let el of data) if (!el.viewed) c++;
-        dataModel.get2_("driver", "points", req.session.sid, function (datap) {
-            res.render('driver/info', {
-                "is_driver": true,
-                "login": (req.session.sid !== undefined),
-                'lang': req.session.lang,
-                notifications: data,
-                unread_notification_number: c,
-                points: JSON.stringify(datap.points)
+    if (req.session.sid === undefined || !req.session.is_driver) {
+        res.render('driver/info', {
+            "is_driver": true,
+            "login": (req.session.sid !== undefined),
+            'lang': req.session.lang,
+            notifications: false,
+            unread_notification_number: 0,
+            points: 0
+        });
+    }
+    else {
+        dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let c = 0;
+            for (let el of data) if (!el.viewed) c++;
+            dataModel.get2_("driver", "points", req.session.sid, function (datap) {
+                res.render('driver/info', {
+                    "is_driver": true,
+                    "login": (req.session.sid !== undefined),
+                    'lang': req.session.lang,
+                    notifications: data,
+                    unread_notification_number: c,
+                    points: JSON.stringify(datap.points)
+                });
             });
         });
-    });
+    }
+    // console.log(req.session.lang);
+    
 };
 
 function get_driver_book_page(req, res) {
@@ -686,6 +491,108 @@ function convert_12h_to_24h(time12h) {
     if (hours < 10) { hours = '0' + hours; }
     if (minutes < 10) { minutes = '0' + parseInt(minutes); }
     return `${hours}:${minutes}`;
+}
+
+function get_parking_pages(req, res, tp) {
+    if (req.session.sid === undefined || !req.session.is_driver) {
+        dataModel.read2_(`parking_type = ${tp}`, function (data2) {
+            data2 = JSON.parse(JSON.stringify(data2));
+            for (let row of data2) {
+                row.location = row.location.split("/").map(parseFloat);
+                //get price for each parking
+                let prc = 0;
+                if (req.session._dts) {
+                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
+                }
+                row.price = prc;
+                row.rating = parseFloat(row.rating).toFixed(1);
+            }
+            res.render('driver/home', {
+                "is_driver": true,
+                "login": (req.session.sid !== undefined),
+                'lang': req.session.lang,
+                dates: req.session._dts,
+                parking_station_locations: JSON.stringify(data2)
+            });
+        });
+    }
+    else {
+        dataModel.read2_(`parking_type = ${tp}`, function (data2) {
+            data2 = JSON.parse(JSON.stringify(data2));
+            for (let row of data2) {
+                row.location = row.location.split("/").map(parseFloat);
+                //get price for each parking
+                let prc = 0;
+                if (req.session._dts) {
+                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
+                }
+                row.price = prc;
+                row.rating = parseFloat(row.rating).toFixed(1);
+            }
+            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (data) {
+                data = JSON.parse(JSON.stringify(data));
+                let c = 0;
+                for (let el of data) if (!el.viewed) c++;
+                dataModel.get2_("driver", "points", req.session.sid, function (datap) {
+                    res.render('driver/home', {
+                        "is_driver": true,
+                        "login": (req.session.sid !== undefined),
+                        'lang': req.session.lang,
+                        dates: req.session._dts,
+                        parking_station_locations: JSON.stringify(data2),
+                        notifications: data,
+                        unread_notification_number: c,
+                        points: JSON.stringify(datap.points)
+                    });
+                });
+            });
+        });
+    }
+}
+function search_parking_pages(req, res, tp){
+    if (req.session.sid === undefined || !req.session.is_driver) {
+        console.log("To search for parking you must sign in first");
+        res.redirect('/sign_in');
+    }
+    else {
+        req.session._dts = { "start": req.body.s_dttm, "end": req.body.e_dttm };
+        req.session._ready_to_add_reservation = true;
+        let cond = `parking_type = ${tp} AND id IN (SELECT DISTINCT parking_station_id FROM parking_lot WHERE id NOT IN (SELECT parking_lot_id FROM reservation WHERE (${Date.parse(req.session._dts.start)} < r_end AND ${Date.parse(req.session._dts.end)} > r_start)))`;
+        dataModel.read2_(cond, function (data) {
+            data = JSON.parse(JSON.stringify(data));
+            let valid_rows = [];
+            for (let row of data) {
+                row.location = row.location.split("/").map(parseFloat);
+                let prc = 0;
+                if (req.session._dts) {
+                    if (row.id != 1 && row.id != 2) prc = final_price_calculation(row.price_list, row.discount, req.session._dts.start, req.session._dts.end);
+                }
+                row.price = prc;
+                row.rating = parseFloat(row.rating).toFixed(1);
+
+                if (check_work_hours(row.work_hours, req.session._dts.start, req.session._dts.end)) {
+                    valid_rows.push(row);
+                }
+            }
+            dataModel.read_("notification", dataModel.schema_show.notification.join(", "), `user_id = 'd${req.session.sid}' ORDER BY date_created DESC`, function (datan) {
+                datan = JSON.parse(JSON.stringify(datan));
+                let c = 0;
+                for (let el of datan) if (!el.viewed) c++;
+                dataModel.get2_("driver", "points", req.session.sid, function (datap) {
+                    res.render('driver/home', {
+                        "is_driver": true,
+                        "login": (req.session.sid !== undefined),
+                        'lang': req.session.lang,
+                        dates: req.session._dts,
+                        parking_station_locations: JSON.stringify(valid_rows),
+                        notifications: datan,
+                        unread_notification_number: c,
+                        points: JSON.stringify(datap.points)
+                    });
+                });
+            });
+        });
+    }
 }
 
 module.exports = {
