@@ -1,94 +1,98 @@
-<meta http-equiv="refresh" content="60">
+<meta http-equiv="refresh" content="">
 <h3>{{#if lang}}Θέσεις parking (κατειλημμένες):{{else}}Parking Lots (occupied):{{/if}}</h3>
-<div class="d-flex mb-5">
-    <div class="progress mb-3 w-50" style="height: 30px;">
-        <div id="_prog_bar" class="progress-bar progress-bar-animated progress-bar-striped bg-success" role="progressbar" style="width: {{pl_per}}%; font-size: 25px;">{{pl_per}}%</div>
+<div class="d-flex flex-wrap mb-5">
+    <div class="col-12 col-sm-8 col-lg-6">
+        <div class="progress mb-3" style="min-width: 250px; height: 30px;">
+            <div id="_prog_bar" class="progress-bar progress-bar-animated progress-bar-striped bg-success" role="progressbar" style="width: {{pl_per}}%; font-size: 25px;">{{pl_per}}%</div>
+        </div>
     </div>
-    <button type="button" id="myBtn-nr" class="btn btn-lg btn-danger d-block mx-auto _btn_modal" style="font-size: 20px; width: 12%; height: 100%;">{{#if lang}}Νέα κράτηση{{else}}New Reservation{{/if}}</button>
-    <div id="myModal-nr" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{#if lang}}Προσθήκη νέας κράτησης{{else}}Add New Reservation{{/if}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/parking_station/home" method="post" id="_form2">
-                        <div class="text-nowrap" id="ps_driver_">
-                            <label for="ps_driver">{{#if lang}}Οδηγός:{{else}}Driver:{{/if}}</label>
-                            <select name="driver" id="ps_driver">
-                                <option value="new">{{#if lang}}Νέος{{else}}New{{/if}}</option>
-                                {{#each drivers}}
-                                <option value="{{this.id}}">{{this.name}} <small>({{this.email}},{{this.phone}})</small></option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div id="dr_">
-                            <div class="text-nowrap">
-                                <label for="ff-email" class="label">{{#if lang}}Email{{else}}Email{{/if}}</label>
-                                <input id="ff-email" type="email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-                            </div>
-                            <div class="text-nowrap">
-                                <label for="ff-name" class="label">{{#if lang}}Ονοματεπώνυμο{{else}}Full Name{{/if}}</label>
-                                <input id="ff-name" type="text" name="name" class="input" placeholder={{#if lang}}"Εισάγετε το ονοματεπώνυμό σας"{{else}}"Enter your full name"{{/if}} required>
-                            </div>
-                            <div class="text-nowrap">
-                                <label for="ff-phone" class="label">{{#if lang}}Τηλέφωνο{{else}}Phone{{/if}}</label>
-                                <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
-                            </div>
-                        </div>
-                        <div class="text-nowrap" id="ps_car_">
-                            <label for="ps_car">{{#if lang}}Όχημα:{{else}}Vehicle:{{/if}}</label>
-                            <select name="car" id="ps_car">
-                                <option value="new">{{#if lang}}Νέο{{else}}New{{/if}}</option>
-                                {{#each cars}}
-                                <option value="{{this.id}}" title="{{this.driver_id}}" class="to_hide">{{this.plate}}<small> ({{this.model}}-{{this.color}})</small></option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div id="cr_">
-                            <div class="text-nowrap">
-                                <label for="ff-plate">{{#if lang}}Πινακίδα{{else}}Plate{{/if}}</label>
-                                <input type="text" id="ff-plate" name="plate" placeholder="XXX0000" required>
-                            </div>
-                            <div class="text-nowrap">
-                                <label for="ff-model">{{#if lang}}Μοντέλο{{else}}Model{{/if}}</label>
-                                <input type="text" id="ff-model" name="model">
-                            </div>
-                            <div class="text-nowrap">
-                                <label for="ff-color">{{#if lang}}Χρώμα{{else}}Color{{/if}}</label>
-                                <input type="text" id="ff-color" name="color">
-                            </div>
+    <div class="col-12 col-sm-4 col-lg-6">
+        <button type="button" id="myBtn-nr" class="btn btn-lg btn-danger d-block mx-auto _btn_modal text-nowrap mx-sm-4 mx-md-auto" style="font-size: 20px; height: 100%;">{{#if lang}}Νέα κράτηση{{else}}New Reservation{{/if}}</button>
+    </div>
+</div>
+<div id="myModal-nr" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{#if lang}}Προσθήκη νέας κράτησης{{else}}Add New Reservation{{/if}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/parking_station/home" method="post" id="_form2">
+                    <div class="text-nowrap" id="ps_driver_">
+                        <label for="ps_driver">{{#if lang}}Οδηγός:{{else}}Driver:{{/if}}</label>
+                        <select name="driver" id="ps_driver">
+                            <option value="new">{{#if lang}}Νέος{{else}}New{{/if}}</option>
+                            {{#each drivers}}
+                            <option value="{{this.id}}">{{this.name}} <small>({{this.email}},{{this.phone}})</small></option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div id="dr_">
+                        <div class="text-nowrap">
+                            <label for="ff-email" class="label">{{#if lang}}Email{{else}}Email{{/if}}</label>
+                            <input id="ff-email" type="email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-r_start">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
-                            <input type="datetime-local" id="ff-r_start" name="r_start" required>
+                            <label for="ff-name" class="label">{{#if lang}}Ονοματεπώνυμο{{else}}Full Name{{/if}}</label>
+                            <input id="ff-name" type="text" name="name" class="input" placeholder={{#if lang}}"Εισάγετε το ονοματεπώνυμό σας"{{else}}"Enter your full name"{{/if}} required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-r_end">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}}</label>
-                            <input type="datetime-local" id="ff-r_end" name="r_end" required>
+                            <label for="ff-phone" class="label">{{#if lang}}Τηλέφωνο{{else}}Phone{{/if}}</label>
+                            <input id="ff-phone" type="tel" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+                    <div class="text-nowrap" id="ps_car_">
+                        <label for="ps_car">{{#if lang}}Όχημα:{{else}}Vehicle:{{/if}}</label>
+                        <select name="car" id="ps_car">
+                            <option value="new">{{#if lang}}Νέο{{else}}New{{/if}}</option>
+                            {{#each cars}}
+                            <option value="{{this.id}}" title="{{this.driver_id}}" class="to_hide">{{this.plate}}<small> ({{this.model}}-{{this.color}})</small></option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div id="cr_">
+                        <div class="text-nowrap">
+                            <label for="ff-plate">{{#if lang}}Πινακίδα{{else}}Plate{{/if}}</label>
+                            <input type="text" id="ff-plate" name="plate" placeholder="XXX0000" required>
                         </div>
                         <div class="text-nowrap">
-                            <label for="ff-price">{{#if lang}}Τιμή: {{else}}Price: {{/if}}</label>
-                            <input type="text" id="ff-price" name="price"> €
+                            <label for="ff-model">{{#if lang}}Μοντέλο{{else}}Model{{/if}}</label>
+                            <input type="text" id="ff-model" name="model">
                         </div>
                         <div class="text-nowrap">
-                            {{#if empty_lots}}
-                            <label for="plid">{{#if lang}}Θέση:{{else}}Lot:{{/if}}</label>
-                            <select name="parking_lot_id" id="plid">
-                                {{!-- load available parking lots --}}
-                                {{#each empty_lots}}
-                                <option value="{{this}}">{{this}}</option>
-                                {{/each}}
-                            </select>
-                            {{/if}}
+                            <label for="ff-color">{{#if lang}}Χρώμα{{else}}Color{{/if}}</label>
+                            <input type="text" id="ff-color" name="color">
                         </div>
-                        <div class="d-flex justify-content-between mt-5">
-                            <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
-                            <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success" value={{#if lang}}"Προσθηκη"{{else}}"Add"{{/if}} onclick="add_resv()">
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <label for="ff-r_start">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
+                        <input type="datetime-local" id="ff-r_start" name="r_start" required>
+                    </div>
+                    <div class="text-nowrap">
+                        <label for="ff-r_end">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}}</label>
+                        <input type="datetime-local" id="ff-r_end" name="r_end" required>
+                    </div>
+                    <div class="text-nowrap">
+                        <label for="ff-price">{{#if lang}}Τιμή: {{else}}Price: {{/if}}</label>
+                        <input type="text" id="ff-price" name="price"> €
+                    </div>
+                    <div class="text-nowrap">
+                        {{#if empty_lots}}
+                        <label for="plid">{{#if lang}}Θέση:{{else}}Lot:{{/if}}</label>
+                        <select name="parking_lot_id" id="plid">
+                            {{!-- load available parking lots --}}
+                            {{#each empty_lots}}
+                            <option value="{{this}}">{{this}}</option>
+                            {{/each}}
+                        </select>
+                        {{/if}}
+                    </div>
+                    <div class="d-flex justify-content-between mt-5">
+                        <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                        <input type="submit" {{#unless empty_lots}}hidden{{/unless}} class="btn btn-lg btn-success" value={{#if lang}}"Προσθηκη"{{else}}"Add"{{/if}} onclick="add_resv()">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -101,11 +105,11 @@
             <tr>
                 <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
                 <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία έναρξης{{else}}Start date{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία λήξης{{else}}End date{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εισόδου{{else}}Date in{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εξόδου{{else}}Date out{{/if}}</th>
                 <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
                 <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
-                <th>{{#if lang}}Πινακίδα οχήματος{{else}}Car plate{{/if}}</th>
+                <th>{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</th>
                 <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
             </tr>
         </thead>
@@ -303,8 +307,7 @@
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
-        console.log(_dt2.value);
-        //check_available();
+        check_available();
     });
     _dt1.addEventListener('change', function () {
         _dt2.min = _dt1.value;

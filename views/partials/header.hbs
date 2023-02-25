@@ -1,13 +1,13 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Header -->
-<header class="d-flex justify-content-between">
-    <div>
+<header class="d-flex justify-content-between ps-2 pe-3">
+    <div class="col-7">
         <ul class="nav">
-            <li class="mx-1 ms-2"><a href="https://www.facebook.com/"><img src="/images/h-fb_icon.png"></a></li>
-            <li class="mx-1"><a href="https://www.instagram.com/"><img src="/images/h-insta_icon.png"></a></li>
-            <li class="mx-1"><a href="https://twitter.com/"><img src="/images/h-twitter_icon.png"></a></li>
-            <li class="mx-1  me-5"><a href="https://www.linkedin.com/"><img src="/images/h-linkedin_icon.png"></a></li>
+            <li class="mx-1 ms-2"><a href="https://www.facebook.com/"><img src="/images/h-fb_icon.png" title="Facebook"></a></li>
+            <li class="mx-1"><a href="https://www.instagram.com/"><img src="/images/h-insta_icon.png" title="Instagram"></a></li>
+            <li class="mx-1"><a href="https://twitter.com/"><img src="/images/h-twitter_icon.png" title="Twitter"></a></li>
+            <li class="mx-1  me-5"><a href="https://www.linkedin.com/"><img src="/images/h-linkedin_icon.png" title="LinkedIn"></a></li>
             <li class="text-nowrap mx-2 me-5">
                 {{!-- <img src="/images/h-msg_icon.png"> --}}
                 <i class="fa fa-envelope"></i>
@@ -23,8 +23,8 @@
         </ul>
 
     </div>
-    <div>
-        {{#if is_driver}}{{#if login}}<span class="mx-4">{{#if lang}}Πόντοι: {{else}}Points: {{/if}}{{points}}<i class="fa fa-diamond"></i></span>{{/if}}{{/if}}
+    <div class="col-5 text-end">
+        {{#if is_driver}}{{#if login}}<span class="mx-4 text-nowrap">{{#if lang}}Πόντοι: {{else}}Points: {{/if}}{{points}}<i class="fa fa-diamond"></i></span>{{/if}}{{/if}}
         <span class="text-nowrap">
             {{#if is_driver}}
             <i class="fa fa-user"></i>
@@ -34,47 +34,49 @@
             {{!-- <img src="/images/h-business_icon.png" alt=""> --}}
             {{/if}}
             {{#if login}}
-            {{#if is_driver}}
-            <div class="dropdown d-inline">
-                {{!-- <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown button
-                </button> --}}
-                <a href="/account" class="text-nowrap me-4" data-bs-toggle="dropdown" role="button">{{#if lang}}Ο Λογαριασμός μου{{else}}My account{{/if}}</a>
-                <div class="dropdown-menu _header_dropdown">
-                    <a href="/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile Settings{{/if}}</a>
-                    <a href="/history" class="dropdown-item">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="/logout" class="dropdown-item">{{#if lang}}Αποσύνδεση{{else}}Logout{{/if}}</a>
+                {{#if is_driver}}
+                <div class="dropdown d-inline">
+                    {{!-- <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown button
+                    </button> --}}
+                    <a href="/account" class="text-nowrap me-4" data-bs-toggle="dropdown" role="button">{{#if lang}}Ο Λογαριασμός μου{{else}}My account{{/if}}</a>
+                    <div class="dropdown-menu _header_dropdown">
+                        <a href="/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile Settings{{/if}}</a>
+                        <a href="/history" class="dropdown-item">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item">{{#if lang}}Αποσύνδεση{{else}}Logout{{/if}}</a>
+                    </div>
                 </div>
-            </div>
-            {{else}}
-            <div class="dropdown d-inline">
-                <a href="" class="text-nowrap" data-bs-toggle="dropdown">{{#if lang}}Η Επιχείρησή μου{{else}}My parking_station{{/if}}</a>
-                <div class="dropdown-menu _header_dropdown">
-                    <a href="/parking_station/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile Settings{{/if}}</a>
-                    <a href="/parking_station/my_parking" class="dropdown-item">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="/parking_station/logout" class="dropdown-item">{{#if lang}}Αποσύνδεση{{else}}Logout{{/if}}</a>
+                {{else}}
+                <div class="dropdown d-inline">
+                    <a href="" class="text-wrap" data-bs-toggle="dropdown">{{#if lang}}Η Επιχείρησή μου{{else}}My parking station{{/if}}</a>
+                    <div class="dropdown-menu _header_dropdown">
+                        <a href="/parking_station/account" class="dropdown-item">{{#if lang}}Ρυθμίσεις Προφίλ{{else}}Profile Settings{{/if}}</a>
+                        <a href="/parking_station/my_parking" class="dropdown-item">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/parking_station/logout" class="dropdown-item">{{#if lang}}Αποσύνδεση{{else}}Logout{{/if}}</a>
+                    </div>
                 </div>
-            </div>
-            {{/if}}
+                {{/if}}
             {{else}}
-            {{#if is_driver}}
+                {{#if is_driver}}
             <a href="/sign_in"><span class="text-nowrap">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span></a>
         </span>
-        <span class="text-nowrap me-4">
-            /
-            <a href="/sign_up"><span class="text-nowrap">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span></a>
-            {{else}}
-            <a href="/parking_station/sign_in"><span class="text-nowrap">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span></a>
-            <span class="text-nowrap me-4">
+        <span class="text-nowrap">
                 /
-                <a href="/parking_station/sign_up"><span class="text-nowrap">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span></a>
+                <a href="/sign_up"><span class="text-nowrap">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span></a>
+                {{else}}
+                <a href="/parking_station/sign_in"><span class="text-nowrap">{{#if lang}}Σύνδεση{{else}}Sign in{{/if}}</span></a>
+        </span>
+        <span class="text-nowrap">
+                /
+                <a href="/parking_station/sign_up"><span class="text-nowrap d-">{{#if lang}}Εγγραφή{{else}}Sign up{{/if}}</span></a>
                 {{/if}}
             </span>
             {{/if}}
         </span>
         {{#if login}}
+        <br class="d-sm-none">
         <div class="dropdown d-inline">
             <a href="" id="notif" class="text-nowrap" data-bs-toggle="dropdown" role="button">
                 <i class="fa fa-bell"></i>{{#if unread_notification_number}}<span id="notif_num" class="text-danger">({{unread_notification_number}})</span>{{/if}}</a>
@@ -102,7 +104,7 @@
             </div>
         </div> --}}
         {{/if}}
-        <span class="text-nowrap mx-4">
+        <span class="text-nowrap ms-4">
             <a href="/language"><i class="fa fa-globe"></i>
                 {{!-- <img src="/images/h-lang_icon.png" alt=""> --}}
                 {{#if lang}}<span>GR</span>{{else}}<span>EN</span>{{/if}}

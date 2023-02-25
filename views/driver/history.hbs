@@ -10,7 +10,7 @@
                 <th>{{#if lang}}Ημερομηνία λήξης{{else}}End date{{/if}}</th>
                 <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
                 <th>{{#if lang}}Πινακίδα οχήματος{{else}}Car plate{{/if}}</th>
-                <th>{{#if lang}}Parking{{else}}Parking{{/if}}</th>
+                <th>{{#if lang}}Χώρος Στάθμευσης{{else}}Parking{{/if}}</th>
                 <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
             </tr>
         </thead>
@@ -24,15 +24,14 @@
                 <td>{{this.price}} €</td>
                 <td>{{this.plate}}</td>
                 <td id="P-{{this.id1}}">
-                    <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}"
-                        target="_blank"><i class="fa fa-map-marker"></i> {{this.name}} </a>
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=&destination={{this.location}}" target="_blank"><i class="fa fa-map-marker"></i> {{this.name}} </a>
                     <p class="m-0 _history-note">{{this.address}}, {{this.phone}}</p>
                 </td>
                 <td class="d-flex">
                     <div>
-                        <button type="button" id="myBtn-{{this.id}}"
-                            class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;"><i
-                                class="fa fa-plus"></i> {{#if lang}}Αξιολόγηση{{else}}Review{{/if}}</button>
+                        <button  type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;">
+                            <i class="fa fa-plus"></i> {{#if lang}}Αξιολόγηση{{else}}Review{{/if}}
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -216,7 +215,7 @@
             idd = btn.id.split("-")[1];
             btn.addEventListener("click", function () {
                 myModal.show();
-                document.querySelector("#myModalRev #desc").innerHTML = '';
+                document.querySelector("#myModalRev #desc").innerHTML = "";
                 if (rev[idd]) {
                     switch (rev[idd].stars) {
                         case 1:
@@ -237,9 +236,7 @@
                         default:
                             document.querySelector("#myModalRev #radio3").checked = true;
                     }
-                    if (rev[idd].description) {
-                        document.querySelector("#myModalRev #desc").innerHTML = rev[idd].description;
-                    }
+                    if (rev[idd].description) document.querySelector("#myModalRev #desc").innerHTML = rev[idd].description;
                     document.querySelector("#myModalRev #_sbmt_btn").value = "Update";
                     document.getElementById("del_btn").hidden = false; // enable delete button
                 }
@@ -282,8 +279,10 @@
         rd = rd.split(" ");
         rd[0] = rd[0].split("/");
         h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
-        if (tday.getTime() < Date.parse(h_dt)) document.getElementById("myBtn-" + _id).disabled = true;
-        //console.log(_id);
+        if (tday.getTime() < Date.parse(h_dt)) {
+            document.getElementById("myBtn-" + _id).disabled = true;
+            document.getElementById("myBtn-" + _id).parentElement.title = "Review is available only after reservation ends";
+        }
     }
 
     function highlight_future_reservations() {

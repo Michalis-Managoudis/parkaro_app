@@ -1,5 +1,6 @@
 html {
   font-size: 10px;
+  background-color: #68a7f4;
 }
 
 body {
@@ -57,7 +58,7 @@ footer {
 /* ------------------------- Main ------------------------- */
 main {
   background-color: #68a7f4;
-  min-height: 100px;
+  min-height: 400px;
   padding: 20px;
   /* background-color: #9e3c8d; */
 }
@@ -65,8 +66,22 @@ main {
 #map {
   height: 500px;
   /* The height is 400 pixels */
-  width: 60%;
+  /* width: 60%; */
   /* The width is the width of the web page */
+}
+
+@media (max-width: 576px) {
+  #map {
+    height: 350px;
+  }
+}
+
+._map_popup {
+  font-size: 1.4em;
+}
+
+.m-h-ps_marker {
+  font-size: 1.2em;
 }
 
 /* .mapouter {
@@ -89,6 +104,33 @@ main {
   font-family: 'Open Sans', sans-serif;
 }
 
+#error_popup {
+  font-size: 1.3em;
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f9992c;
+  /* border: 1px solid #ffffff; */
+  padding: 20px;
+  border-radius: 5px;
+  z-index: 10000;
+  word-wrap: normal;
+}
+
+#confirm_popup {
+  font-size: 1.3em;
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #049304;
+  padding: 20px;
+  border-radius: 5px;
+  z-index: 10000;
+  word-wrap: normal;
+}
+
 /* ------------------------- Login & Sign up ------------------------- */
 .login-box {
   width: 100%;
@@ -96,14 +138,13 @@ main {
   max-width: 400px;
   min-height: 600px;
   /* position:relative; */
-  /* background:url(https://images.unsplash.com/photo-1507208773393-40d9fc670acf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1268&q=80) no-repeat center; */
-  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, .24), 0 17px 50px 0 rgba(0, 0, 0, .19);
+  /* box-shadow: 0 12px 15px 0 rgba(0, 0, 0, .24), 0 17px 50px 0 rgba(0, 0, 0, .19); */
 }
 
 .login-box2 {
   max-width: 400px;
-  min-height: 900px;
-  /* height: 950px; */
+  min-height: 950px;
+  /* height: auto; */
   box-shadow: none;
 }
 
@@ -113,6 +154,7 @@ main {
   position: absolute;
   padding: 30px 50px 20px 50px;
   background: rgba(0, 157, 254, 0.9);
+  /* background: rgba(51, 55, 57, 0.9); */
 }
 
 .login-snip2 {
@@ -308,15 +350,101 @@ a {
   width: 1500px;
   /* left: 100px; */
 }
+
 ::placeholder {
   /* color: #b3b3b3; */
   color: inherit;
   font-size: 15px;
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px;
+  color: #333;
+  font-size: 14px;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #f39c21;
+  /* background-color: #15d818; */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+#ps_sup {
+  background: rgba(0, 157, 254, 0.9);
+  padding: 15px 15px;
+}
+
+#ps_sup input {
+  background: rgba(255, 255, 255, .1);
+  border-radius: 25px;
+  border: none;
+  padding: 5px 14px;
+  color: #fff;
+}
+
 /* ------------------------- Account ------------------------- */
 #_account {
   min-height: 250px;
+  width: fit-content;
+  /* margin: auto; */
 }
 
 /* ------------------------- History ------------------------- */
@@ -364,10 +492,10 @@ a {
 }
 
 #prc_ {
-  font-size: 1.3em;
-  border-radius: 15px;
+  font-size: 1.1em;
+  border-radius: 5px;
   width: fit-content;
-  background-color: #f53636;
+  background-color: #36f59c;
   padding: 0px 15px;
 }
 
@@ -389,11 +517,21 @@ a {
   float: left;
 }
 
+._info_img {
+  height: 100px;
+  margin: 10px;
+}
+
+#tech_logo_container {
+  /* width: max-content;  */
+  margin: auto;
+}
+
 /* ---------------------- my_parking ---------------------- */
 
 .lbls {
   background-color: #F5B136;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
 }
 
@@ -422,4 +560,6 @@ a {
   padding: 3px 15px;
   border-radius: 25px;
   background: #406694;
+  color: #ffffff;
+  margin-bottom: 10px ;
 }

@@ -13,7 +13,7 @@
                                 <input type="email" id="m-f-email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                             </div>
                             <div class="group">
-                                <label for="m-f-pswd" class="label">{{#if lang}}Κωδικός πρόσβασης:{{else}}Password{{/if}}</label>
+                                <label for="m-f-pswd" class="label" title="Minimum eight characters, at least one uppercase ltter, one lowercase letter, one number and one special character">{{#if lang}}Κωδικος προσβασης:{{else}}Password{{/if}} <i class="fa fa-info-circle"></i></label>
                                 <input type="password" id="m-f-pswd" name="password" class="input" placeholder={{#if lang}}"Εισάγετε τον κωδικό σας"{{else}}"Enter your password"{{/if}} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
                             </div>
                             {{!-- <div class="group">

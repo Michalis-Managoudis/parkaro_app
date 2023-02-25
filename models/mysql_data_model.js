@@ -15,8 +15,8 @@ conn.connect(function (err) {
 
 const schema = {
   "driver": ["id", "email", "password", "name", "phone", "lang", "parking_station_id", "points"],
-  "car": ["id", "driver_id", "plate", "model", "color", "photo"],
-  "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "car": ["id", "driver_id", "plate", "model", "color"],
+  "parking_station": ["id", "email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["id", "parking_station_id"],
   "reservation": ["id", "car_id", "parking_lot_id", "r_start", "r_end", "price", "state"],
   "review": ["id", "parking_station_id", "stars", "description"],
@@ -26,7 +26,7 @@ const schema = {
 const schema_required = {
   "driver": ["email", "password", "name", "phone"],
   "car": ["driver_id", "plate", "model", "color"],
-  "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "photo", "work_hours", "price_list", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_station": ["email", "password", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "work_hours", "price_list", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
@@ -35,9 +35,9 @@ const schema_required = {
 };
 const schema_show = { //? , "lang";;;;;;;
   "driver": ["email", "name", "phone", "points"],
-  "car": ["plate", "model", "color", "photo"],
-  // "parking_station": ["address", "phone", "location", "name", "parking_type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
-  "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "car": ["plate", "model", "color"],
+  // "parking_station": ["address", "phone", "location", "name", "parking_type", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   "parking_lot": ["parking_station_id"],
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
@@ -46,9 +46,9 @@ const schema_show = { //? , "lang";;;;;;;
 };
 const schema_editable = {
   "driver": ["email", "name", "phone", "lang"],
-  // "car": ["plate", "model", "color", "photo"],
+  // "car": ["plate", "model", "color"],
   "car": ["model", "color"],
-  "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "photo", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
+  "parking_station": ["email", "tin", "company_name", "tax_office", "address", "phone", "lots", "location", "name", "parking_type", "lang", "work_hours", "price_list", "discount", "info", "s_height", "s_length", "s_covered", "s_keys", "s_card", "s_charger", "s_english", "s_camera", "s_wash"],
   //"reservation": ["car_id", "r_start", "r_end", "price"],
   "reservation": ["price"],
   "review": ["stars", "description"],

@@ -1,24 +1,26 @@
-<div class="d-flex justify-content-around">
-    <div class="p-3 mb-3 lbls">
-        <h2>{{#if lang}}Έσοδα ημέρας:{{else}}Today income:{{/if}}</h2>
+<div class="d-flex flex-wrap justify-content-around">
+    <div class="col-4 col-sm-3 p-3 mx-3 mb-3 lbls">
+        <h2 class="text-sm-nowrap">{{#if lang}}Έσοδα ημέρας:{{else}}Today income:{{/if}}</h2>
         <p id="incm_today" class="mb-0">0 €</p>
     </div>
-    <div class="p-3 mb-3 lbls">
-        <h2>{{#if lang}}Έσοδα μήνα:{{else}}Month income:{{/if}}</h2>
+    <div class="col-4 col-sm-3 p-3 mx-3 mb-3 lbls">
+        <h2 class="text-sm-nowrap">{{#if lang}}Έσοδα μήνα:{{else}}Month income:{{/if}}</h2>
         <p id="incm_monthly" class="mb-0">0 €</p>
     </div>
-    <div class="p-3 mb-3 lbls">
-        <h2>{{#if lang}}Αξιολόγηση:{{else}}Rating:{{/if}}</h2>
-        <p id="rating" class="mb-0"></p>
+    <div class="col-6 col-sm-3 p-3 mx-3 mb-3 lbls">
+        <h2 class="text-sm-nowrap">{{#if lang}}Αξιολόγηση:{{else}}Rating:{{/if}}</h2>
+        <p id="rating" class="mb-0 text-nowrap"></p>
     </div>
 </div>
 
 {{#if records}}
-<div class="d-flex justify-content-between mx-5 my-2">
-    <h2 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h2>
-    <div class="text-nowrap">
+<h1 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h1>
+<div class="d-flex flex-wrap justify-content-end my-2">
+    <div class="mb-2">
         <label for="_start">{{#if lang}}Από:{{else}}From:{{/if}}</label>
         <input type="datetime-local" id="_start" name="r_start" class="dates_ bg-info">
+    </div>
+    <div>
         <label for="_end">{{#if lang}}Έως:{{else}}Up to:{{/if}}</label>
         <input type="datetime-local" id="_end" name="r_end" class="dates_ bg-info">
     </div>
@@ -29,11 +31,11 @@
             <tr>
                 <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
                 <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία έναρξης{{else}}Start date{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία λήξης{{else}}End date{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εισόδου{{else}}Date in{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εξόδου{{else}}Date out{{/if}}</th>
                 <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
                 <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
-                <th>{{#if lang}}Πινακίδα οχήματος{{else}}Car plate{{/if}}</th>
+                <th>{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</th>
                 <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
             </tr>
         </thead>
@@ -49,7 +51,7 @@
                 <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p></td>
                 <td class="d-flex">
                     <div>
-                        <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;"><i class="fa fa-plus"></i> Review</button>
+                        <button type="button" id="myBtn-{{this.id}}" class="btn btn-lg btn-dark d-block mx-3 _btn_rev text-nowrap" style="font-size: 18px;">Review</button>
                     </div>
                 </td>
             </tr>
@@ -140,12 +142,8 @@
             document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star"></i>';
         }
         if (!Number.isInteger(rat)) document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + '<i class="fa fa-star-half-empty">';
-        document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + `(${rat} / 5)`;
+        document.getElementById("rating").innerHTML = document.getElementById("rating").innerHTML + ` (${rat} / 5)`;
     }
-
-
-
-
 
     document.addEventListener("DOMContentLoaded", function () {
         highlight_future_reservations();

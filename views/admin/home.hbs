@@ -1,0 +1,195 @@
+<div class="d-flex flex-wrap text-white" id="ps_sup">
+    <div class="" style="max-width: 275px;">
+        <div class="mx-3">
+            <div class="group">
+                <label for="m-f-email" class="label">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                <input type="email" id="m-f-email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+            </div>
+            <div class="group">
+                <label for="m-f-pswd" class="label" title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character">{{#if lang}}Κωδικος προσβασης:{{else}}Password:{{/if}} <i class="fa fa-info-circle"></i></label>
+                <input type="password" id="m-f-pswd" name="password" class="input" placeholder={{#if lang}}"Εισάγετε τον κωδικό σας"{{else}}"Enter your password"{{/if}} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+            </div>
+            <div class="group">
+                <label for="pass2" class="label" title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character">{{#if lang}}Επιβεβαιωση κωδικου:{{else}}Confirm password:{{/if}} <i class="fa fa-info-circle"></i></label>
+                <input id="pass2" type="password" name="password2" class="input" data-type="password" placeholder={{#if lang}}"Επαναλάβετε τον κωδικό σας"{{else}}"Repeat your password"{{/if}} required>
+            </div>
+            <div class="group">
+                <label for="m-f-tin" class="label">{{#if lang}}ΑΦΜ:{{else}}Tin:{{/if}}</label>
+                <input type="number" id="m-f-tin" name="tin" class="input" pattern="[0-9]+" required>
+            </div>
+            <div class="group">
+                <label for="m-f-cname" class="label">{{#if lang}}Επωνυμια Εταιριας:{{else}}Company name:{{/if}}</label>
+                <input type="text" id="m-f-cname" name="company_name" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-tax_of" class="label">{{#if lang}}Δ.Ο.Υ.:{{else}}Tax office:{{/if}}</label>
+                <input type="text" id="m-f-tax_of" name="tax_office" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-addr" class="label">{{#if lang}}Εδρα:{{else}}Address:{{/if}}</label>
+                <input type="text" id="m-f-addr" name="address" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-phone" class="label">{{#if lang}}Τηλεφωνο:{{else}}Phone:{{/if}}</label>
+                <input type="tel" id="m-f-phone" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
+            </div>
+        </div>
+    </div>
+    <div class="" style="max-width: 250px;">
+        <div class="mx-3">
+            <div class="group">
+                <label for="m-f-lots" class="label">{{#if lang}}Διαθεσιμες θεσεις parking:{{else}}Available parking lots:{{/if}}</label>
+                <input type="number" id="m-f-lots" name="lots" class="input" min="0" pattern="[0-9]+" required>
+            </div>
+            <div class="group">
+                <label for="m-f-loc" class="label">{{#if lang}}Τοποθεσια:{{else}}Location:{{/if}}</label>
+                <input type="text" id="m-f-loc" name="location" class="input" value="23.72756045767275/37.98437516117204" required hidden readonly>
+                <div id="map" style="height: 200px; width: 100%;"></div>
+            </div>
+            <div class="group">
+                <label for="m-f-name" class="label">{{#if lang}}Ονομα:{{else}}Name:{{/if}}</label>
+                <input type="text" id="m-f-name" name="name" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-type" class="label">{{#if lang}}Ειδος Parking:{{else}}Parking type:{{/if}}</label>
+                <select name="parking_type" id="m-f-type" class="input">
+                    <option value=0>{{#if lang}}Πόλης{{else}}City{{/if}}</option>
+                    <option value=1>{{#if lang}}Αεροδρόμιο{{else}}Airport{{/if}}</option>
+                    <option value=2>{{#if lang}}Λιμάνι{{else}}Port{{/if}}</option>
+                </select>
+            </div>
+            <div class="group">
+                <label for="m-f-photo" class="label">{{#if lang}}Φωτογραφια:{{else}}Photo:{{/if}}</label>
+                <input type="text" id="m-f-photo" name="photo" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-height" class="label">{{#if lang}}Μεγιστο επιτρεπομενο υψος (μ):{{else}}Max height allowed (m):{{/if}}</label>
+                <input type="text" id="m-f-height" name="s_height" class="input" required>
+            </div>
+            <div class="group">
+                <label for="m-f-length" class="label">{{#if lang}}Μεγιστο επιτρεπομενο μηκος (μ):{{else}}Max length allowed (m):{{/if}}</label>
+                <input type="text" id="m-f-length" name="s_length" class="input" required>
+            </div>
+        </div>
+    </div>
+    <div class="" style="max-width: 300px;">
+        <div class="mx-3">
+            <h3>{{#if lang}}Ωράριο Λειτουργίας:{{else}}Work hours:{{/if}}</h3>
+            <div class="group">
+                <input type="checkbox" id="24/7_" name="work_hours_0" class="check" value="1">
+                <label for="24/7_" class="label"><span class="icon"></span> {{#if lang}}Ανοιχτα όλο το 24ωρο καθημερινα{{else}}Open daily 24 hours a day{{/if}}</label>
+            </div>
+            <div class="group">
+                <span id="work_hours_">
+                    <label for="m-f-work_hours1" class="label">{{#if lang}}Δευτερα:{{else}}Monday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours1" name="work_hours1" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours1b" name="work_hours1b" class="input input2" required>
+                    <label for="m-f-work_hours2" class="label">{{#if lang}}Τριτη:{{else}}Tuesday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours2" name="work_hours2" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours2b" name="work_hours2b" class="input input2" required>
+                    <label for="m-f-work_hours3" class="label">{{#if lang}}Τεταρτη:{{else}}Wednesday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours3" name="work_hours3" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours3b" name="work_hours3b" class="input input2" required>
+                    <label for="m-f-work_hours4" class="label">{{#if lang}}Πεμπτη:{{else}}Thursday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours4" name="work_hours4" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours4b" name="work_hours4b" class="input input2" required>
+                    <label for="m-f-work_hours5" class="label">{{#if lang}}Παρασκευη:{{else}}Friday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours5" name="work_hours5" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours5b" name="work_hours5b" class="input input2" required>
+                    <label for="m-f-work_hours6" class="label">{{#if lang}}Σαββατο:{{else}}Saturday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours6" name="work_hours6" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours6b" name="work_hours6b" class="input input2" required>
+                    <label for="m-f-work_hours7" class="label">{{#if lang}}Κυριακη:{{else}}Sunday:{{/if}}</label>
+                    <input type="time" id="m-f-work_hours7" name="work_hours7" class="input input2" required>&nbsp;-
+                    <input type="time" id="m-f-work_hours7b" name="work_hours7b" class="input input2" required>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="mx-3" style="max-width: 275px;">
+            <div class="group">
+                <h3>{{#if lang}}Τιμοκατάλογος:{{else}}Price list:{{/if}} (€)</h3>
+                {{!-- <label class="switch">
+                    <input id="hour_switch" name="hour_md" type="checkbox" checked>
+                    <span class="slider"></span>
+                    <span class="switch-text">Hour</span>
+                </label> --}}
+                <div id="hour_" class="mb-2">
+                    <label for="m-f-price_list1" class="label label2">{{#if lang}}1 ωρα:{{else}}1 hour:{{/if}}</label>
+                    <input type="text" id="m-f-price_list1" name="price_list_h1" class="input input3" required><br>
+                    <label for="m-f-price_list2" class="label label2">{{#if lang}}Για καθε εξτρα ωρα:{{else}}For each extra hour:{{/if}}</label>
+                    <input type="text" id="m-f-price_list2" name="price_list_h2" class="input input3" required>
+                </div>
+                {{!-- <label class="switch">
+                    <input id="day_switch" name="day_md" type="checkbox" checked>
+                    <span class="slider"></span>
+                    <span class="switch-text">Day</span>
+                </label> --}}
+                <div id="day_" class="mb-2">
+                    <label for="m-f-price_list3" class="label label2">{{#if lang}}1 μερα:{{else}}1 day:{{/if}} </label>
+                    <input type="text" id="m-f-price_list3" name="price_list_d1" class="input input3" required><br>
+                    <label for="m-f-price_list4" class="label label2">{{#if lang}}Για καθε εξτρα μερα: {{else}}For each extra day: {{/if}}</label>
+                    <input type="text" id="m-f-price_list4" name="price_list_d2" class="input input3" required>
+                </div>
+                {{!-- <label class="switch">
+                    <input id="month_switch" name="month_md" type="checkbox" checked>
+                    <span class="slider"></span>
+                    <span class="switch-text">Month</span>
+                </label> --}}
+                <div id="month_" class="mb-2">
+                    <label for="m-f-price_list5" class="label label2">{{#if lang}}1 μηνας:{{else}}1 month:{{/if}}</label>
+                    <input type="text" id="m-f-price_list5" name="price_list_m1" class="input input3" required><br>
+                    <label for="m-f-price_list6" class="label label2">{{#if lang}}Για καθε εξτρα μηνα: {{else}}For each extra month: {{/if}}</label>
+                    <input type="text" id="m-f-price_list6" name="price_list_m2" class="input input3" required>
+                </div>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-1h" name="s_covered" class="check" value="0">
+                <input type="checkbox" id="m-f-1" name="s_covered" class="check" value="1">
+                <label for="m-f-1" class="label"><span class="icon"></span> {{#if lang}}Στεγασμενος χωρος{{else}}Covered area{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-2h" name="s_keys" class="check" value="0">
+                <input type="checkbox" id="m-f-2" name="s_keys" class="check" value="1">
+                <label for="m-f-2" class="label"><span class="icon"></span> {{#if lang}}Τα κλειδια παραμενουν στο parking{{else}}Keys remain in the parking lot{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-3h" name="s_card" class="check" value="0">
+                <input type="checkbox" id="m-f-3" name="s_card" class="check" value="1">
+                <label for="m-f-3" class="label"><span class="icon"></span> {{#if lang}}Πληρωμη με καρτα στο χωρο του parking{{else}}Payment by card in the parking{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-4h" name="s_charger" class="check" value="0">
+                <input type="checkbox" id="m-f-4" name="s_charger" class="check" value="1">
+                <label for="m-f-4" class="label"><span class="icon"></span> {{#if lang}}Φορτιστης ηλεκτρικων οχηματων{{else}}Electric vehicle charger{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-5h" name="s_english" class="check" value="0">
+                <input type="checkbox" id="m-f-5" name="s_english" class="check" value="1">
+                <label for="m-f-5" class="label"><span class="icon"></span> {{#if lang}}Αγγλικα{{else}}English{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-6h" name="s_camera" class="check" value="0">
+                <input type="checkbox" id="m-f-6" name="s_camera" class="check" value="1">
+                <label for="m-f-6" class="label"><span class="icon"></span> {{#if lang}}24ωρη παρακολουθηση από καμερες{{else}}24 hour surveillance by cameras{{/if}}</label>
+            </div>
+            <div class="group">
+                <input type="hidden" id="m-f-7h" name="s_wash" class="check" value="0">
+                <input type="checkbox" id="m-f-7" name="s_wash" class="check" value="1">
+                <label for="m-f-7" class="label"><span class="icon"></span> {{#if lang}}Πλυντηριο{{else}}Wash{{/if}}</label>
+            </div>
+            <div class="group">
+                <label for="m-f-info" class="label">{{#if lang}}Επιπλεον πληροφοριες:{{else}}Extra Info:{{/if}}</label>
+                <textarea type="text" id="m-f-info" name="info" class="input" required></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="group d-flex justify-content-center mt-5">
+    <input type="submit" class="button bbtn" value={{#if lang}}"Εγγραφη"{{else}}"Sign Up"{{/if}}>
+</div>
+<hr>
+<div class="foot relative-bottom">
+    <a href="/parking_station/sign_in">{{#if lang}}Έχετε ήδη λογαριασμό; Συνδεθείτε εδώ{{else}}Already have an account? Sign in here{{/if}}</a>
+</div>

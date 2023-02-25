@@ -14,19 +14,19 @@
                                 <input id="eml" type="email" name="email" class="input" placeholder="someone@example.com" autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
                             </div>
                             <div class="group">
-                                <label for="pass" class="label">{{#if lang}}Κωδικός πρόσβασης:{{else}}Password:{{/if}}</label>
+                                <label for="pass" class="label" title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character">{{#if lang}}Κωδικος προσβασης:{{else}}Password:{{/if}} <i class="fa fa-info-circle"></i></label>
                                 <input id="pass" type="password" name="password" class="input" data-type="password" placeholder={{#if lang}}"Εισάγετε τον κωδικό σας"{{else}}"Enter your password"{{/if}} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
                             </div>
                             <div class="group">
-                                <label for="pass2" class="label">{{#if lang}}Επιβεβαίωση κωδικού:{{else}}Confirm password:{{/if}}</label>
+                                <label for="pass2" class="label" title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character">{{#if lang}}Επιβεβαιωση κωδικου:{{else}}Confirm password:{{/if}} <i class="fa fa-info-circle"></i></label>
                                 <input id="pass2" type="password" name="password2" class="input" data-type="password" placeholder={{#if lang}}"Επαναλάβετε τον κωδικό σας"{{else}}"Repeat your password"{{/if}} required>
                             </div>
                             <div class="group">
-                                <label for="nm" class="label">{{#if lang}}Ονοματεπώνυμο:{{else}}Full Name:{{/if}}</label>
+                                <label for="nm" class="label">{{#if lang}}Ονοματεπωνυμο:{{else}}Full Name:{{/if}}</label>
                                 <input id="nm" type="text" name="name" class="input" placeholder={{#if lang}}"Εισάγετε το ονοματεπώνυμό σας"{{else}}"Enter your full name"{{/if}} required>
                             </div>
                             <div class="group">
-                                <label for="tl" class="label">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
+                                <label for="tl" class="label">{{#if lang}}Τηλεφωνο:{{else}}Phone:{{/if}}</label>
                                 <input id="tl" type="tel" name="phone" class="input" placeholder="69********" pattern="[0-9]{10}" required>
                             </div>
                             <div class="group">

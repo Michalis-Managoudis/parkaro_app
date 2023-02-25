@@ -1,82 +1,70 @@
-{{!--
-<script>
-    //console.log("op");
-    //let ps_id = sessionStorage.getItem("parking_station_target");
-    //console.log(ps_id);
-</script> --}}
-<!-- Start Card -->
-<div class="card _book-card w-100 border-0">
-    <!-- Start Card Body -->
-    <div id="book_card_" class="card-body">
-        <div class="row">
-            <!-- Start Form -->
-            <form action="/book" id="_form" method="post" class="col-7 border-end border-secondary">
-                <fieldset>
-                    <p class="text-decoration-underline">{{#if lang}}Στοιχεία χρέωσης:{{else}}Reservation information:{{/if}}</p>
-                    <div class="my-3">
-                        <label for="input_date1">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
-                        <input type="datetime-local" class="book_input" id="input_date1" name="s_date" value="{{dates.start}}" required autofocus />
-                    </div>
-                    <div class="my-3">
-                        <label for="input_date2">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}} </label>
-                        <input type="datetime-local" class="book_input" id="input_date2" name="e_date" value="{{dates.end}}" required />
-                    </div>
-                    {{!-- <div class="d-block">
-                        <input type="checkbox" name="wash" id="ws">
-                        <label for="ws">Wash</label>
-                    </div> --}}
-                </fieldset>
-                <hr>
-                <fieldset>
-                    <p class="text-decoration-underline">{{#if lang}}Στοιχεία Πελάτη:{{else}}Customer information:{{/if}}</p>
-                    <div class="my-3">
-                        <label for="m-f-email">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
-                        <input type="email" class="book_input" id="m-f-email" name="email" placeholder="someone@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}"{{/if}} required>
-                    </div>
-                    <div class="my-3">
-                        <label for="m-f-name">{{#if lang}}Ονοματεπώνυμο:{{else}}Fullname:{{/if}}</label>
-                        <input type="text" class="book_input" id="m-f-name" name="name" placeholder={{#if lang}}"Ονοματεπώνυμο"{{else}}"Fullname"{{/if}} {{#if login}}value="{{driver.name}}" {{/if}} required>
-                    </div>
-                    <div class="my-3">
-                        <label for="m-f-phone">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
-                        <input type="tel" class="book_input" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" {{#if login}}value="{{driver.phone}}" {{/if}} required>
-                    </div>
-                    
-                    <label for="_c">{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</label>
-                    {{#if driver_car}}
-                    <select name="car" id="_c" class="book_input">
-                        {{#each driver_car}}
-                        <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} -
-                                {{this.color}})</span></option>
-                        {{/each}}
-                    </select>
-                    {{else}}
-                    <input type="text" name="car">
-                    {{/if}}
-                </fieldset>
-                <div class="d-flex justify-content-end">
-                    <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success mt-5 me-5" style="font-size: 1.3em;" value={{#if lang}}"Κράτηση"{{else}}"Reserve"{{/if}} onclick="add_resv()">
-                    <p {{#if found}}hidden{{/if}} class="bg-warning mt-5 px-1" style="font-size: 1.3em;">{{#if lang}}Δεν υπάρχει διαθέσιμη θέση στάθμευσης, δοκιμάστε ένα άλλο parking ή κάποια άλλη ημερομηνία{{else}}There is no avaliable parking space try another parking station or another datetime{{/if}}</p>
+<div class="d-md-flex">
+    <div class="col-md-6 col-lg-6 mx-2 p-3 border border-3">
+        <form action="/book" id="_form" method="post">
+            <fieldset>
+                <p class="text-decoration-underline">{{#if lang}}Στοιχεία χρέωσης:{{else}}Reservation information:{{/if}}</p>
+                <div class="my-3">
+                    <label for="input_date1">{{#if lang}}Ημερομηνία έναρξης (Άφιξη):{{else}}Start date (Arrival):{{/if}}</label>
+                    <input type="datetime-local" class="book_input" id="input_date1" name="s_date" value="{{dates.start}}" required autofocus />
                 </div>
-            </form>
-            <div class="col-3" id="p_info">
-                <p id="info_name"></p>
-                <p id="info_phone" class="p_info_el mt-3"></p>
-                <img id="_img_" class="d-block" style="width: 250px; height: auto;" src="" />
-                <p id="info_address" class="p_info_el d-inline"></p>
-                <a id="info_location" class="d-inline ms-3" href="https://www.google.com/maps/dir/?api=1&origin=&destination=" target="_blank"><i class="fa fa-map-marker"></i> {{#if lang}}Οδηγίες Πλοήγησης{{else}}Νavigate{{/if}}</a>
-                {{!-- <p id="info_photo" class="p_info_el"></p> --}}
-                <p id="info_discount" class="bg-info"></p>
+                <div class="my-3">
+                    <label for="input_date2">{{#if lang}}Ημερομηνία λήξης (Αναχώρηση):{{else}}End date (Departure):{{/if}} </label>
+                    <input type="datetime-local" class="book_input" id="input_date2" name="e_date" value="{{dates.end}}" required />
+                </div>
+                {{!-- <div class="d-block">
+                    <input type="checkbox" name="wash" id="ws">
+                    <label for="ws">Wash</label>
+                </div> --}}
+            </fieldset>
+            <hr>
+            <fieldset>
+                <p class="text-decoration-underline">{{#if lang}}Στοιχεία Πελάτη:{{else}}Customer information:{{/if}}</p>
+                <div class="my-3">
+                    <label for="m-f-email">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                    <input type="email" class="book_input" id="m-f-email" name="email" placeholder="someone@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {{#if login}}value="{{driver.email}}"{{/if}} required>
+                </div>
+                <div class="my-3">
+                    <label for="m-f-name">{{#if lang}}Ονοματεπώνυμο:{{else}}Fullname:{{/if}}</label>
+                    <input type="text" class="book_input" id="m-f-name" name="name" placeholder={{#if lang}}"Ονοματεπώνυμο"{{else}}"Fullname"{{/if}} {{#if login}}value="{{driver.name}}" {{/if}} required>
+                </div>
+                <div class="my-3">
+                    <label for="m-f-phone">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
+                    <input type="tel" class="book_input" id="m-f-phone" name="phone" placeholder="69********" pattern="[0-9]{10}" {{#if login}}value="{{driver.phone}}" {{/if}} required>
+                </div>                        
+                <label for="_c">{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</label>
+                {{#if driver_car}}
+                <select name="car" id="_c" class="book_input">
+                    {{#each driver_car}}
+                        <option value={{this.id}}>{{this.plate}}<span class="_car-info"> ({{this.model}} - {{this.color}})</span></option>
+                    {{/each}}
+                </select>
+                {{else}}
+                <input type="text" name="car">
+                {{/if}}
+            </fieldset>
+            <div class="d-flex justify-content-between mt-5 mx-md-5" id="p_price">
+                <input {{#unless found}}hidden{{/unless}} type="submit" class="btn btn-lg btn-success" style="font-size: 1.2em;" value={{#if lang}}"Κράτηση"{{else}}"Reserve"{{/if}} onclick="add_resv()">
             </div>
-            <div class="col-2" id="p_info2">
-                <ul id="info_work_hours"><i class="fa fa-clock-o"></i> {{#if lang}}Ωράριο Λειτουργίας:{{else}}Work hours:{{/if}} </ul>
-                <p id="info_info"></p>
-            </div>
-        </div>
+            <p {{#if found}}hidden{{/if}} class="m-0 bg-danger mt-3 px-2" style="font-size: 1.1em; border-radius: 5px;">{{#if lang}}Δεν υπάρχει διαθέσιμη θέση στάθμευσης, δοκιμάστε ένα άλλο parking ή κάποια άλλη ημερομηνία{{else}}There is no avaliable parking space try another parking station or another datetime{{/if}}</p>
+        </form>
     </div>
-    <!-- End Card Body -->
+    {{!-- <hr class="py-2 border-0 bg-secondary"> --}}
+    <div class="col-md-3 col-lg-3 mx-3 mt-4 mt-md-0" id="p_info">
+        <p class="text-decoration-underline">{{#if lang}}Στοιχεία χώρου στάθμευσης:{{else}}Parking station information:{{/if}}</p>
+        <p id="info_name"></p>
+        <p id="info_phone" class="p_info_el mt-3"></p>
+        <img id="_img_" class="d-block" style="width: 85%; height: auto;" src="" />
+        <p id="info_address" class="p_info_el d-inline"></p>
+        <a id="info_location" class="d-inline ms-3" href="https://www.google.com/maps/dir/?api=1&origin=&destination=" target="_blank"><i class="fa fa-map-marker"></i> {{#if lang}}Οδηγίες Πλοήγησης{{else}}Νavigate{{/if}}</a>
+        {{!-- <p id="info_photo" class="p_info_el"></p> --}}
+        <p id="info_discount" class="bg-info"></p>
+        <p id="info_info"></p>
+    </div>
+    <div class="col-md-3 col-lg-3 mx-3">
+        <ul id="info_work_hours"><i class="fa fa-clock-o"></i> {{#if lang}}Ωράριο Λειτουργίας:{{else}}Work hours:{{/if}} </ul>
+        <ul id="info_price_list"><i class="fa fa-money"></i> {{#if lang}}Τιμοκατάλογος:{{else}}Price list:{{/if}}</ul>
+    </div>
 </div>
-<!-- End Card -->
 
 <script>
     let ps = {{{ parking_station }}};
@@ -142,9 +130,29 @@
             for (let i = 0 ; i < 7 ; i++) {
                 //days_res += days_[i] + ps.work_hours.split(",")[i];
                 const addd1 = document.createElement("li");
-                addd1.innerText = days_[i] + ps.work_hours.split(",")[i];
+                const addd2 = document.createElement("span");
+                addd2.classList.add("text-nowrap");
+                addd2.innerText = ps.work_hours.split(",")[i];
+                addd1.appendChild(addd2);
+                addd1.innerHTML = days_[i] + addd1.innerHTML;
                 document.getElementById("info_work_hours").appendChild(addd1);
             }
+        }
+        let prcs_lex = {{#if lang}}["1η Ώρα: ","Για καθε εξτρα ωρα: ", "1η Μέρα: ", "Για καθε εξτρα μερα: ", "1ος Μήνας: ", "Για καθε εξτρα μηνα: "]{{else}}["1 hour: ", "For each extra hour: ", "1 day: ", "For each extra day: ", "1 month: ", "For each extra month: "]{{/if}};
+        const prcs = ["h","d","m"];
+        for (let i = 0 ; i < 3 ; i++) {
+            const addd1 = document.createElement("li");
+            addd1.style = "line-height: 1.2;"
+            addd1.classList.add("mb-3");
+            const addd2 = document.createElement("span");
+            addd2.classList.add("text-nowrap");
+            addd2.innerText = prcs_lex[2*i] + ps.price_list.split("/" + prcs[i])[1].split("/")[0].split(",")[0] + "€\n";
+            addd1.appendChild(addd2);
+            const addd3 = document.createElement("span");
+            addd3.classList.add("text-nowrap");
+            addd3.innerText = "" + prcs_lex[2*i+1] + ps.price_list.split("/" + prcs[i])[1].split("/")[0].split(",")[1] + "€";
+            addd1.appendChild(addd3);
+            document.getElementById("info_price_list").appendChild(addd1);
         }
         document.getElementById("info_info").innerHTML = '<i class="fa fa-info-circle"></i> ' + ps.info;
         if (ps.discount) document.getElementById("info_discount").innerText = ps.discount + {{#if lang}}"% έκπτωση"{{else}}"% discount"{{/if}};
@@ -173,14 +181,15 @@
         // final price area
         const addd = document.createElement("p");
         addd.innerHTML = {{#if lang}}"Τελική τιμή: "{{else}}"Final Price: "{{/if}};
+        addd.classList.add("text-nowrap");
+        addd.classList.add("my-auto");
+        addd.classList.add("py-2");
         addd.id = "prc_";
-        const addd2 = document.createElement("span");
-        addd2.id = "f_price";
-        if (prc) addd2.innerText = prc;
-        else addd2.innerText = 0;
-        addd.appendChild(addd2);
+        let pr_ = 0;
+        {{#if found}}if (prc) pr_ = prc;{{/if}}
+        addd.innerHTML += pr_; 
         addd.innerText = addd.innerText + "€";
-        document.getElementById("p_info").appendChild(addd);
+        document.getElementById("p_price").prepend(addd);
     }
 
     function check_available() {

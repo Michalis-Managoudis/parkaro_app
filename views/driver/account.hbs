@@ -1,46 +1,56 @@
-<div id="_account">
-    <p>{{#if lang}}Ο λογαριασμός μου{{else}}My account{{/if}}</p>
+<div  id="_account" class="mx-auto">
+    <h1 class="mb-5">{{#if lang}}Ο λογαριασμός μου{{else}}My account{{/if}}&nbsp;&nbsp;<small id="hdr_" style="color: brown; font-size:x-small"></small></h1>
 
     <form action="" method="post" id="_main_form">
         <fieldset>
-            <label for="m-f-email">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
-            <input type="email" class="inpt" id="m-f-email" name="email" placeholder="someone@example.com" value='{{driver.email}}' autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-            <label for="m-f-name">{{#if lang}}Ονοματεπώνυμο:{{else}}Full Name:{{/if}}</label>
-            <input type="text" class="inpt" id="m-f-name" name="name" placeholder={{#if lang}}"Ονοματεπώνυμο"{{else}}"Fullname"{{/if}} value='{{driver.name}}' required>
-            <label for="m-f-phone">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
-            <input type="tel" class="inpt" id="m-f-phone" name="phone" placeholder="69********" value='{{driver.phone}}' pattern="[0-9]{10}" required>
-            <label>{{#if lang}}Γλώσσα:{{else}}Language:{{/if}}</label>
-            <input type="radio" id="a" name="lang" value="0" {{#unless lang}}checked{{/unless}}>
-            <label for="a">{{#if lang}}Αγγλικά{{else}}English{{/if}}</label>
-            <input type="radio" id="b" name="lang" value="1" {{#if lang}}checked{{/if}}>
-            <label for="b">{{#if lang}}Ελληνικά{{else}}Greek{{/if}}</label>
-            <div class="d-flex justify-content-end mx-5 my-2">
-                <button type="button" id="myBtn4" class="btn btn-lg btn-secondary me-5">{{#if lang}}Αλλαγή κωδικού{{else}}Change password{{/if}}</button>
-                <button type="button" id="myBtn2" class="btn btn-lg btn-success">{{#if lang}}Αποθήκευση{{else}}Save{{/if}}</button>
+            <div class="d-inline text-nowrap">
+                <label for="m-f-email">{{#if lang}}Email:{{else}}Email:{{/if}}</label>
+                <input type="email" class="inpt" id="m-f-email" name="email" placeholder="someone@example.com" value='{{driver.email}}' autofocus pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onchange="chng_detect()" required>
+            </div>
+            <div class="d-inline text-nowrap">
+                <label for="m-f-name">{{#if lang}}Ονοματεπώνυμο:{{else}}Full Name:{{/if}}</label>
+                <input type="text" class="inpt" id="m-f-name" name="name" placeholder={{#if lang}}"Ονοματεπώνυμο"{{else}}"Fullname"{{/if}} value='{{driver.name}}' onchange="chng_detect()" required>
+            </div><br class="d-md-inline">
+            <div class="d-inline text-nowrap">
+                <label for="m-f-phone">{{#if lang}}Τηλέφωνο:{{else}}Phone:{{/if}}</label>
+                <input type="tel" class="inpt" id="m-f-phone" name="phone" placeholder="69********" value='{{driver.phone}}' pattern="[0-9]{10}" onchange="chng_detect()" required>
+            </div>
+            <div class="d-inline text-nowrap">
+                <label>{{#if lang}}Γλώσσα:{{else}}Language:{{/if}}</label>
+                <input type="radio" id="a" name="lang" value="0" {{#unless lang}}checked{{/unless}} onchange="chng_detect()">
+                <label for="a">{{#if lang}}Αγγλικά{{else}}English{{/if}}</label>
+                <input type="radio" id="b" name="lang" value="1" {{#if lang}}checked{{/if}} onchange="chng_detect()">
+                <label for="b">{{#if lang}}Ελληνικά{{else}}Greek{{/if}}</label>
             </div>
         </fieldset>
     </form>
-    <div class="card bg-primary">
-        <h3>{{#if lang}}Οχήματα{{else}}Vehicles:{{/if}}</h3>
-        <ul style="list-style: none;">
-            {{#if cars}}
-            {{#each cars}}
-            <div class="d-flex justify-content-between">
-                <li><i class="fa fa-car me-4"></i>{{this.plate}}<span class="_car-info" id="info-{{this.id}}"> ({{this.model}} - {{this.color}})</span></li>
-                <button type="button" id="myBtnEdit/{{this.id}}" class="border-0 bg-primary me-4 _btn_edt" title="{{this.plate}}"><i class="fa fa-pencil"></i></button>
-                <button type="button" id="myBtn/{{this.id}}" class="border-0 bg-primary me-4 _btn_delt"><i class="fa fa-times"></i></button>
+    <div class="col-sm-9 col-12">
+        <div class="card w-auto bg-primary p-2 mt-4">
+            <h3>{{#if lang}}Οχήματα{{else}}Vehicles:{{/if}}</h3>
+            <ul style="list-style: none;">
+                {{#if cars}}
+                {{#each cars}}
+                <div class="d-flex justify-content-between">
+                    <li><i class="fa fa-car me-4"></i>{{this.plate}}<span class="_car-info" id="info-{{this.id}}"> ({{this.model}} - {{this.color}})</span></li>
+                    <button type="button" id="myBtnEdit/{{this.id}}" class="border-0 bg-primary me-4 _btn_edt" title="{{this.plate}}"><i class="fa fa-pencil"></i></button>
+                    <button type="button" id="myBtn/{{this.id}}" class="border-0 bg-primary me-4 _btn_delt"><i class="fa fa-times"></i></button>
+                </div>
+                {{/each}}
+                {{/if}}
+            </ul>
+            <div>
+                <button type="button" id="myBtn3" class="btn btn-lg btn-info m-3"><i class="fa fa-car"></i> {{#if lang}}Προσθέστε νέο όχημα{{else}}Add new vehicle{{/if}}</button>
             </div>
-            {{/each}}
-            {{/if}}
-        </ul>
+        </div>
     </div>
-    <div class="d-flex justify-content-between p-5">
+    <div class="d-flex justify-content-between m-5">
         <a class="btn btn-secondary btn-lg" href="/logout" role="button">{{#if lang}}Αποσύνδεση{{else}}Log out{{/if}}</a>
         <div>
-            <button type="button" id="myBtn3" class="btn btn-lg btn-primary"><i class="fa fa-car"></i> {{#if lang}}Προσθέστε νέο όχημα{{else}}Add new vehicle{{/if}}</button>
-        </div>
-        <div>
             <button type="button" id="myBtn" class="btn btn-lg btn-danger">{{#if lang}}Διαγραφή Λογαριασμού{{else}}Delete Account{{/if}}</button>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="button" id="myBtn4" class="btn btn-lg btn-secondary me-5">{{#if lang}}Αλλαγή κωδικού{{else}}Change password{{/if}}</button>
+            <button type="button" id="myBtn2" class="btn btn-lg btn-success">{{#if lang}}Αποθήκευση{{else}}Save{{/if}}</button>
         </div>
     </div>
     <div id="myModlDel" class="modal fade" tabindex="-1">
@@ -152,7 +162,7 @@
                 </div>
                 <div class="modal-body">
                     <p class="_modal-text">{{#if lang}}Επιβεβαίωση κωδικού{{else}}Confirm password{{/if}}</p>
-                    <input type="password" name="password" placeholder="********" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                    <input type="password" form="_main_form" name="password" placeholder="********" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
@@ -212,6 +222,10 @@
         delete_buttons();
         edit_buttons();
     });
+
+    function chng_detect() {
+        document.getElementById("hdr_").textContent = " (Press 'Save' button to save changes)";
+    }
 
     function edit_buttons() {
         let bn = document.querySelectorAll("._btn_edt");

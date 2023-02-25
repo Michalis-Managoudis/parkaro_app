@@ -1,3 +1,17 @@
-<h1>{{message}}</h1>
+{{!-- <h1>{{message}}</h1>
 <h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+<pre>{{error.stack}}</pre> --}}
+
+<div class="d-flex">
+    <img class="me-5" src="/images/error.png" alt="Error" style="height: 300px;">
+    <div>
+        <br>
+        <h1>{{#if lang}}Η σελίδα δεν βρέθηκε{{else}}Page not found{{/if}}</h1>
+        <br>
+        <p>{{#if lang}}Βεβαιωθείτε ότι η διεύθυνση του ιστότοπου είναι γραμμένη σωστά.{{else}}Please check that the Web site address is spelled correctly.{{/if}}
+            <br>
+            {{#if lang}}Ή μεταβείτε στην{{else}}Or go to our{{/if}} <a style="text-decoration: underline;" href="/">{{#if lang}}αρχική σελίδα{{else}}home page{{/if}}</a>, 
+            {{#if lang}}και χρησιμοποιήστε τα μενού για να πλοηγηθείτε σε μια συγκεκριμένη ενότητα.{{else}}and use the menus to navigate to a specific section.{{/if}}
+        </p>
+    </div>
+</div>

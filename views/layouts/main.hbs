@@ -32,6 +32,35 @@
     </main>
 
     {{> footer}}
+    <div id="confirm_popup" hidden>Error</div>
+    <div id="error_popup" hidden>Error</div>
 </body>
 
 </html>
+
+<script>
+    const err = {{{error_msg}}};
+    console.log(err);
+    const error_ = document.getElementById("error_popup");
+    if (err) {
+        error_.innerHTML = err;
+        error_.hidden = false;
+        setTimeout(function() {error_.hidden = true;}, 5000);
+    }
+    document.addEventListener("click", function() {
+        error_.hidden = true;
+    });
+
+    const conf = {{{confirm_msg}}};
+    console.log(conf);
+    const conf_ = document.getElementById("confirm_popup");
+    if (conf) {
+        conf_.innerHTML = conf;
+        conf_.hidden = false;
+        setTimeout(function() {conf_.hidden = true;}, 5000);
+    }
+    document.addEventListener("click", function() {
+        conf_.hidden = true;
+    });
+
+</script>

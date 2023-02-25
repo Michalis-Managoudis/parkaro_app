@@ -3,10 +3,10 @@
     &q=Space+Needle,Seattle+WA">
 </iframe>
 <p>direct embed google map</p> --}}
-<div class="row">
-    <div id="map" class="col-8"></div>
-    <div class="col-4">
-        <form action="" method="post" id="_form2">
+<h1 id="h_text"></h1>
+<div class="d-md-flex flex-row-reverse">
+    <div class="col-md-4 mb-2">
+        <form action="" method="post" id="_form2" class="ms-3">
             {{!-- <div class="input-group">
                 <div class="form-outline">
                     <input type="search" id="form1" class="form-control" placeholder="Search" />
@@ -17,7 +17,7 @@
             </div> --}}
             {{!-- <br> --}}
             <div id="_search">
-                <div>
+                <div class="mb-3">
                     <label for="search_date1">{{#if lang}}Άφιξη:{{else}}Arrival:{{/if}}</label> {{#if lang}}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{{else}}&nbsp; &nbsp; &nbsp;{{/if}}
                     <input type="datetime-local" class="dates_2" id="search_date1" name="s_dttm" value="{{dates.start}}" required autofocus />
                 </div>
@@ -29,6 +29,7 @@
             {{!-- <button hidden type="submit" class="btn btn-outline-primary">search</button> --}}
         </form>
     </div>
+    <div id="map" class="col-md-8 w-md-100 h-md-25"></div>
 </div>
 
 {{!-- <div id="menu">
@@ -45,8 +46,7 @@
 </div> --}}
 
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
-<link rel="stylesheet"
-    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
 <script>
     if (navigator.geolocation) {
@@ -179,7 +179,13 @@
                 zoom: 14.00
             });
 
-            // Add the control to the map.
+            // add a zoom event listener
+            //map.on('zoom', function() {
+            //    var zoomLevel = map.getZoom();
+            //    console.log('Current zoom level:', zoomLevel);
+            //});
+
+            // Add the control to the map. (searchbox on map)
             map.addControl(
                 new MapboxGeocoder({
                     accessToken: mapboxgl.accessToken,
@@ -197,46 +203,54 @@
                 }
             };
             map.on('load', () => {
-                let stars = "";
-                let prc = "";
-                let disc = "";
-                for (let i = 0; i < Object.keys(data).length; i++) {
-                    stars = "";
-                    if (data[i].rating === "NaN") {
-                        stars = '<i class="fa fa-star-o"></i>';
-                        data[i].rating = 0;
-                    }
-                    for (let j = 1; j <= data[i].rating; j++) stars = stars + '<i class="fa fa-star"></i>';
-                    if (!Number.isInteger(data[i].rating)) stars = stars + '<i class="fa fa-star-half-empty"></i>';
-                    if (data[i].price) prc = {{#if lang}}'<p class="m-0"> Τιμή: '{{else}}'<p class="m-0"> Price: '{{/if}} + data[i].price + ' €</p>';
-                    if (data[i].discount) disc = '<p class="m-0 bg-warning">' + data[i].discount + '%</p>';
-                    marker_data.data.features[i] = {
-                        'type': 'Feature',
-                        'properties': {
-                            'id': data[i].id,
-                            'description':
-                                '<strong>' + data[i].name + '</strong> <span>' + stars + '(' + data[i].rating + '/5)' + '</span> <br> <div class="d-flex justify-content-between">' + disc + prc + ' <a href="/book/' + data[i].id + '" id="' + data[i].id + {{#if lang}}'" class="m-h-ps_marker bg-info">Κράτηση</a></div>'{{else}}'" class="m-h-ps_marker bg-info">BOOK NOW</a></div>'{{/if}},
-                            'icon': 'car-15'
-                        },
-                        'geometry': {
-                            'type': 'Point',
-                            'coordinates': data[i].location
+                map.loadImage('/images/parking_marker2.png', (error, image) => {    
+                    if (error) throw error;
+                    // Add the image to the map style.
+                    map.addImage('parking__marker', image);
+
+                    let stars = "";
+                    let prc = "";
+                    let disc = '<div class="d-flex justify-content-between">';
+                    for (let i = 0; i < Object.keys(data).length; i++) {
+                        stars = "";
+                        if (data[i].rating === "NaN") {
+                            stars = '<i class="fa fa-star-o"></i>';
+                            data[i].rating = 0;
                         }
-                    };
-                }
-                map.addSource('places', marker_data);
-                // Add a layer showing the places.
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'symbol',
-                    'source': 'places',
-                    'layout': {
-                        'icon-image': '{icon}',
-                        'icon-allow-overlap': true
+                        for (let j = 1; j <= data[i].rating; j++) stars = stars + '<i class="fa fa-star"></i>';
+                        if (!(parseInt(data[i].rating) == data[i].rating)) stars = stars + '<i class="fa fa-star-half-empty"></i>';
+                        else data[i].rating = parseInt(data[i].rating);
+                        if (data[i].price) prc = {{#if lang}}'<p class="m-0 bg-warning"> Τιμή: '{{else}}'<p class="m-0 bg-warning"> Price: '{{/if}} + data[i].price + ' €</p>';
+                        if (data[i].discount) disc += '<p class="m-0">' + data[i].discount + '% discount</p>';
+                        marker_data.data.features[i] = {
+                            'type': 'Feature',
+                            'properties': {
+                                'id': data[i].id,
+                                'description':
+                                    '<div class="_map_popup"><strong class="_map_popup_el">' + data[i].name + '</strong> <span class="_map_popup_el text-nowrap">' + stars + '(' + data[i].rating + '/5)' + '</span> <br> ' + disc + prc + '</div> <div class="d-flex justify-content-center"><a href="/book/' + data[i].id + '" id="' + data[i].id + {{#if lang}}'" class="m-h-ps_marker bg-info mt-2">Κράτηση</a>'{{else}}'" class="m-h-ps_marker bg-info  mt-2">BOOK NOW</a>'{{/if}}+ '</div></div>',
+                                'icon': 'parking__marker'
+                            },
+                            'geometry': {
+                                'type': 'Point',
+                                'coordinates': data[i].location
+                            }
+                        };
                     }
+                    map.addSource('places', marker_data);
+                    // Add a layer showing the places.
+                    map.addLayer({
+                        'id': 'places',
+                        'type': 'symbol',
+                        'source': 'places',
+                        'layout': {
+                            'icon-image': '{icon}',
+                            //'icon-image': 'mapbox://styles/mihosmike/cl7xa1a85001017nq8g0b2qy4/assets/parking__marker.svg',
+                            'icon-allow-overlap': true,
+                            'icon-size': ['interpolate', ['linear'], ['zoom'], 0, 0.08, 10, 0.1, 14, 0.13, 15, 0.15]
+                        }
+                    });
                 });
             });
-
             //const popup = new mapboxgl.Popup();
 
             // When a click event occurs on a feature in the places layer, open a popup at the
@@ -289,11 +303,23 @@
     else {
         alert("Geolocation is not supported by this browser.");
     }
-
-
 </script>
 
 <script>
+    let parking_type = {{{pr_tp}}};
+    let h_txt = "";
+    switch(parking_type) {
+        case 1:
+            h_txt = {{#if lang}}"Αεροδρόμιο"{{else}}"Airport"{{/if}};
+            break;
+        case 2:
+            h_txt = {{#if lang}}"Λιμάνι"{{else}}"Port"{{/if}};
+            break;
+        default:
+            h_txt = {{#if lang}}"Πόλη"{{else}}"City"{{/if}};
+    }
+    document.getElementById("h_text").textContent = h_txt;
+
     let _dt1 = document.getElementById("search_date1");
     let _dt2 = document.getElementById("search_date2");
     let _srch = document.getElementById("_search");
@@ -311,7 +337,6 @@
 
     _dt1.min = today;
     _dt2.min = today;
-
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
