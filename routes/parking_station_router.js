@@ -55,7 +55,7 @@ router.get('/logout', login_controller.logout_parking_station);                 
 router.post('/sign_in', login_controller.login_parking_station);                                                                //? ready
 router.post('/sign_up', login_controller.add_new_parking_station);                                                              //? ready                
 // local
-router.get('/local_post_data', parking_station_controller.get_local_parking_station_data);                                      //? ready
+//? router.get('/local_post_data', parking_station_controller.get_local_parking_station_data);                                      //? ready
 router.post('/local_post_data', parking_station_controller.post_local_parking_station_data);                                    //? ready
 
 module.exports = router;

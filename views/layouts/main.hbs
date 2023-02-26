@@ -40,7 +40,6 @@
 
 <script>
     const err = {{{error_msg}}};
-    console.log(err);
     const error_ = document.getElementById("error_popup");
     if (err) {
         error_.innerHTML = err;
@@ -52,7 +51,6 @@
     });
 
     const conf = {{{confirm_msg}}};
-    console.log(conf);
     const conf_ = document.getElementById("confirm_popup");
     if (conf) {
         conf_.innerHTML = conf;

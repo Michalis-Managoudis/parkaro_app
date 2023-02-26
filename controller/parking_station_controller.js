@@ -43,21 +43,23 @@ function get_parking_station_home_page(req, res) {
                                         let c = 0;
                                         for (let el of data3) if (!el.viewed) c++;
                                         let lcl = 0;
-                                        if (req.session.local_trigger) {
-                                            if (req.session.local_trigger === 1) {
-                                                req.session.local_trigger = 0;
-                                                lcl = 1;
-                                            }
-                                            else if (req.session.local_trigger === 2) {
-                                                req.session.local_trigger = 0;
-                                                lcl = 2;
-                                            }
-                                        }
+                                        // if (req.session.local_trigger) {
+                                        //     if (req.session.local_trigger === 1) {
+                                        //         req.session.local_trigger = 0;
+                                        //         lcl = 1;
+                                        //     }
+                                        //     else if (req.session.local_trigger === 2) {
+                                        //         req.session.local_trigger = 0;
+                                        //         lcl = 2;
+                                        //     }
+                                        // }
                                         dataModel.get_("sensor_data", req.session.sid, function (datas) {
                                             if (datas) {
-                                                if (datas.sensor_value) {
-                                                    let vl = datas.sensor_value;
-                                                    let rr = { "id": req.session.sid, "sensor_value": 0 };
+                                                if (datas.value) {
+                                                    let vl = datas.value;
+                                                    if (vl == -1) vl = 2;
+                                                    const vls = JSON.stringify({ "value": vl, "plate": datas.plate});
+                                                    let rr = { "id": req.session.sid, "value": 0, "plate": "" };
                                                     dataModel.update_("sensor_data", rr, function () {
                                                         let err_msg = false;
                                                         if (req.session.err_msg) {
@@ -83,7 +85,7 @@ function get_parking_station_home_page(req, res) {
                                                             unread_notification_number: c,
                                                             drivers: data5,
                                                             cars: data6,
-                                                            local: vl
+                                                            local: vls
                                                         });
                                                     });
                                                 }
@@ -145,7 +147,6 @@ function get_parking_station_home_page(req, res) {
                                                 });
                                             }
                                         });
-                                        
                                     });
                                 });
                             });
@@ -773,40 +774,42 @@ function convert_12h_to_24h(time12h) {
     return `${hours}:${minutes}`;
 };
 
-function get_local_parking_station_data(req, res) {
-    if (req.session.sid === undefined || req.session.is_driver) {
-        console.log("You must sign in first");
-        req.session.err_msg = "You must sign in first";
-        res.redirect('/parking_station/sign_in');
-    }
-    else {
-        const p_id = 3;
-        const entered_ = 1;
-        req.session.local_trigger = 0;
-        if (entered_) {
-            req.session.local_trigger = 1;
-            res.redirect('/parking_station/home');
-        }
-        else {
-            req.session.local_trigger = 2;
-            res.redirect('/parking_station/home');
-        }
-    }
-};
+// function get_local_parking_station_data(req, res) {
+//     if (req.session.sid === undefined || req.session.is_driver) {
+//         console.log("You must sign in first");
+//         req.session.err_msg = "You must sign in first";
+//         res.redirect('/parking_station/sign_in');
+//     }
+//     else {
+//         const p_id = 3;
+//         const entered_ = 1;
+//         req.session.local_trigger = 0;
+//         if (entered_) {
+//             req.session.local_trigger = 1;
+//             res.redirect('/parking_station/home');
+//         }
+//         else {
+//             req.session.local_trigger = 2;
+//             res.redirect('/parking_station/home');
+//         }
+//     }
+// };
 
 function post_local_parking_station_data(req, res) {
     const p_id = req.body._id;
-    const entered_ = req.body.sensor_value;
+    const entered_ = req.body.value;
+    const plate_ = req.body.plate
     if (entered_) {
         dataModel.check2_("sensor_data", `id = ${p_id}`, function (data) {
             if (data) {
-                let rr = { "id": p_id, "sensor_value": entered_ };
-                dataModel.update_("sensor_data", rr, function () {
+                const sensor_data = { "id": p_id, "value": entered_, "plate": plate_ };
+                dataModel.update_("sensor_data", sensor_data, function () {
                     res.status(200).send("ok");
                 });
             }
             else {
-                let vls = { "id": p_id, "sensor_value": entered_ };
+                const sensor_data = { "id": p_id, "value": entered_, "plate": plate_ };
+                const vls = Object.values(sensor_data);
                 dataModel.create_("sensor_data", vls, function () {
                     res.status(200).send("ok");
                 });
@@ -829,6 +832,6 @@ module.exports = {
     read_parking_station_notifications,
     delete_parking_station_image,
     change_reservation_state,
-    get_local_parking_station_data,
+    //get_local_parking_station_data,
     post_local_parking_station_data
 }

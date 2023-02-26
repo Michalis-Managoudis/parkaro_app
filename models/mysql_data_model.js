@@ -21,7 +21,7 @@ const schema = {
   "reservation": ["id", "car_id", "parking_lot_id", "r_start", "r_end", "price", "state"],
   "review": ["id", "parking_station_id", "stars", "description"],
   "notification": ["id", "user_id", "date_created", "viewed", "message"],
-  "sensor_data": ["id", "sensor_value"]
+  "sensor_data": ["id", "value", "plate"]
 };
 const schema_required = {
   "driver": ["email", "password", "name", "phone"],
@@ -31,7 +31,7 @@ const schema_required = {
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
   "notification": ["user_id", "date_created", "message"],
-  "sensor_data": ["id", "sensor_value"]
+  "sensor_data": ["id", "value", "plate"]
 };
 const schema_show = { //? , "lang";;;;;;;
   "driver": ["email", "name", "phone", "points"],
@@ -42,7 +42,7 @@ const schema_show = { //? , "lang";;;;;;;
   "reservation": ["car_id", "parking_lot_id", "r_start", "r_end", "price"],
   "review": ["parking_station_id", "stars", "description"],
   "notification": ["date_created", "viewed", "message"],
-  "sensor_data": ["sensor_value"]
+  "sensor_data": ["value", "plate"]
 };
 const schema_editable = {
   "driver": ["email", "name", "phone", "lang"],
@@ -53,7 +53,7 @@ const schema_editable = {
   "reservation": ["price"],
   "review": ["stars", "description"],
   "notification": ["message"],
-  "sensor_data": ["sensor_value"]
+  "sensor_data": ["value", "plate"]
 };
 const schema_unique = {
   "driver": ["email", "phone"],

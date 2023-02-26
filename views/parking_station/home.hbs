@@ -10,6 +10,87 @@
         <button type="button" id="myBtn-nr" class="btn btn-lg btn-danger d-block mx-auto _btn_modal text-nowrap mx-sm-4 mx-md-auto" style="font-size: 20px; height: 100%;">{{#if lang}}Νέα κράτηση{{else}}New Reservation{{/if}}</button>
     </div>
 </div>
+{{#if records}}
+<h3 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h3>
+<div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
+    <table class="table table-bordered m-0" id="resv_table">
+        <thead style="position: sticky; top: 0" class="bg-dark text-white">
+            <tr>
+                <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
+                <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εισόδου{{else}}Date in{{/if}}</th>
+                <th>{{#if lang}}Ημερομηνία εξόδου{{else}}Date out{{/if}}</th>
+                <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
+                <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
+                <th>{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</th>
+                <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each records}}
+            <tr class="_resv" id="{{this.id}}" title="{{this.state}}">
+                <td>{{this.id}}</td>
+                <td>{{this.parking_lot_id}}</td>
+                <td class="_t_replace">{{this.r_start}}</td>
+                <td class="_t_replace">{{this.r_end}}</td>
+                <td>{{this.price}} €</td>
+                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p></td>
+                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p></td>
+                <td class="d-flex"></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div id="myModalEdit-" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{#if lang}}Κράτηση{{else}}Reservation{{/if}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/parking_station/update_reservation" method="post" id="myEditForm-">
+                        <input type="number" id="resv__id-" hidden name="_id" value="">
+                        <input type="email" id="resv_d_email-" hidden name="d_email" value="">
+                        <div class="text-nowrap">
+                            <label for="ff-price-">{{#if lang}}Τιμή:{{else}}Price:{{/if}}</label>
+                            <input type="text" id="ff-price-" name="price" value="" autofocus> €
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value={{#if lang}}"Ενημέρωση"{{else}}"Update"{{/if}}>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="myModalDel-" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="_modal-text">{{#if lang}}Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κράτηση;{{else}}Are you sure you want to delete this reservation?{{/if}}</p>
+                    <form action="/parking_station/delete_reservation" method="post" id="myDelForm-">
+                        <input type="number" id="resv_id--" hidden name="_id" value="">
+                        <input type="text" id="resv_prc-" hidden name="_price" value="">
+                        <input type="email" id="resv_d_email--" hidden name="d_email" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
+                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value={{#if lang}}"Διαγραφή Κράτησης"{{else}}"Delete Reservation"{{/if}}>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{else}}
+<p class="p-3 text-center">{{#if lang}}Ωχ δεν βρέθηκε καμία ενεργή κράτηση{{else}}Oops none current reservation found{{/if}}</p>
+{{/if}}
 <div id="myModal-nr" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -97,97 +178,17 @@
         </div>
     </div>
 </div>
-{{#if records}}
-<h3 class="text-center">{{#if lang}}Κρατήσεις{{else}}Reservations{{/if}}</h3>
-<div class=" bg-primary table-wrapper-scroll-y my-custom-scrollbar _history-table">
-    <table class="table table-bordered m-0" id="resv_table">
-        <thead style="position: sticky; top: 0" class="bg-dark text-white">
-            <tr>
-                <th>{{#if lang}}Α/Α{{else}}ID{{/if}}</th>
-                <th>{{#if lang}}Θέση{{else}}Lot{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία εισόδου{{else}}Date in{{/if}}</th>
-                <th>{{#if lang}}Ημερομηνία εξόδου{{else}}Date out{{/if}}</th>
-                <th>{{#if lang}}Τιμή{{else}}Price{{/if}}</th>
-                <th>{{#if lang}}Οδηγός{{else}}Driver{{/if}}</th>
-                <th>{{#if lang}}Όχημα{{else}}Vehicle{{/if}}</th>
-                <th>{{#if lang}}Ενέργειες{{else}}Actions{{/if}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each records}}
-            <tr class="_resv" id="{{this.id}}" title="{{this.state}}">
-                <td>{{this.id}}</td>
-                <td>{{this.parking_lot_id}}</td>
-                <td class="_t_replace">{{this.r_start}}</td>
-                <td class="_t_replace">{{this.r_end}}</td>
-                <td>{{this.price}} €</td>
-                <td>{{this.name}}, {{this.phone}} <p class="m-0 _history-note2" id="eml-{{this.id}}">{{this.email}}</p></td>
-                <td>{{this.plate}} <p class="m-0 _history-note2">({{this.model}}, {{this.color}})</p></td>
-                <td class="d-flex"></td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    <div id="myModalEdit-" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{#if lang}}Κράτηση{{else}}Reservation{{/if}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/parking_station/update_reservation" method="post" id="myEditForm-">
-                        <input type="number" id="resv__id-" hidden name="_id" value="">
-                        <input type="email" id="resv_d_email-" hidden name="d_email" value="">
-                        <div class="text-nowrap">
-                            <label for="ff-price-">{{#if lang}}Τιμή:{{else}}Price:{{/if}}</label>
-                            <input type="text" id="ff-price-" name="price" value="" autofocus> €
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-lg btn-secondary " data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
-                    <input type="submit" form="myEditForm-" class="btn btn-lg btn-success" value={{#if lang}}"Ενημέρωση"{{else}}"Update"{{/if}}>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="myModalDel-" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="_modal-text">{{#if lang}}Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κράτηση;{{else}}Are you sure you want to delete this reservation?{{/if}}</p>
-                    <form action="/parking_station/delete_reservation" method="post" id="myDelForm-">
-                        <input type="number" id="resv_id--" hidden name="_id" value="">
-                        <input type="text" id="resv_prc-" hidden name="_price" value="">
-                        <input type="email" id="resv_d_email--" hidden name="d_email" value="">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">{{#if lang}}Άκυρο{{else}}Cancel{{/if}}</button>
-                    <input type="submit" form="myDelForm-" class="btn btn-lg btn-danger" value={{#if lang}}"Διαγραφή Κράτησης"{{else}}"Delete Reservation"{{/if}}>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{{else}}
-<p class="p-3 text-center">{{#if lang}}Ωχ δεν βρέθηκε καμία ενεργή κράτηση{{else}}Oops none current reservation found{{/if}}</p>
-{{/if}}
 <div id="myModalEnterExit" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{#if lang}}Όχημα εξήλθε{{else}}Vehicle exited{{/if}}</h5>
+                    <h5 id="veh_e_ttl" class="modal-title">{{#if lang}}Όχημα εξήλθε{{else}}Vehicle exited{{/if}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form action="/parking_station/change_reservation_state" method="post" id="myEnterExitForm-">
-                        <label for="ps_car">{{#if lang}}Όχημα που εξήλθε{{else}}Vehicle exited:{{/if}}</label>
+                        <p>{{#if lang}}Όχημα που ανιχνέυθηκε:{{else}}Vehicle detected:{{/if}} <b id="veh_e_plt"></b></p>
+                        <label id="veh_e_lbl" for="ps_car"></label>
                         <select name="_id" id="ps_car_exited"></select>
                         <input type="number" name="state" id="f_st_s" hidden>
                     </form>
@@ -233,39 +234,7 @@
             else document.getElementById("ps_car").value = "new";
             if(!f_dt.car) document.getElementById("ps_car_").hidden = true;
         }
-
-        if (local_trigger == 1) alert("A vehicle had just entered parking");
-        if (local_trigger == 2) alert("A vehicle had just exited parking");
-        if (local_trigger == 1 || local_trigger == 2) {
-            document.getElementById("f_st_s").value = local_trigger;
-
-            let tbl = document.getElementById("resv_table");
-            let bl = false;
-            if (tbl) {
-                let tday = new Date();
-                let h_dt = "";
-                let rd = "";
-                for (let i = 1; i < tbl.rows.length; i++) {
-                    rd = tbl.rows[i].cells[2].textContent;
-                    rd = rd.split(" ");
-                    rd[0] = rd[0].split("/");
-                    h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
-                    if (local_trigger == 1 && tday.getTime() < Date.parse(h_dt)) {
-                        bl = true;
-                        break;
-                    }
-                }
-            }
-            if (bl) {
-                var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
-                myModal.show();
-            }
-            else {
-                var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
-                myModal.show();
-            }
-            
-        }
+        
         driver_car_selection();
         var btn = document.getElementById("myBtn-nr");
         btn.addEventListener("click", function () {
@@ -278,7 +247,52 @@
         in_out_buttons();
         edit_buttons();
         delete_buttons();
-        show_reservations_able_to_enter_or_exit(local_trigger);
+        show_reservations_able_to_enter_or_exit(local_trigger.value, local_trigger.plate);
+
+        if (local_trigger.value == 1 || local_trigger.value == 2) {
+            document.getElementById("veh_e_plt").textContent = local_trigger.plate;
+            document.getElementById("f_st_s").value = local_trigger.value;
+            if (local_trigger.value == 1) {
+                document.getElementById("veh_e_ttl").textContent = '{{#if lang}}Όχημα εισήλθε{{else}}Vehicle entered{{/if}}';
+                document.getElementById("veh_e_lbl").textContent = '{{#if lang}}Όχημα που εισήλθε:{{else}}Vehicle entered:{{/if}}';
+                let tbl = document.getElementById("resv_table");
+                let bl = false;
+                if (tbl) {
+                    let tday = new Date();
+                    let h_dt = "";
+                    let rd = "";
+                    for (let i = 1; i < tbl.rows.length; i++) {
+                        rd = tbl.rows[i].cells[2].textContent;
+                        rd = rd.split(" ");
+                        rd[0] = rd[0].split("/");
+                        h_dt = rd[0][2] + "-" + rd[0][1] + "-" + rd[0][0] + "T" + rd[1] + ":00";
+                        if (local_trigger.value == 1 && tday.getTime() < Date.parse(h_dt)) {
+                            bl = true;
+                            break;
+                        }
+                    }
+                }
+                if (bl) {
+                    var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
+                    myModal.show();
+                }
+                else {
+                    var myModal = new bootstrap.Modal(document.getElementById("myModal-nr"));
+                    document.getElementById("ff-plate").value = local_trigger.plate;
+                    myModal.show();
+                }
+                alert("A vehicle had just entered parking");
+            }
+            else if (local_trigger.value == 2) {
+                document.getElementById("veh_e_ttl").textContent = '{{#if lang}}Όχημα εξήλθε{{else}}Vehicle exited{{/if}}';
+                document.getElementById("veh_e_lbl").textContent = '{{#if lang}}Όχημα που εξήλθε:{{else}}Vehicle exited:{{/if}}';
+                if (document.getElementById("ps_car_exited").length) {
+                    var myModal = new bootstrap.Modal(document.getElementById("myModalEnterExit"));
+                    myModal.show();
+                }
+                alert("A vehicle had just exited parking");
+            }
+        }
 
     });
 
@@ -406,7 +420,7 @@
         if (state == 2 || (state == 0 && tday.getTime() < Date.parse(h_dt))) document.getElementById("myOutBtn-" + _id).disabled = true;
     }
 
-    function show_reservations_able_to_enter_or_exit(md) {
+    function show_reservations_able_to_enter_or_exit(md, plt) {
         let tbl = document.getElementById("resv_table");
         if (tbl) {
             let tday = new Date();
@@ -422,8 +436,10 @@
                 else bl = tday.getTime() > Date.parse(h_dt);
                 if (bl) {
                     const opt = document.createElement("option");
-                    opt.innerText = tbl.rows[i].cells[0].textContent + "/ " + tbl.rows[i].cells[1].textContent + "/ " + tbl.rows[i].cells[5].innerText + "/ " + tbl.rows[i].cells[6].innerText;
+                    //opt.innerText = tbl.rows[i].cells[0].textContent + "/ " + tbl.rows[i].cells[1].textContent + "/ " + tbl.rows[i].cells[5].innerText + "/ " + tbl.rows[i].cells[6].innerText;
+                    opt.innerText = tbl.rows[i].cells[0].textContent + " / " + tbl.rows[i].cells[6].innerText;
                     opt.value = tbl.rows[i].cells[0].textContent;
+                    if (tbl.rows[i].cells[6].innerText.split("(")[0].split("\n")[0] == plt) opt.selected = true;
                     document.getElementById("ps_car_exited").appendChild(opt);
                 }
             }
