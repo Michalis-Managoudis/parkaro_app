@@ -1,10 +1,16 @@
 'use strict';
 
 const mysql = require('mysql');
+// const conn = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "$AmazonaB933776",
+//   database: "parkaro_app_db",
+// });
 const conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "$AmazonaB933776",
+  host: "database-parkaro-app.c7vsqtgvu8y8.us-east-1.rds.amazonaws.com",
+  user: "admin_amazona",
+  password: "4xN6x3U3(6brH&o",
   database: "parkaro_app_db",
 });
 
