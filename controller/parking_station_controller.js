@@ -277,6 +277,7 @@ function add_parking_station_reservation(req, res) {
                                                 if (field === "driver_id") car[field] = data3.id;
                                                 else car[field] = req.body[field];
                                             }
+                                            car.plate = car.plate.toUpperCase();
                                             dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
                                                 if (!data4) {
                                                     // add car
@@ -393,6 +394,7 @@ function add_parking_station_reservation(req, res) {
                     if (field === "driver_id") car[field] = req.body.driver;
                     else car[field] = req.body[field];
                 }
+                car.plate = car.plate.toUpperCase();
                 dataModel.check2_("car", `plate = "${car.plate}"`, function (data4) {
                     if (!data4) {
                         // add car
