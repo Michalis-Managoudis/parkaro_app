@@ -395,7 +395,7 @@ function get_driver_history_page(req, res) {
                 dataModel.load_reservation_history("driver", req.session.sid, function (data2) {
                     const dt = JSON.parse(JSON.stringify(data2));
                     let ids = [];
-                    dataModel.read_("parking_lot", "", `parking_station_id = ${req.session.sid}`, function (data1) {
+                    dataModel.read_("parking_lot", "", `parking_station_id = 3`, function (data1) {
                         const dt1 = JSON.parse(JSON.stringify(data1));
                         let ids_ = [];
                         for (let ell of dt1) ids_.push(ell.id);
@@ -610,7 +610,8 @@ function get_parking_pages(req, res, tp) {
                 error_msg: err_msg,
                 confirm_msg: conf_msg,
                 dates: req.session._dts,
-                parking_station_locations: JSON.stringify(data2)
+                parking_station_locations: JSON.stringify(data2),
+                pr_tp: tp
             });
         });
     }
@@ -652,7 +653,8 @@ function get_parking_pages(req, res, tp) {
                         parking_station_locations: JSON.stringify(data2),
                         notifications: data,
                         unread_notification_number: c,
-                        points: JSON.stringify(datap.points)
+                        points: JSON.stringify(datap.points),
+                        pr_tp: tp
                     });
                 });
             });
@@ -710,7 +712,8 @@ function search_parking_pages(req, res, tp){
                         parking_station_locations: JSON.stringify(valid_rows),
                         notifications: datan,
                         unread_notification_number: c,
-                        points: JSON.stringify(datap.points)
+                        points: JSON.stringify(datap.points),
+                        pr_tp: tp
                     });
                 });
             });

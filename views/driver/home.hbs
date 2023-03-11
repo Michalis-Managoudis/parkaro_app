@@ -210,8 +210,10 @@
 
                     let stars = "";
                     let prc = "";
-                    let disc = '<div class="d-flex justify-content-between">';
+                    let disc_h = '<div class="d-flex justify-content-between">';
+                    let disc = '';
                     for (let i = 0; i < Object.keys(data).length; i++) {
+                        disc = disc_h;
                         stars = "";
                         if (data[i].rating === "NaN") {
                             stars = '<i class="fa fa-star-o"></i>';
@@ -340,15 +342,19 @@
 
     _dt2.addEventListener('change', function () {
         _dt1.max = _dt2.value;
+        console.log("search for dates");
         check_available();
     });
     _dt1.addEventListener('change', function () {
         _dt2.min = _dt1.value;
+        console.log("search for dates");
         check_available();
     });
 
     function check_available() {
+        console.log("search for dates2");
         if (_dt1.value != "" && _dt2.value != "") {
+            console.log("search for dates");
             document.getElementById("_form2").submit();
         }
     }

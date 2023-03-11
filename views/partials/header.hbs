@@ -120,11 +120,15 @@
         datt.innerHTML = date_to_string(parseInt(datt.innerHTML));
     });
 
-    document.getElementById("notif1").addEventListener("click", function () {
-        document.getElementById("notif").innerHTML = '<i class="fa fa-bell"></i>';
-        {{#if is_driver}}window.location.assign("/rd_notif");{{/if}}
-        {{#unless is_driver}}window.location.assign("/parking_station/rd_notif");{{/unless}}
-    });
+    try {
+        document.getElementById("notif1").addEventListener("click", function () {
+            document.getElementById("notif").innerHTML = '<i class="fa fa-bell"></i>';
+            {{#if is_driver}}window.location.assign("/rd_notif");{{/if}}
+            {{#unless is_driver}}window.location.assign("/parking_station/rd_notif");{{/unless}}
+        });
+    } catch (error) {
+        //console.error(error);
+    }
 
     function date_to_string(num) {
         let dtm_h = new Date(num);
