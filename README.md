@@ -26,15 +26,15 @@ processing, Dates data processing, Proximity-Distance detector, Ultrasonic senso
 Driver side application use-view:
 
 https://user-images.githubusercontent.com/100244277/232223313-07e2c9e5-cc14-4f74-a032-e527d2460ee5.mp4
-.
-.
+
+
 Parking Station side application use-view:
 
 https://user-images.githubusercontent.com/100244277/232222933-535d9ad5-5a52-48d7-84d3-90e3baa4a39c.mp4
-.
-.
+
+
 Sensor demonstration-use:
 
 https://user-images.githubusercontent.com/100244277/232223367-95383d6d-f2bc-45ef-a89e-f9e4d4e26afe.mp4
-.
+
 https://user-images.githubusercontent.com/100244277/232223550-d67b5955-d44f-48fe-b086-9ff25f49733b.mp4
