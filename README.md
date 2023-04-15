@@ -27,7 +27,7 @@ Driver side application use-view:
 
 https://user-images.githubusercontent.com/100244277/232223313-07e2c9e5-cc14-4f74-a032-e527d2460ee5.mp4
 
-
+/
 Parking Station side application use-view:
 
 https://user-images.githubusercontent.com/100244277/232222933-535d9ad5-5a52-48d7-84d3-90e3baa4a39c.mp4
